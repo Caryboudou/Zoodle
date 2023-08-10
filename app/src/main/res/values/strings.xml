@@ -1,0 +1,159 @@
+<resources>
+    <string name="app_name">Zoodle</string>
+    <string name="add_new_mood_description">Add New Mood Button</string>
+
+    <string name="welcome_text">How are you?</string>
+    <string name="main_settings">Settings button</string>
+    <string name="main_row_filter_title">Today</string>
+    <string name="main_row_feelings">Feelings</string>
+    <string name="main_row_activities">Activities</string>
+    <string name="main_view_trend">View trend</string>
+    <string name="main_click_debug">Click here to create a random entry</string>
+    <string name="calendar_button_description">Click to see Calendar box</string>
+    <string name="click_button_text">Click here to add a new entry</string>
+    <string name="click_to_login">Click to login ***PREMIUM ONLY***</string>
+    <string name="login_content_description">Login icon to click to establish online connectivity</string>
+    <string name="return_to_main">Return</string>
+
+    <string name="mood_picker_date_title">Date</string>
+    <string name="mood_picker_date_value">04/10/2022</string>
+    <string name="mood_picker_time_title">Time</string>
+    <string name="mood_picker_time_value">08h30</string>
+    <string name="mood_picker_mood_title">Mood</string>
+    <string name="mood_picker_fatigue_title">Fatigue</string>
+    <string name="mood_picker_mood_value">3</string>
+
+    <string name="front_mood_title">How are you feeling today?</string>
+    <string name="front_sleep_title">How did you sleep last night?</string>
+    <string name="front_medication_title">Did you take your medication?</string>
+
+    <string name="confirm_change">Confirm</string>
+    <string name="remove">Remove</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">Create</string>
+
+    <string name="default_date">04/10/2022</string>
+    <string name="default_time">12h01</string>
+    <string name="default_mood">5</string>
+    <string name="default_fatigue">5</string>
+
+    <string name="trend_reset">Reset</string>
+    <string name="trend_check_mood">Mood</string>
+    <string name="trend_check_fatigue">Fatigue</string>
+    <string name="trend_month">Month</string>
+    <string name="trend_year">Year</string>
+    <string name="trend_title">How have you been</string>
+
+    <string name="activities_choose">Choose your activity…</string>
+    <string name="activities_selected">Selected</string>
+    <string name="activities_available">Available</string>
+    <string name="activities_name">Activity</string>
+    <string name="activities_delete">Press to delete</string>
+    <string name="activities_cross">X</string>
+    <string name="activities_add_new">Click here to add a new activity</string>
+    <string name="activities_add_new_description">Clickable button to add new activity</string>
+    <string name="activities_add_new_activity_name">New activity</string>
+    <string name="activities_enable_delete">Delete Activity</string>
+    <string name="activities_add_new_activity_name_hint">Enter in a new activity name of your choosing</string>
+    <string name="activities_restore_defaults">Restore defaults</string>
+
+    <string name="feelings_welcome">Choose how you feel</string>
+    <string name="feelings_selected">Selected</string>
+    <string name="feelings_available">Available</string>
+    <string name="feelings_name">Feeling</string>
+    <string name="feelings_delete">Press to delete</string>
+    <string name="feelings_cross">X</string>
+    <string name="feelings_add_new">Click here to add a new feeling</string>
+    <string name="feelings_add_new_description">Clickable button to add new feeling</string>
+    <string name="feelings_add_new_feeling">New Feeling</string>
+    <string name="feelings_enable_delete">Delete Feeling</string>
+    <string name="feelings_add_new_activity_name_hint">Record a new feeling</string>
+    <string name="feelings_restore_defaults">Restore defaults</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_mood_display">Mood Options</string>
+    <string name="settings_mood_use_numerals">Use Numbers for Mood</string>
+    <string name="settings_import">Import JSON</string>
+    <string name="settings_export">Export JSON</string>
+
+    <dimen name="text_size_xxlarge">30sp</dimen>
+    <dimen name="text_size_xlarge">26sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_search">14sp</dimen>
+    <dimen name="choose_mood_circle_size">50dp</dimen>
+    <dimen name="choose_mood_circle_margin">5dp</dimen>
+    <dimen name="choose_fatigue_circle_size">51sp</dimen>
+    <dimen name="choose_fatigue_circle_margin">5dp</dimen>
+    <dimen name="choose_high_tab">48dp</dimen>
+
+    <string-array name="mood_faces">
+        <item>&#128557;</item>
+        // terrible
+        <item>&#128577;</item>
+        // unhappy
+        <item>&#128528;</item>
+        // average
+        <item>&#128512;</item>
+        // happy
+        <item>&#128513;</item>
+        // ecstatic
+    </string-array>
+
+    <string-array name="fatigue_faces">
+        <item>&#128557;</item>
+        // terrible
+        <item>&#128577;</item>
+        // unhappy
+        <item>&#128528;</item>
+        // average
+        <item>&#128512;</item>
+        // happy
+        <item>&#128513;</item>
+        // ecstatic
+    </string-array>
+
+    <string name="mood_ecstatic">&#128513;</string>
+    <string name="mood_happy">&#128512;</string>
+    <string name="mood_average">&#128528;</string>
+    <string name="mood_unhappy">&#128577;</string>
+    <string name="mood_terrible">&#128557;</string>
+
+    <string-array name="available_activities">
+        <item>Guitar</item>
+        <item>Programming</item>
+        <item>Gaming</item>
+        <item>Browsing internet</item>
+        <item>Singing</item>
+        <item>School</item>
+        <item>Rugby</item>
+        <item>Cooking</item>
+        <item>Cleaning</item>
+    </string-array>
+
+    <string-array name="available_feelings">
+        <item>Happy</item>
+        <item>Ecstatic</item>
+        <item>Okay</item>
+        <item>Unhappy</item>
+        <item>Terrible</item>
+        <item>Sad</item>
+        <item>Angry</item>
+        <item>Frustrated</item>
+        <item>Energetic</item>
+        <item>Motivated</item>
+    </string-array>
+
+    <string-array name="valid_filter_row_keys">
+        <item>Today</item>
+        <item>Last Week</item>
+        <item>Last Month</item>
+        <item>Last Year</item>
+        <item>Years Ago</item>
+        <item></item>
+    </string-array>
+</resources>
+
+

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp">
+
+    <com.kalzakath.zoodle.layout.FatigueCircle
+        android:id="@+id/veryGoodCircle"
+        android:layout_width="@dimen/choose_mood_circle_size"
+        android:layout_height="@dimen/choose_mood_circle_size"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <com.kalzakath.zoodle.layout.FatigueCircle
+        android:id="@+id/goodCircle"
+        android:layout_width="@dimen/choose_mood_circle_size"
+        android:layout_height="@dimen/choose_mood_circle_size"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <com.kalzakath.zoodle.layout.FatigueCircle
+        android:id="@+id/badCircle"
+        android:layout_width="@dimen/choose_mood_circle_size"
+        android:layout_height="@dimen/choose_mood_circle_size"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <com.kalzakath.zoodle.layout.FatigueCircle
+        android:id="@+id/veryBadCircle"
+        android:layout_width="@dimen/choose_mood_circle_size"
+        android:layout_height="@dimen/choose_mood_circle_size"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <com.kalzakath.zoodle.layout.FatigueCircle
+        android:id="@+id/mediocreCircle"
+        android:layout_width="@dimen/choose_mood_circle_size"
+        android:layout_height="@dimen/choose_mood_circle_size"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</FrameLayout>
