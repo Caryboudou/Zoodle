@@ -19,6 +19,24 @@ object ResUtil {
         )
     }
 
+    fun getDateStringFR(date: String) : String {
+        val slipped = date.split('-')
+        return slipped[2]+"/"+slipped[1]+"/"+slipped[0]
+    }
+    fun getDateStringEN(date: String) : String {
+        val slipped = date.split('/')
+        return slipped[2]+"-"+slipped[1]+"-"+slipped[0]
+    }
+
+    fun getTimeStringFR(time: String) : String {
+        val slipped = time.split(":")
+        return slipped[0]+"h"+slipped[1]
+    }
+    fun getTimeStringEN(time: String) : String {
+        val slipped = time.split("h")
+        return slipped[0]+":"+slipped[1]
+    }
+
     fun getColor(context: Context?, resourceId: Int): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             context!!.getColor(resourceId)

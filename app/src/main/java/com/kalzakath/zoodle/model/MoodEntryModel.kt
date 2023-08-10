@@ -3,8 +3,9 @@ package com.kalzakath.zoodle.model
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.IgnoreExtraProperties
 import com.kalzakath.zoodle.*
-import com.kalzakath.zoodle.model.Date
 import com.kalzakath.zoodle.interfaces.RowEntryModel
+import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
+import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -86,8 +87,8 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
 
 fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
     val mViewHolder = holder as MoodViewHolder
-    mViewHolder.dateText.text = date
-    mViewHolder.timeText.text = time
+    mViewHolder.dateText.text = getDateStringFR(date)
+    mViewHolder.timeText.text = getTimeStringFR(time)
     val moodHelper = MoodValueHelper()
 
     hideRow(mViewHolder)

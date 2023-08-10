@@ -111,9 +111,9 @@
         android:id="@+id/llAddNewActivity"
         android:layout_width="0dp"
         android:layout_height="70dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginEnd="10dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="invisible"
@@ -156,9 +156,8 @@
 
     <LinearLayout
         android:id="@+id/llConfirmDelete"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="70dp"
-        android:layout_margin="5dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"

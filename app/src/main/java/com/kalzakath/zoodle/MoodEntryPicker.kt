@@ -8,6 +8,10 @@ import android.widget.TextView
 import com.kalzakath.zoodle.layout.ChooseFatigueCircle
 import com.kalzakath.zoodle.layout.ChooseMoodCircle
 import com.kalzakath.zoodle.model.MoodEntryModel
+import com.kalzakath.zoodle.utils.ResUtil.getDateStringEN
+import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
+import com.kalzakath.zoodle.utils.ResUtil.getTimeStringEN
+import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -47,8 +51,8 @@ class MoodEntryPicker(context: Context, val onCreateMoodEntry: (MoodEntryModel) 
         val fatigue: ChooseFatigueCircle = dialog.findViewById(R.id.tvmpFatigueValue)
 
         return MoodEntryModel(
-            date.text.toString(),
-            time.text.toString(),
+            getDateStringEN(date.text.toString()),
+            getTimeStringEN(time.text.toString()),
             mood.toInt(),
             fatigue.toInt()
         )
@@ -70,8 +74,8 @@ class MoodEntryPicker(context: Context, val onCreateMoodEntry: (MoodEntryModel) 
         val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
         val time: TextView = dialog.findViewById(R.id.tvmpTimeValue)
 
-        date.text = dateFormat.format(LocalDate.now())
-        time.text = timeFormat.format(LocalTime.now())
+        date.text = getDateStringFR(dateFormat.format(LocalDate.now()))
+        time.text = getTimeStringFR(timeFormat.format(LocalTime.now()))
     }
 
     fun showPopup() {
