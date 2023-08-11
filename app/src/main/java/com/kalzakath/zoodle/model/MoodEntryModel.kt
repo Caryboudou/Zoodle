@@ -1,9 +1,15 @@
 package com.kalzakath.zoodle.model
 
+import android.graphics.drawable.LayerDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.IgnoreExtraProperties
+import com.google.firebase.database.core.view.View
 import com.kalzakath.zoodle.*
+import com.kalzakath.zoodle.data.CircleFatigueBO
+import com.kalzakath.zoodle.data.CircleMoodBO
+import com.kalzakath.zoodle.data.CircleStateBO
 import com.kalzakath.zoodle.interfaces.RowEntryModel
+import com.kalzakath.zoodle.layout.MoodCircle
 import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
 import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.io.Serializable
@@ -93,40 +99,32 @@ fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
 
     hideRow(mViewHolder)
 
-        if (Settings.moodMode == Settings.MoodModes.FACES)
-
-            mViewHolder.moodText.text = mViewHolder.itemView.resources.getString(
-                moodHelper.getEmoji(
-                    toFaces(
-                        moodHelper.getSanitisedNumber(mood, 5)
-                    )
+    if (Settings.moodMode == Settings.MoodModes.FACES)
+        mViewHolder.moodText.text = mViewHolder.itemView.resources.getString(
+            moodHelper.getEmojiMood(
+                toFaces(
+                    moodHelper.getSanitisedNumber(mood, 5)
                 )
             )
-        else mViewHolder.moodText.text = mood.toString()
-        mViewHolder.activityText.text = when (activities.toString()) {
-            "[]" -> "Click to add an activity"
-            else -> activities.toString().removeSurrounding(
-                "[",
-                "]"
-            )
-        }
-        if (Settings.fatigueMode == Settings.FatigueModes.FACES)
+        )
+    else mViewHolder.moodText.text = mood.toString()
 
-            mViewHolder.fatigueText.text = mViewHolder.itemView.resources.getString(
-                moodHelper.getEmoji(
-                    toFaces(
-                        moodHelper.getSanitisedNumber(fatigue, 5)
-                    )
+    if (Settings.fatigueMode == Settings.FatigueModes.FACES)
+        mViewHolder.fatigueText.text = mViewHolder.itemView.resources.getString(
+            moodHelper.getEmojiFatigue(
+                toFaces(
+                    moodHelper.getSanitisedNumber(fatigue, 5)
                 )
             )
-        else mViewHolder.fatigueText.text = fatigue.toString()
-        mViewHolder.activityText.text = when (activities.toString()) {
-            "[]" -> "Click to add an activity"
-            else -> activities.toString().removeSurrounding(
-                "[",
-                "]"
-            )
-        }
+        )
+    else mViewHolder.fatigueText.text = fatigue.toString()
+    mViewHolder.activityText.text = when (activities.toString()) {
+        "[]" -> "Click to add an activity"
+        else -> activities.toString().removeSurrounding(
+            "[",
+            "]"
+        )
+    }
 
     mViewHolder.feelingsText.text = when (feelings.toString()) {
         "[]" -> "Click to add feelings"
@@ -142,8 +140,9 @@ fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
 }
 
 fun MoodEntryModel.applyDrawableMood() {
-    if (viewHolder != null) {
+    if (viewHolder != null && Settings.moodMode == Settings.MoodModes.NUMBERS) {
         val mViewHolder = viewHolder as MoodViewHolder
+        mViewHolder.moodFace.visibility = android.view.View.INVISIBLE
 
         when {
             mood == 1 -> mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_bad)
@@ -154,11 +153,20 @@ fun MoodEntryModel.applyDrawableMood() {
             else -> mViewHolder.moodText.setBackgroundResource(R.drawable.none_rating_color)
         }
     }
+    else if (viewHolder != null && Settings.moodMode == Settings.MoodModes.FACES) {
+        val mViewHolder = viewHolder as MoodViewHolder
+        val face = mViewHolder.moodFace
+        face.state = CircleStateBO.CHOOSE_MOOD
+        face.mood = CircleMoodBO.from(mood)
+        face.visibility = android.view.View.VISIBLE
+        mViewHolder.moodText.setBackgroundResource(0)
+    }
 }
 
 fun MoodEntryModel.applyDrawableFatigue() {
-    if (viewHolder != null) {
+    if (viewHolder != null && Settings.fatigueMode == Settings.FatigueModes.NUMBERS) {
         val mViewHolder = viewHolder as MoodViewHolder
+        mViewHolder.fatigueFace.visibility = android.view.View.INVISIBLE
 
         when {
             fatigue == 1 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_bad)
@@ -168,5 +176,12 @@ fun MoodEntryModel.applyDrawableFatigue() {
             fatigue == 5 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good)
             else -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.none_rating_color)
         }
+    } else if (viewHolder != null && Settings.fatigueMode == Settings.FatigueModes.FACES) {
+        val mViewHolder = viewHolder as MoodViewHolder
+        val face = mViewHolder.fatigueFace
+        face.state = CircleStateBO.CHOOSE_MOOD
+        face.fatigue = CircleFatigueBO.from(fatigue)
+        face.visibility = android.view.View.VISIBLE
+        mViewHolder.fatigueText.setBackgroundResource(0)
     }
 }

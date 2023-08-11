@@ -120,6 +120,11 @@
     <string name="mood_average">&#128528;</string>
     <string name="mood_unhappy">&#128577;</string>
     <string name="mood_terrible">&#128557;</string>
+    <string name="fatigue_ecstatic">&#128513;</string>
+    <string name="fatigue_happy">&#128512;</string>
+    <string name="fatigue_average">&#128528;</string>
+    <string name="fatigue_unhappy">&#128577;</string>
+    <string name="fatigue_terrible">&#128557;</string>
 
     <string-array name="available_activities">
         <item>Guitar</item>

@@ -59,11 +59,19 @@
 
         <LinearLayout
             android:id="@+id/llMainRowVerticalLeft"
-            android:layout_width="30dp"
+            android:layout_width="@dimen/choose_mood_circle_size"
             android:layout_height="match_parent"
             android:layout_marginRight="5dp"
             android:layout_weight="0"
             android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constrMood"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/llMainRowTop"
+            app:layout_constraintTop_toTopOf="@+id/llMainRowTop">
 
             <TextView
                 android:id="@+id/tvMoodRating"
@@ -77,28 +85,64 @@
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 tools:ignore="RtlCompat,TouchTargetSizeCheck" />
+
+            <com.kalzakath.zoodle.layout.MoodCircle
+                android:id="@+id/moodCircle"
+                android:layout_width="@dimen/choose_mood_circle_size"
+                android:layout_height="@dimen/choose_mood_circle_size"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:visibility="invisible"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="@+id/tvMoodRating"
+                app:layout_constraintEnd_toEndOf="@+id/tvMoodRating"
+                app:layout_constraintStart_toStartOf="@+id/tvMoodRating"
+                app:layout_constraintTop_toTopOf="@+id/tvMoodRating"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/llMainRowVerticalRight"
-            android:layout_width="30dp"
+            android:layout_width="@dimen/choose_fatigue_circle_size"
             android:layout_height="match_parent"
             android:layout_marginRight="5dp"
             android:layout_weight="0"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvFatigueRating"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constrFatigue"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0"
-                android:gravity="center_vertical"
-                android:text="@string/default_fatigue"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                tools:ignore="RtlCompat,TouchTargetSizeCheck" />
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/llMainRowTop"
+                app:layout_constraintTop_toTopOf="@+id/llMainRowTop">
+
+                <TextView
+                    android:id="@+id/tvFatigueRating"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="@string/default_mood"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    tools:ignore="RtlCompat,TouchTargetSizeCheck" />
+
+                <com.kalzakath.zoodle.layout.FatigueCircle
+                    android:id="@+id/fatigueCircle"
+                    android:layout_width="@dimen/choose_fatigue_circle_size"
+                    android:layout_height="@dimen/choose_fatigue_circle_size"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvFatigueRating"
+                    app:layout_constraintEnd_toEndOf="@+id/tvFatigueRating"
+                    app:layout_constraintTop_toTopOf="@+id/tvFatigueRating"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <LinearLayout

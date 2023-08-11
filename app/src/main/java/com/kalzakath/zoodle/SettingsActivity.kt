@@ -45,10 +45,11 @@ class SettingsActivity() : AppCompatActivity() {
         parcelData?.filterIsInstanceTo(moodData)
 
         sMoodNumerals.isChecked = Settings.moodMode == Settings.MoodModes.NUMBERS
+        sMoodNumerals.isChecked = Settings.fatigueMode == Settings.FatigueModes.NUMBERS
 
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) Settings.moodMode = Settings.MoodModes.NUMBERS
-            else Settings.moodMode = Settings.MoodModes.FACES
+            if (isChecked) { Settings.moodMode = Settings.MoodModes.NUMBERS; Settings.fatigueMode = Settings.FatigueModes.NUMBERS }
+            else {Settings.moodMode = Settings.MoodModes.FACES; Settings.fatigueMode = Settings.FatigueModes.FACES }
         }
 
         tvSettingsExport.setOnClickListener {
