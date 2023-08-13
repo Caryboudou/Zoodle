@@ -28,6 +28,7 @@ class FeelingsActivity: AppCompatActivity()  {
         setContentView(R.layout.feelings_recycle_view)
 
         val bConfirm: Button = findViewById(R.id.bFeelingsConfirm)
+        val bDelete: ImageButton = findViewById(R.id.delete)
         val bActivityAddNew: ImageButton = findViewById(R.id.bFeelingsAddNew)
         val arrayData = intent.getStringArrayListExtra("AvailableFeelings")
         val bActivityAdd: Button = findViewById(R.id.bActivityAdd)
@@ -73,6 +74,10 @@ class FeelingsActivity: AppCompatActivity()  {
             finishIntent.putExtra("MoodEntry", moodEntry)
             finishIntent.putStringArrayListExtra("AvailableFeelings", availableFeelings)
             setResult(RESULT_OK, finishIntent)
+            finish()
+        }
+
+        bDelete.setOnClickListener {
             finish()
         }
 

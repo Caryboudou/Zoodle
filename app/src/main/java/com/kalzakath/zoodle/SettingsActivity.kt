@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -35,7 +35,7 @@ class SettingsActivity() : AppCompatActivity() {
         val sMoodNumerals: Switch = findViewById(R.id.sMoodNumerals)
         val tvSettingsImport: TextView = findViewById(R.id.tvSettingsImport)
         val tvSettingsExport: TextView = findViewById(R.id.tvSettingsExport)
-        val bSettingsConfirm: Button = findViewById(R.id.bSettingsConfirm)
+        val bSettingsConfirm: ImageButton = findViewById(R.id.bSettingsConfirm)
         val dataImport = ArrayList<MoodEntryModel>()
 
         var parcelData: ArrayList<Parcelable>? = null

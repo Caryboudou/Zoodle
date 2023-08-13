@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
@@ -19,31 +21,31 @@ import com.github.mikephil.charting.utils.EntryXComparator
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.kalzakath.zoodle.model.MoodEntryModel
+import com.kalzakath.zoodle.model.updateDateTime
+import com.kalzakath.zoodle.utils.ResUtil
+import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
+import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 class TrendViewActivity : AppCompatActivity() {
 
     private var moodData = ArrayList<MoodEntryModel>()
-    private var filter = "default"
+    private var maxDate: LocalDate = LocalDate.now()
+    private var minDate: LocalDate = LocalDate.now()
 
     class MyFormat(val context: Context): ValueFormatter() {
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-           when (Settings.moodMode) {
-               Settings.MoodModes.NUMBERS -> return value.toString()
-           }
-            return ""
+           return value.toString()
         }
     }
 
-    class ChartValueFormatter(private val filter: String): ValueFormatter() {
+    class ChartValueFormatter(): ValueFormatter() {
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-            val formatter = when (filter) {
-                "year" -> SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
-                "month" -> SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
-                else -> SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-            }
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
             return formatter.format(Date(value.toLong()))
         }
 
@@ -62,13 +64,39 @@ class TrendViewActivity : AppCompatActivity() {
         val jsonString = secureFileHandler.read()
         if (jsonString != "") moodData = getMoodListFromJSON(jsonString)
 
-        val bViewData: Button = findViewById(R.id.bViewData)
-        val bReset: Button = findViewById(R.id.bTrendReset)
-        val bMonth: Button = findViewById(R.id.bTrendMonth)
-        val bYear: Button = findViewById(R.id.bTrendYear)
+        val bViewData: ImageButton = findViewById(R.id.bViewData)
+        val bReset: ImageButton = findViewById(R.id.bTrendReset)
+        val binitDate: Button = findViewById(R.id.bTrendInitDate)
+        val bendDate: Button = findViewById(R.id.bTrendEndDate)
         val cMood: CheckBox = findViewById(R.id.checkMood)
         val cFatigue: CheckBox = findViewById(R.id.checkFatigue)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+        var date = dateFormatLocal.format(LocalDate.now())
 
+        bendDate.text = getDateStringFR(date)
+        maxDate = LocalDate.parse(date, dateFormatLocal)
+
+        date = dateFormatLocal.format(LocalDate.now().minusMonths(1))
+        binitDate.text = getDateStringFR(date)
+        minDate = LocalDate.parse(date, dateFormatLocal)
+
+        val dtPickerInit = DatePicker()
+        dtPickerInit.onUpdateListenerTrend = {
+            date = dateFormat.format(it.time)
+            minDate = LocalDate.parse(date, dateFormatLocal)
+            binitDate.text = getDateStringFR(date)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked)
+        }
+
+        val dtPickerEnd = DatePicker()
+        dtPickerEnd.onUpdateListenerTrend = {
+            date = dateFormat.format(it.time)
+            maxDate = LocalDate.parse(date, dateFormatLocal)
+            bendDate.text = getDateStringFR(date)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked)
+        }
+        
         if (moodData.isNotEmpty()) setLineChartData(cMood.isChecked, cFatigue.isChecked)
 
         cMood.setOnClickListener {
@@ -80,18 +108,23 @@ class TrendViewActivity : AppCompatActivity() {
         }
 
         bReset.setOnClickListener {
-            filter = "default"
+            date = dateFormatLocal.format(LocalDate.now())
+            bendDate.text = getDateStringFR(date)
+            maxDate = LocalDate.parse(date, dateFormatLocal)
+
+            date = dateFormatLocal.format(LocalDate.now().minusMonths(1))
+            binitDate.text = getDateStringFR(date)
+            minDate = LocalDate.parse(date, dateFormatLocal)
+
             setLineChartData(cMood.isChecked, cFatigue.isChecked)
         }
 
-        bMonth.setOnClickListener {
-            filter = "month"
-            setLineChartData(cMood.isChecked, cFatigue.isChecked)
+        binitDate.setOnClickListener {
+            dtPickerInit.show(this)
         }
 
-        bYear.setOnClickListener {
-            filter = "year"
-            setLineChartData(cMood.isChecked, cFatigue.isChecked)
+        bendDate.setOnClickListener {
+            dtPickerEnd.show(this)
         }
 
         bViewData.setOnClickListener {
@@ -102,42 +135,18 @@ class TrendViewActivity : AppCompatActivity() {
     private fun setLineChartData(cMood: Boolean, cFatigue: Boolean) {
         val entryListMood: ArrayList<Entry> = ArrayList()
         val entryListFatigue: ArrayList<Entry> = ArrayList()
-        val timeArrayMood = mutableMapOf<String, ArrayList<Int>>()
-        val timeArrayFatigue = mutableMapOf<String, ArrayList<Int>>()
-        var subStringLength = 4
         var dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH )
-        var format = "yyyy"
+        val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+        var dateIt : LocalDate
 
         for (moods in moodData) {
             var moodNumber = moods.mood
             var fatigueNumber = moods.fatigue
-            var timePeriod = ""
 
             if (Settings.moodMode == Settings.MoodModes.NUMBERS) { moodNumber = moods.mood; fatigueNumber = moods.fatigue }
+            dateIt = LocalDate.parse(moods.date, dateFormatLocal)
 
-            if (filter == "month") {
-                format = "yyyy-MM"
-                subStringLength = 7
-            } else if (filter == "year") format = "yyyy"
-
-            if (filter != "default") {
-                dateFormat = SimpleDateFormat(
-                    format,
-                    Locale.ENGLISH
-                )
-
-                if (timePeriod == "" || timePeriod != moods.date.substring(0, subStringLength)) {
-                    timePeriod =
-                        moods.date.substring(0, subStringLength)
-                    if (timeArrayMood[timePeriod] == null) timeArrayMood[timePeriod] = ArrayList()
-                    val valueMood = moods.mood
-                    timeArrayMood[timePeriod]?.add(valueMood)
-
-                    if (timeArrayFatigue[timePeriod] == null) timeArrayFatigue[timePeriod] = ArrayList()
-                    val valueFatigue = moods.fatigue
-                    timeArrayFatigue[timePeriod]?.add(valueFatigue)
-                }
-            } else {
+            if (dateIt <= maxDate && dateIt > minDate) {
                 entryListMood.add(
                     Entry(
                         dateFormat.parse(moods.date)?.time?.toFloat() ?: 0.0.toFloat(),
@@ -150,33 +159,6 @@ class TrendViewActivity : AppCompatActivity() {
                         (fatigueNumber.toFloat())
                     )
                 )
-            }
-        }
-
-        if (filter != "default") {
-            for ((key) in timeArrayMood) {
-                var average = 0
-                for (data in timeArrayMood[key]!!) {
-                    average += data
-                }
-                average /= timeArrayMood[key]!!.size
-                entryListMood.add(
-                Entry(
-                    dateFormat.parse(key)?.time?.toFloat() ?: 0.0.toFloat(),
-                    (average.toFloat())
-                ))
-            }
-            for ((key) in timeArrayFatigue) {
-                var average = 0
-                for (data in timeArrayFatigue[key]!!) {
-                    average += data
-                }
-                average /= timeArrayFatigue[key]!!.size
-                entryListFatigue.add(
-                Entry(
-                    dateFormat.parse(key)?.time?.toFloat() ?: 0.0.toFloat(),
-                    (average.toFloat())
-                ))
             }
         }
 
@@ -207,7 +189,7 @@ class TrendViewActivity : AppCompatActivity() {
 
         val data = LineData(lines)
         data.setValueTextColor(Color.WHITE)
-        data.setValueFormatter(ChartValueFormatter(filter))
+        data.setValueFormatter(ChartValueFormatter())
 
         val chart: LineChart = findViewById(R.id.getTheGraph)
         val legend = chart.legend
@@ -220,7 +202,7 @@ class TrendViewActivity : AppCompatActivity() {
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.textColor = Color.WHITE
-        xAxis.valueFormatter = ChartValueFormatter(filter)
+        xAxis.valueFormatter = ChartValueFormatter()
         xAxis.labelRotationAngle = 90f
         xAxis.setDrawGridLines(false)
 

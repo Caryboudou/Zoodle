@@ -58,7 +58,7 @@
     <string name="activities_add_new_activity_name_hint">Enter in a new activity name of your choosing</string>
     <string name="activities_restore_defaults">Restore defaults</string>
 
-    <string name="feelings_welcome">Choose how you feel</string>
+    <string name="feelings_welcome">How you feel</string>
     <string name="feelings_selected">Selected</string>
     <string name="feelings_available">Available</string>
     <string name="feelings_name">Feeling</string>

@@ -14,6 +14,4 @@ interface MainActivityInterface {
 
     /*fun createMoodValuePicker(moodEntry: MoodEntryModel)*/
     fun createMoodEntryPicker()
-
-    fun launchSignInEvent()
 }

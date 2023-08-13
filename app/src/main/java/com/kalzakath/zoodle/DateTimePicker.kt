@@ -43,3 +43,27 @@ class DateTimePicker {
 
     var onUpdateListener: ((Calendar)->Unit)? = null
 }
+class DatePicker {
+    private val calendar
+            : Calendar = Calendar.getInstance(TimeZone.getDefault())
+
+    fun show(context: Context) {
+        val dateSetListener =
+            DatePickerDialog.OnDateSetListener { _, year, month, day ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, day)
+
+                onUpdateListenerTrend?.invoke(calendar)
+            }
+
+        DatePickerDialog(
+            context, dateSetListener,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+
+    var onUpdateListenerTrend: ((Calendar)->Unit)? = null
+}

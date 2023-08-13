@@ -28,6 +28,7 @@ class ActivitiesActivity: AppCompatActivity()  {
         setContentView(R.layout.activities_recycle_view)
 
         val bConfirm: Button = findViewById(R.id.bActivitiesConfirm)
+        val bDelete: ImageButton = findViewById(R.id.delete)
         val bActivityAddNew: ImageButton = findViewById(R.id.bActivityAddNew)
         val bActivityAdd: Button = findViewById(R.id.bActivityAdd)
         val bActivityCancel: Button = findViewById(R.id.bActivityCancel)
@@ -75,6 +76,10 @@ class ActivitiesActivity: AppCompatActivity()  {
             finishIntent.putExtra("MoodEntry", moodEntry)
             finishIntent.putStringArrayListExtra("AvailableActivities", availableActivities)
             setResult(RESULT_OK, finishIntent)
+            finish()
+        }
+
+        bDelete.setOnClickListener {
             finish()
         }
 
