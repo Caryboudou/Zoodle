@@ -69,9 +69,10 @@ class SettingsActivity() : AppCompatActivity() {
         sReminder.setOnCheckedChangeListener { _, isChecked ->
             Settings.notificationAct = isChecked
             if (isChecked) {
-                val newText = getString(R.string.settings_reminder_time) + getTimeStringFR(Settings.notificationTime)
+                val newText = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
                 tvReminderTime.text = newText
                 tvReminderTime.visibility = View.VISIBLE
+                deleteNotif(this)
                 createNotif(this, Settings.notificationTime)
             }
             else {
