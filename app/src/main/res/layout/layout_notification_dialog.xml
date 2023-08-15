@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notificationContainerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/background_notif"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:paddingTop="0dp"
+        android:paddingBottom="22dp">
+
+        <TextView
+            android:id="@+id/setReminderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="22dp"
+            android:gravity="center"
+            android:text="@string/set_notification_reminder"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_large"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/setReminderTextView"/>
+
+        <Button
+            android:id="@+id/saveTime"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="22dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_medium"
+            app:layout_constraintTop_toBottomOf="@id/timePicker" />
+
+        <ImageButton
+            android:id="@+id/closeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="0dp"
+            android:backgroundTint="@android:color/transparent"
+            app:srcCompat="@drawable/ic_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

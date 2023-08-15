@@ -111,7 +111,6 @@ class DetailedViewActivity : AppCompatActivity() {
         val feelings: TextView = findViewById(R.id.tvFrontFeelings)
         val activityTitle: TextView = findViewById(R.id.tvFrontActivitiesTitle)
         val feelingsTitle: TextView = findViewById(R.id.tvFrontFeelingsTitle)
-        val medicationCheck: CheckBox = findViewById(R.id.cbFrontMedication)
 
         if (moodEntry.activities.isNotEmpty()) {
             activityTitle.text = resources.getString(R.string.main_row_activities)
@@ -132,8 +131,6 @@ class DetailedViewActivity : AppCompatActivity() {
             feelings.visibility = View.INVISIBLE
             feelingsTitle.text = resources.getString(R.string.feelings_add_new)
         }
-
-        medicationCheck.isChecked = moodEntry.medication
     }
 
     private fun initButtons(moodEntry: MoodEntryModel, preset: Boolean = false) {
@@ -143,13 +140,11 @@ class DetailedViewActivity : AppCompatActivity() {
         val moodGood: ImageButton = findViewById(R.id.ibFrontGood)
         val moodVeryGood: ImageButton = findViewById(R.id.ibFrontVeryGood)
 
-        val sleepVeryBad: ImageButton = findViewById(R.id.ibSleepVeryBad)
-        val sleepBad: ImageButton = findViewById(R.id.ibSleepBad)
-        val sleepOk: ImageButton = findViewById(R.id.ibSleepOk)
-        val sleepGood: ImageButton = findViewById(R.id.ibSleepGood)
-        val sleepVeryGood: ImageButton = findViewById(R.id.ibSleepVeryGood)
-
-        val medicationCheck: CheckBox = findViewById(R.id.cbFrontMedication)
+        val fatigueVeryBad: ImageButton = findViewById(R.id.ibFatigueVeryBad)
+        val fatigueBad: ImageButton = findViewById(R.id.ibFatigueBad)
+        val fatigueOk: ImageButton = findViewById(R.id.ibFatigueOk)
+        val fatigueGood: ImageButton = findViewById(R.id.ibFatigueGood)
+        val fatigueVeryGood: ImageButton = findViewById(R.id.ibFatigueVeryGood)
 
         val activityTitle: LinearLayout = findViewById(R.id.llActivities)
         val feelingsTitle: LinearLayout = findViewById(R.id.llFeelings)
@@ -157,7 +152,7 @@ class DetailedViewActivity : AppCompatActivity() {
         val mainActivity: Button = findViewById(R.id.bFrontSeeData)
 
         val btnMoodArray = arrayOf(moodVeryBad, moodBad, moodOk, moodGood, moodVeryGood)
-        val btnSleepArray = arrayOf(sleepVeryBad, sleepBad, sleepOk, sleepGood, sleepVeryGood)
+        val btnFatigueArray = arrayOf(fatigueVeryBad, fatigueBad, fatigueOk, fatigueGood, fatigueVeryGood)
 
         val date: TextView = findViewById(R.id.tvFrontDate)
         val time: TextView = findViewById(R.id.tvFrontTime)
@@ -167,7 +162,7 @@ class DetailedViewActivity : AppCompatActivity() {
 
         if (preset) {
             btnMoodArray.indices.forEach { if(it == moodEntry.mood-1) btnMoodArray[it].setBackgroundColor(Color.WHITE) else btnMoodArray[it].setBackgroundColor(Color.DKGRAY) }
-            btnSleepArray.indices.forEach { if(it == moodEntry.sleep-1) btnSleepArray[it].setBackgroundColor(Color.WHITE) else btnSleepArray[it].setBackgroundColor(Color.DKGRAY) }
+            btnFatigueArray.indices.forEach { if(it == moodEntry.fatigue-1) btnFatigueArray[it].setBackgroundColor(Color.WHITE) else btnFatigueArray[it].setBackgroundColor(Color.DKGRAY) }
             updateButtons(moodEntry)
         }
 
@@ -196,10 +191,10 @@ class DetailedViewActivity : AppCompatActivity() {
                 if (ib != it) ib.setBackgroundColor(resources.getColor(R.color.dark_gray, theme))
             } } }
 
-        btnSleepArray.forEach { btn -> btn.setOnClickListener {
+        btnFatigueArray.forEach { btn -> btn.setOnClickListener {
             it.setBackgroundColor(resources.getColor(R.color.white, theme))
-            moodEntry.sleep = btnSleepArray.indexOf(it) + 1
-            btnSleepArray.forEach { ib ->
+            moodEntry.fatigue = btnFatigueArray.indexOf(it) + 1
+            btnFatigueArray.forEach { ib ->
                 if (ib != it) ib.setBackgroundColor(resources.getColor(R.color.dark_gray, theme))
             } } }
 
@@ -216,10 +211,6 @@ class DetailedViewActivity : AppCompatActivity() {
             intent.putExtra("MoodEntry", moodEntry)
             setResult(RESULT_OK, intent)
             finish()
-        }
-
-        medicationCheck.setOnClickListener {
-            moodEntry.medication = medicationCheck.isChecked
         }
     }
 }

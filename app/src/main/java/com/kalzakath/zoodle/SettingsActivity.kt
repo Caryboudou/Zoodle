@@ -5,17 +5,23 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.kalzakath.zoodle.model.MoodEntryModel
+import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
+import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -33,6 +39,8 @@ class SettingsActivity() : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val sMoodNumerals: Switch = findViewById(R.id.sMoodNumerals)
+        val sReminder: Switch = findViewById(R.id.sReminder)
+        val tvReminderTime: TextView = findViewById(R.id.tvReminderTime)
         val tvSettingsImport: TextView = findViewById(R.id.tvSettingsImport)
         val tvSettingsExport: TextView = findViewById(R.id.tvSettingsExport)
         val bSettingsConfirm: ImageButton = findViewById(R.id.bSettingsConfirm)
@@ -47,9 +55,33 @@ class SettingsActivity() : AppCompatActivity() {
         sMoodNumerals.isChecked = Settings.moodMode == Settings.MoodModes.NUMBERS
         sMoodNumerals.isChecked = Settings.fatigueMode == Settings.FatigueModes.NUMBERS
 
+        sReminder.isChecked = Settings.notificationAct
+        val timeReminder = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
+        tvReminderTime.text = timeReminder
+        tvReminderTime.visibility = if(Settings.notificationAct) View.VISIBLE
+                else View.INVISIBLE
+
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) { Settings.moodMode = Settings.MoodModes.NUMBERS; Settings.fatigueMode = Settings.FatigueModes.NUMBERS }
             else {Settings.moodMode = Settings.MoodModes.FACES; Settings.fatigueMode = Settings.FatigueModes.FACES }
+        }
+
+        sReminder.setOnCheckedChangeListener { _, isChecked ->
+            Settings.notificationAct = isChecked
+            if (isChecked) {
+                val newText = getString(R.string.settings_reminder_time) + getTimeStringFR(Settings.notificationTime)
+                tvReminderTime.text = newText
+                tvReminderTime.visibility = View.VISIBLE
+                createNotif(this, Settings.notificationTime)
+            }
+            else {
+                tvReminderTime.visibility = View.INVISIBLE
+                deleteNotif(this)
+            }
+        }
+
+        tvReminderTime.setOnClickListener {
+            getNewTime(tvReminderTime)
         }
 
         tvSettingsExport.setOnClickListener {
@@ -193,5 +225,36 @@ class SettingsActivity() : AppCompatActivity() {
                     }
                 }
             }
+    }
+
+    private fun getNewTime(tvReminderTime: TextView) {
+        val ibClose: ImageButton = findViewById(R.id.closeTextView)
+        val tpPicker: TimePicker = findViewById(R.id.timePicker)
+        val bSave: Button = findViewById(R.id.saveTime)
+        val clTimePicker: ConstraintLayout = findViewById(R.id.clock)
+
+        tpPicker.setIs24HourView(true)
+        tpPicker.hour = 20
+        tpPicker.minute = 0
+
+        clTimePicker.visibility = View.VISIBLE
+
+        bSave.setOnClickListener {
+            val hour = tpPicker.hour
+            val minute = tpPicker.minute
+            val hourStr = if (hour<10) "0$hour" else hour.toString()
+            val minuteStr = if (minute<10) "0$minute" else minute.toString()
+            Settings.notificationTime = "$hourStr:$minuteStr"
+
+            val newText = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
+            tvReminderTime.text = newText
+            deleteNotif(this)
+            createNotif(this, Settings.notificationTime)
+            clTimePicker.visibility = View.INVISIBLE
+        }
+
+        ibClose.setOnClickListener{
+            clTimePicker.visibility = View.INVISIBLE
+        }
     }
 }

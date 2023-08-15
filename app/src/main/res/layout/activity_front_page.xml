@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/colorMainBackground"
     tools:context=".DetailedViewActivity">
 
     <TextView
@@ -172,14 +172,14 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llFrontSleep"
+            android:id="@+id/llFrontFatigue"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_margin="5dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvFrontSleepTitle"
+                android:id="@+id/tvFrontFatigueTitle"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
@@ -198,71 +198,41 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:id="@+id/ibSleepVeryBad"
+                    android:id="@+id/ibFatigueVeryBad"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/fatigue_rating_colour_very_bad" />
 
                 <ImageButton
-                    android:id="@+id/ibSleepBad"
+                    android:id="@+id/ibFatigueBad"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/fatigue_rating_colour_bad" />
 
                 <ImageButton
-                    android:id="@+id/ibSleepOk"
+                    android:id="@+id/ibFatigueOk"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/fatigue_rating_colour_mediocre" />
 
                 <ImageButton
-                    android:id="@+id/ibSleepGood"
+                    android:id="@+id/ibFatigueGood"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/fatigue_rating_colour_good" />
 
                 <ImageButton
-                    android:id="@+id/ibSleepVeryGood"
+                    android:id="@+id/ibFatigueVeryGood"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/fatigue_rating_colour_very_good" />
 
             </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llMedication"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:layout_weight="0"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/tvFrontMedicationTitle"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:layout_weight="2"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/front_medication_title"
-                android:textAlignment="gravity"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <CheckBox
-                android:id="@+id/cbFrontMedication"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner" />
-
         </LinearLayout>
 
         <LinearLayout

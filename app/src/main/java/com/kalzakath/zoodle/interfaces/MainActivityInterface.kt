@@ -9,9 +9,5 @@ interface MainActivityInterface {
     fun startActivityFrontPage(moodEntry: MoodEntryModel?)
     fun startActivityTrendView()
     fun startActivityFeelings(moodEntry: MoodEntryModel)
-
     fun setupRecycleView(): RecyclerViewAdaptor
-
-    /*fun createMoodValuePicker(moodEntry: MoodEntryModel)*/
-    fun createMoodEntryPicker()
 }

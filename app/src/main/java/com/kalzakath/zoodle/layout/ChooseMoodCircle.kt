@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import com.kalzakath.zoodle.R
 import com.kalzakath.zoodle.data.CircleMoodBO
 import com.kalzakath.zoodle.data.CircleStateBO
-import com.kalzakath.zoodle.data.MoodDO
 import com.kalzakath.zoodle.model.MoodEntryModel
 import com.kalzakath.zoodle.utils.AnimUtils
 import com.kalzakath.zoodle.utils.ResUtil
@@ -17,7 +16,7 @@ const val ANIM_DURATION = 300
 
 class ChooseMoodCircle : FrameLayout {
 
-    var selectedMood: CircleMoodBO by Delegates.observable(CircleMoodBO.NONE) { _, _, value ->
+    private var selectedMood: CircleMoodBO by Delegates.observable(CircleMoodBO.NONE) { _, _, value ->
         mediocreCircle.mood = value
         onSelectedMoodChange.invoke(value)
     }
@@ -117,10 +116,6 @@ class ChooseMoodCircle : FrameLayout {
         AnimUtils.animateMove(ANIM_DURATION, 0, veryBadCircle)
     }
 
-    fun setOnSelectedMoodAction(action: (CircleMoodBO) -> Unit) {
-        onSelectedMoodChange = action
-    }
-
     fun toInt() : Int {
         return selectedMood.toInt()
     }
@@ -135,5 +130,8 @@ class ChooseMoodCircle : FrameLayout {
         isInit = false
         mediocreCircle.mood = CircleMoodBO.NONE
         selectedMood = CircleMoodBO.NONE
+        circleCollapseAnimation()
+        expanded = false
+        isInit = false
     }
 }

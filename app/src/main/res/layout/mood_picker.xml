@@ -23,15 +23,15 @@
         app:layout_constraintVertical_bias="0.0">
 
         <TableLayout
-            android:id="@+id/tableLayoutTime"
-            android:layout_width="300dp"
+            android:id="@+id/tableLayoutDate"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="11dp"
             android:layout_marginTop="11dp"
             android:layout_marginEnd="11dp"
             android:layout_marginBottom="0dp"
             android:gravity="center_horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/tableLayout"
+            app:layout_constraintBottom_toTopOf="@+id/tableLayoutTime"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="0dp"
                 android:layout_margin="5dp"
                 android:background="@color/dark_gray"
                 android:gravity="center_horizontal">
@@ -52,6 +52,7 @@
                     android:autoSizeTextType="uniform"
                     android:text="@string/mood_picker_date_title"
                     android:textAlignment="center"
+                    android:minEms="6"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -63,11 +64,26 @@
                     android:autoSizeMinTextSize="23sp"
                     android:autoSizeTextType="uniform"
                     android:text="@string/mood_picker_date_value"
+                    android:minEms="8"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 
             </TableRow>
+        </TableLayout>
 
+        <TableLayout
+            android:id="@+id/tableLayoutTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="11dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tableLayoutDate">
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -77,7 +93,7 @@
 
                 <TextView
                     android:id="@+id/tvmpTimeTitle"
-                    android:layout_width="125dp"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/choose_high_tab"
                     android:autoSizeMinTextSize="20sp"
                     android:autoSizeTextType="uniform"
@@ -89,11 +105,12 @@
 
                 <TextView
                     android:id="@+id/tvmpTimeValue"
-                    android:layout_width="150dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/choose_high_tab"
                     android:autoSizeMinTextSize="20sp"
                     android:autoSizeTextType="uniform"
                     android:text="@string/mood_picker_time_value"
+                    android:minEms="6"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 
@@ -102,7 +119,7 @@
 
         <TableLayout
             android:id="@+id/tableLayout"
-            android:layout_width="300dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
             android:layout_marginStart="10dp"
@@ -148,7 +165,7 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@color/dark_gray"
@@ -183,38 +200,42 @@
 
         </TableLayout>
 
-        <Button
-            android:id="@+id/bmpCreate"
-            android:layout_width="140dp"
+        <LinearLayout
+            android:id="@+id/button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginEnd="5dp"
-            android:autoSizeMinTextSize="14sp"
-            android:autoSizeTextType="uniform"
-            android:text="@string/create"
-            android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/bmpCancel"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/tableLayout">
 
         <Button
-            android:id="@+id/bmpCancel"
-            android:layout_width="140dp"
+            android:id="@+id/bmpCreate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginStart="19dp"
+            android:layout_weight="1"
             android:layout_marginEnd="10dp"
             android:autoSizeMinTextSize="14sp"
             android:autoSizeTextType="uniform"
-            android:text="@string/cancel"
-            android:textAllCaps="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bmpCreate"
-            app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+            android:text="@string/create"
+            android:textAllCaps="false" />
 
+        <Button
+            android:id="@+id/bmpCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:autoSizeMinTextSize="14sp"
+            android:autoSizeTextType="uniform"
+            android:text="@string/cancel"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

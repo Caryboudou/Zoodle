@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         setActivityListeners()
 
         //dataHandler = TestSuite.useLocalData(secureFileHandler, applicationContext)
-        TestSuite.setDefaultSettings()
+        //TestSuite.setDefaultSettings()
 
         //rowController.update(dataHandler.read())
 
@@ -144,11 +144,13 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         getFeelingsActivityResult.launch(intent)
     }
 
-    private fun setMoodValue(moodEntry: MoodEntryModel) {
+    private fun setMoodValue(moodEntry: MoodEntryModel, creation: Boolean = false) {
         val numberPickerMood: ChooseMoodCircle = findViewById(R.id.tvmpMoodValue)
         val numberPickerFatigue: ChooseFatigueCircle = findViewById(R.id.tvmpFatigueValue)
         val resetMood : TextView = findViewById(R.id.tvmpMoodTitle)
         val resetFatigue : TextView = findViewById(R.id.tvmpFatigueTitle)
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
 
         resetMood.setOnClickListener {
             numberPickerMood.reset()
@@ -166,6 +168,10 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         clNumberPicker.visibility = View.VISIBLE
 
         val bNpConfirm: Button = findViewById(R.id.bNpConfirm)
+        val bNpCancel: Button = findViewById(R.id.bNpCancel)
+
+        bNpConfirm.text = if (creation) "Create"
+                else "Update"
 
         bNpConfirm.setOnClickListener {
             val moodValue: Int = when (Settings.moodMode) {
@@ -176,9 +182,15 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
                 Settings.FatigueModes.NUMBERS -> numberPickerFatigue.toInt()
                 else -> mvHelper.getUnsanitisedNumber(numberPickerFatigue.toInt(), Settings.fatigueMax)
             }
+            val dateValue: String = if (creation) dateFormat.format(LocalDateTime.now())
+                    else moodEntry.date
+
+            val timeValue: String = if (creation) timeFormat.format(LocalDateTime.now())
+                    else moodEntry.time
+
             val newMood = MoodEntryModel(
-                moodEntry.date,
-                moodEntry.time,
+                dateValue,
+                timeValue,
                 moodValue,
                 fatigueValue,
                 moodEntry.feelings,
@@ -187,7 +199,12 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
                 LocalDateTime.now().toString()
             )
             clNumberPicker.visibility = View.INVISIBLE
-            rowController.update(newMood)
+            if (creation) rowController.add(newMood)
+            else rowController.update(newMood)
+        }
+
+        bNpCancel.setOnClickListener {
+            clNumberPicker.visibility = View.INVISIBLE
         }
     }
 
@@ -234,16 +251,11 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             }
     }
 
-    override fun createMoodEntryPicker() {
-        val moodPicker = MoodEntryPicker(this) { moodEntry -> rowController.add(moodEntry) }
-        moodPicker.showPopup()
-    }
-
     private fun initButtons() {
         val addNewButton: ImageButton = findViewById(R.id.addNewButton)
 
         addNewButton.setOnClickListener {
-            createMoodEntryPicker()
+            setMoodValue(MoodEntryModel(), true)
         }
 
         val bViewTrend: ImageButton = findViewById(R.id.bViewTrend)

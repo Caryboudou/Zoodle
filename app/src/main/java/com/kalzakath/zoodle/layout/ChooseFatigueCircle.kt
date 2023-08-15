@@ -14,7 +14,7 @@ import kotlin.properties.Delegates
 
 class ChooseFatigueCircle : FrameLayout {
 
-    var selectedFatigue: CircleFatigueBO by Delegates.observable(CircleFatigueBO.NONE) { _, _, value ->
+    private var selectedFatigue: CircleFatigueBO by Delegates.observable(CircleFatigueBO.NONE) { _, _, value ->
         mediocreCircle.fatigue = value
         onSelectedFatigueChange.invoke(value)
     }
@@ -115,10 +115,6 @@ class ChooseFatigueCircle : FrameLayout {
         AnimUtils.animateMove(ANIM_DURATION, 0, veryBadCircle)
     }
 
-    fun setOnSelectedFatigueAction(action: (CircleFatigueBO) -> Unit) {
-        onSelectedFatigueChange = action
-    }
-
     fun toInt() : Int {
         return selectedFatigue.toInt()
     }
@@ -133,5 +129,8 @@ class ChooseFatigueCircle : FrameLayout {
         isInit = false
         mediocreCircle.fatigue = CircleFatigueBO.NONE
         selectedFatigue = CircleFatigueBO.NONE
+        circleCollapseAnimation()
+        expanded = false
+        isInit = false
     }
 }

@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Zoodle</string>
+    <string name="app_notification">Zoodle notification</string>
+    <string name="notification_title">Add your mood</string>
+
     <string name="add_new_mood_description">Add New Mood Button</string>
 
     <string name="welcome_text">How are you?</string>
@@ -76,6 +79,10 @@
     <string name="settings_mood_use_numerals">Use Numbers for Mood</string>
     <string name="settings_import">Import JSON</string>
     <string name="settings_export">Export JSON</string>
+    <string name="settings_reminder">Reminder</string>
+    <string name="settings_reminder_time">Reminder at </string>
+
+    <string name="set_notification_reminder">Set notification\nreminder</string>
 
     <dimen name="text_size_xxlarge">30sp</dimen>
     <dimen name="text_size_xlarge">26sp</dimen>

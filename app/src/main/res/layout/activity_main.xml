@@ -187,19 +187,37 @@
 
             <Button
                 android:id="@+id/bNpConfirm"
-                android:layout_width="140dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginStart="160dp"
-                android:layout_marginEnd="176dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
                 android:autoSizeMinTextSize="14sp"
                 android:autoSizeTextType="uniform"
                 android:text="Update"
                 android:textAllCaps="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/bNpCancel"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+            <Button
+                android:id="@+id/bNpCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:autoSizeMinTextSize="14sp"
+                android:autoSizeTextType="uniform"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/bNpConfirm"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -229,7 +247,7 @@
         android:contentDescription="@string/add_new_mood_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/bViewTrend"
-        app:layout_constraintEnd_toStartOf="@id/ibAddNewDebug"
+        app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="@color/colorMainBackground"
         app:srcCompat="@drawable/ic_add"/>
 

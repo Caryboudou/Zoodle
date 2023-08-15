@@ -12,6 +12,8 @@ object Settings {
         const val onlineEnabled = false
         const val debugMode = true
         const val isPremiumEdition = true
+        const val notificationTime = "20:00"
+        const val notificationAct = false
     }
 
     object MoodModes {
@@ -30,6 +32,8 @@ object Settings {
     var onlineEnabled = Default.onlineEnabled
     var debugMode = Default.debugMode
     var isPremiumEdition = Default.isPremiumEdition
+    var notificationTime = Default.notificationTime
+    var notificationAct = Default.notificationAct
 
     fun setDefaultSettings() {
         for (prop in Settings::class.memberProperties) {

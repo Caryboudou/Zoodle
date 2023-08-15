@@ -94,7 +94,7 @@
 
             <TextView
                 android:id="@+id/tvSettingsExport"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
@@ -114,7 +114,7 @@
 
             <Switch
                 android:id="@+id/sMoodNumerals"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
@@ -122,9 +122,130 @@
                 android:text="@string/settings_mood_use_numerals"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/sReminder"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/activity_row_rounded_corner"
+                android:text="@string/settings_reminder"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvReminderTime"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:background="@drawable/activity_row_rounded_corner"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/settings_reminder_time"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/background_notif"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:paddingTop="0dp"
+        android:paddingBottom="22dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/setReminderTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="22dp"
+            android:gravity="center"
+            android:text="@string/set_notification_reminder"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_large"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:timePickerMode="spinner"
+            android:textColor="@color/white"
+            android:numbersTextColor="@color/white"
+            android:numbersBackgroundColor="@android:color/transparent"
+            app:layout_constraintTop_toBottomOf="@id/setReminderTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/saveTime"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="22dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_medium"
+            app:layout_constraintTop_toBottomOf="@id/timePicker"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/closeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="0dp"
+            android:backgroundTint="@android:color/transparent"
+            app:srcCompat="@drawable/ic_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

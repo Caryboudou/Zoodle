@@ -21,8 +21,8 @@ import java.util.*
 data class MoodEntryModel(
     override var date: String = "2020-01-01",
     override var time: String = "08:30",
-    var mood: Int = 3,
-    var fatigue: Int = 3,
+    var mood: Int = 0,
+    var fatigue: Int = 0,
     var feelings: MutableList<String> = ArrayList(),
     var activities: MutableList<String> = ArrayList(),
     override var key: String = "local_" + UUID.randomUUID().toString(),
