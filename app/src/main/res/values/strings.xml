@@ -1,40 +1,34 @@
 <resources>
-    <string name="app_name">Zoodle</string>
-    <string name="app_notification">Zoodle notification</string>
+    <string name="app_name">Mood Tracker</string>
+    <string name="app_notification">Moral du jour</string>
     <string name="notification_title">Add your mood</string>
 
     <string name="add_new_mood_description">Add New Mood Button</string>
 
-    <string name="welcome_text">How are you?</string>
-    <string name="main_settings">Settings button</string>
-    <string name="main_row_filter_title">Today</string>
-    <string name="main_row_feelings">Feelings</string>
-    <string name="main_row_activities">Activities</string>
-    <string name="main_view_trend">View trend</string>
-    <string name="main_click_debug">Click here to create a random entry</string>
-    <string name="calendar_button_description">Click to see Calendar box</string>
-    <string name="click_button_text">Click here to add a new entry</string>
-    <string name="click_to_login">Click to login ***PREMIUM ONLY***</string>
-    <string name="login_content_description">Login icon to click to establish online connectivity</string>
+    <string name="welcome_text">Time Line</string>
+    <string name="main_row_filter_title">Aujourd\'hui</string>
+    <string name="main_row_feelings">Emotion</string>
+    <string name="main_row_activities">Activitées</string>
+    <string name="main_settings">Paramètres</string>
     <string name="return_to_main">Return</string>
 
     <string name="mood_picker_date_title">Date</string>
     <string name="mood_picker_date_value">04/10/2022</string>
-    <string name="mood_picker_time_title">Time</string>
+    <string name="mood_picker_time_title">Heure</string>
     <string name="mood_picker_time_value">08h30</string>
-    <string name="mood_picker_mood_title">Mood</string>
+    <string name="mood_picker_mood_title">Moral</string>
     <string name="mood_picker_fatigue_title">Fatigue</string>
     <string name="mood_picker_mood_value">3</string>
 
-    <string name="front_mood_title">How are you feeling today?</string>
-    <string name="front_sleep_title">How did you sleep last night?</string>
-    <string name="front_medication_title">Did you take your medication?</string>
+    <string name="front_mood_title">Moral du jour</string>
+    <string name="front_sleep_title">Fatigue du jour</string>
+    <string name="front_ritaline_title">Did you take your ritaline?</string>
 
-    <string name="confirm_change">Confirm</string>
+    <string name="confirm_change">Confirmer</string>
     <string name="remove">Remove</string>
-    <string name="add">Add</string>
-    <string name="cancel">Cancel</string>
-    <string name="create">Create</string>
+    <string name="add">Ajouter</string>
+    <string name="cancel">Annuler</string>
+    <string name="create">Créer</string>
 
     <string name="default_date">04/10/2022</string>
     <string name="default_time">12h01</string>
@@ -42,47 +36,49 @@
     <string name="default_fatigue">5</string>
 
     <string name="trend_reset">Reset</string>
-    <string name="trend_check_mood">Mood</string>
+    <string name="trend_check_mood">Moral</string>
     <string name="trend_check_fatigue">Fatigue</string>
-    <string name="trend_month">Month</string>
-    <string name="trend_year">Year</string>
-    <string name="trend_title">How have you been</string>
+    <string name="trend_check_ritaline">Ritaline</string>
+    <string name="trend_month">Mois</string>
+    <string name="trend_year">Année</string>
+    <string name="trend_title">Évolution</string>
 
-    <string name="activities_choose">Choose your activity…</string>
-    <string name="activities_selected">Selected</string>
-    <string name="activities_available">Available</string>
-    <string name="activities_name">Activity</string>
-    <string name="activities_delete">Press to delete</string>
+    <string name="activities_choose">Activitées du jour</string>
+    <string name="activities_selected">Sélectionnés</string>
+    <string name="activities_available">Possible</string>
+    <string name="activities_name">Activitée</string>
+    <string name="activities_delete">Supprimer</string>
     <string name="activities_cross">X</string>
-    <string name="activities_add_new">Click here to add a new activity</string>
+    <string name="activities_add_new">Ajouter des activitées</string>
     <string name="activities_add_new_description">Clickable button to add new activity</string>
-    <string name="activities_add_new_activity_name"></string>
-    <string name="activities_enable_delete">Delete</string>
+    <string name="activities_enable_delete">Supprimer</string>
     <string name="activities_add_new_activity_name_hint">Enter in a new activity name of your choosing</string>
-    <string name="activities_restore_defaults">Restore defaults</string>
+    <string name="activities_restore_defaults">Par défaut</string>
 
-    <string name="feelings_welcome">How you feel</string>
-    <string name="feelings_selected">Selected</string>
-    <string name="feelings_available">Available</string>
-    <string name="feelings_name">Feeling</string>
-    <string name="feelings_delete">Press to delete</string>
+    <string name="feelings_welcome">Émotions du jour</string>
+    <string name="feelings_selected">Sélectionnés</string>
+    <string name="feelings_available">Possible</string>
+    <string name="feelings_name">Émotions</string>
+    <string name="feelings_delete">Supprimer</string>
     <string name="feelings_cross">X</string>
-    <string name="feelings_add_new">Click here to add a new feeling</string>
+    <string name="feelings_add_new">Ajouter des émotions</string>
     <string name="feelings_add_new_description">Clickable button to add new feeling</string>
-    <string name="feelings_add_new_feeling"></string>
-    <string name="feelings_enable_delete">Delete</string>
+    <string name="feelings_enable_delete">Supprimer</string>
     <string name="feelings_add_new_activity_name_hint">Record a new feeling</string>
-    <string name="feelings_restore_defaults">Restore defaults</string>
+    <string name="feelings_restore_defaults">Par défaut</string>
 
-    <string name="settings_title">Settings</string>
+    <string name="note_title">Note du\ </string>
+
+    <string name="settings_title">Paramètres</string>
     <string name="settings_mood_display">Mood Options</string>
-    <string name="settings_mood_use_numerals">Use Numbers for Mood</string>
-    <string name="settings_import">Import JSON</string>
-    <string name="settings_export">Export JSON</string>
-    <string name="settings_reminder">Reminder</string>
-    <string name="settings_reminder_time">Reminder at </string>
-
-    <string name="set_notification_reminder">Set notification\nreminder</string>
+    <string name="settings_mood_use_numerals">Utiliser des nombres</string>
+    <string name="settings_import">Importer un fichier JSON</string>
+    <string name="settings_import_csv">Importer un fichier CSV</string>
+    <string name="settings_export">Exporter un fichier JSON</string>
+    <string name="settings_export_csv">Exporter un fichier CSV</string>
+    <string name="settings_reminder">Rappel</string>
+    <string name="settings_reminder_time">Rappel à</string>
+    <string name="settings_medication_name">Medicament surveillé :\ </string>
 
     <dimen name="text_size_xxlarge">30sp</dimen>
     <dimen name="text_size_xlarge">26sp</dimen>
@@ -92,7 +88,7 @@
     <dimen name="text_size_search">14sp</dimen>
     <dimen name="choose_mood_circle_size">50dp</dimen>
     <dimen name="choose_mood_circle_margin">5dp</dimen>
-    <dimen name="choose_fatigue_circle_size">51sp</dimen>
+    <dimen name="choose_fatigue_circle_size">50sp</dimen>
     <dimen name="choose_fatigue_circle_margin">5dp</dimen>
     <dimen name="choose_high_tab">48dp</dimen>
 
@@ -132,6 +128,7 @@
     <string name="fatigue_average">&#128528;</string>
     <string name="fatigue_unhappy">&#128577;</string>
     <string name="fatigue_terrible">&#128557;</string>
+    <string name="front_enregistrer">Enregistrer</string>
 
     <string-array name="available_activities">
         <item>Guitar</item>
@@ -159,12 +156,12 @@
     </string-array>
 
     <string-array name="valid_filter_row_keys">
-        <item>Today</item>
-        <item>Last Week</item>
-        <item>Last Month</item>
-        <item>Last Year</item>
-        <item>Years Ago</item>
-        <item></item>
+        <item>Aujourd\'hui</item>
+        <item>Cette semaine</item>
+        <item>Ce mois</item>
+        <item>Le mois dernier</item>
+        <item>Cette année</item>
+        <item>Avant</item>
     </string-array>
 </resources>
 

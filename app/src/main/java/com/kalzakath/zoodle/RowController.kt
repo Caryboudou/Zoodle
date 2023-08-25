@@ -5,6 +5,9 @@ import com.kalzakath.zoodle.interfaces.DataControllerEventListener
 import com.kalzakath.zoodle.interfaces.RowEntryModel
 import com.kalzakath.zoodle.model.MoodEntryModel
 import com.kalzakath.zoodle.model.toMap
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.logging.Logger
 
 class RowController: DataController {
@@ -28,7 +31,6 @@ class RowController: DataController {
 
     override fun add(rowEntryModel: RowEntryModel, callUpdate: Boolean) {
         mainRowEntryList.add(rowEntryModel)
-
         if (callUpdate) {
             callChangeEvent(arrayListOf(rowEntryModel), RowControllerEvent.ADDITION )
         }

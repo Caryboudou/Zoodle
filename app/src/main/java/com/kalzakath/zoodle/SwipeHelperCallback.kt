@@ -31,10 +31,8 @@ class SwipeHelperCallback(val adaptor: ItemTouchHelperAdaptor): ItemTouchHelper.
     ) {
         val itemView = viewHolder.itemView
 
-        if (itemView.left + dX.toInt() >= itemView.right - 5) {
-            itemView.setBackgroundColor(0)
-        }
-        else itemView.setBackgroundColor(Color.RED)
+        itemView.setBackgroundColor(0)
+
         itemView.background.setBounds(
             itemView.left,
             itemView.top + 11,

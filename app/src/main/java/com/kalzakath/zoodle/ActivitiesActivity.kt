@@ -89,14 +89,14 @@ class ActivitiesActivity: AppCompatActivity()  {
 
         bActivityCancel.setOnClickListener {
             llAddActivity.visibility = View.INVISIBLE
-            etAddActivity.setText(applicationContext.resources.getString(R.string.activities_add_new_activity_name))
+            etAddActivity.setText("")
         }
 
         bActivityAdd.setOnClickListener {
             selectedAdaptor.addItem(etAddActivity.text.toString())
 
             llAddActivity.visibility = View.INVISIBLE
-            etAddActivity.setText(applicationContext.resources.getString(R.string.activities_add_new_activity_name))
+            etAddActivity.setText(" ")
         }
 
         bDeleteActivity.setOnClickListener {

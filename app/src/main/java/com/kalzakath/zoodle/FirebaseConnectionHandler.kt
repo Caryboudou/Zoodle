@@ -80,7 +80,7 @@ class FirebaseConnectionHandler: OnlineDataHandler, FirebaseAuthentication {
                                 if (hashmap["activities"] == null) arrayListOf() else hashmap["activities"] as MutableList<String>,
                                 key)
                         if (hashmap["sleep"] != null) moodEntry.sleep = hashmap["sleep"] as Int
-                        if (hashmap["medication"] != null) moodEntry.sleep = hashmap["medication"] as Int
+                        if (hashmap["ritaline"] != null) moodEntry.ritaline = hashmap["ritaline"] as String //TO CHANGE ritaline
                         moodData.add(moodEntry)
                     }
                     notifyListenersOfDatabaseUpdate(moodData)

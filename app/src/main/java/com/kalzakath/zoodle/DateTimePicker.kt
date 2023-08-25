@@ -54,7 +54,7 @@ class DatePicker {
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, day)
 
-                onUpdateListenerTrend?.invoke(calendar)
+                onUpdateListener?.invoke(calendar)
             }
 
         DatePickerDialog(
@@ -65,5 +65,28 @@ class DatePicker {
         ).show()
     }
 
-    var onUpdateListenerTrend: ((Calendar)->Unit)? = null
+    var onUpdateListener: ((Calendar)->Unit)? = null
+}
+
+class TimePicker {
+    private val calendar
+            : Calendar = Calendar.getInstance(TimeZone.getDefault())
+
+    fun show(context: Context) {
+        val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        onUpdateListener?.invoke(calendar)
+        }
+
+        TimePickerDialog(
+            context,
+            timeSetListener,
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true
+        ).show()
+    }
+
+    var onUpdateListener: ((Calendar)->Unit)? = null
 }

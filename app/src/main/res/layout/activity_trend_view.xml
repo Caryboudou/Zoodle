@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMainBackground"
+    android:background="@color/colorPrimaryBackground"
     tools:context=".TrendViewActivity">
 
     <TextView
@@ -16,7 +16,7 @@
         android:text="@string/trend_title"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/white"
+        android:textColor="@color/colorOnPrimaryText"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,61 +36,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:translationY="2dp" />
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/getTheGraph"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="#4E4E4E"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line"
-        app:layout_constraintBottom_toTopOf="@+id/checkBoxes" />
-
-    <LinearLayout
-        android:id="@+id/checkBoxes"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/getTheGraph"
-        app:layout_constraintBottom_toTopOf="@+id/llTrendOptions">
-
-        <CheckBox
-            android:id="@+id/checkMood"
-            android:checked="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:autoSizeMaxTextSize="25sp"
-            android:autoSizeTextType="uniform"
-            android:text="@string/trend_check_mood"
-            android:textColor="@color/white"/>
-
-        <CheckBox
-            android:id="@+id/checkFatigue"
-            android:checked="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:autoSizeMaxTextSize="25sp"
-            android:autoSizeTextType="uniform"
-            android:text="@string/trend_check_fatigue"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/checkMood"/>
-    </LinearLayout>
-
     <ImageButton
         android:id="@+id/bViewData"
         android:layout_width="0dp"
@@ -100,57 +45,127 @@
         android:layout_marginBottom="5dp"
         android:text="@string/return_to_main"
         app:srcCompat="@drawable/ic_arrow_left"
-        android:background="@color/colorMainBackground"
+        android:background="@color/colorPrimaryBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/llTrendOptions"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/bTrendReset"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimaryBackground"
+        android:text="@string/trend_reset"
+        app:srcCompat="@drawable/ic_loading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
         android:orientation="horizontal"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBoxes">
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageButton
-            android:id="@+id/bTrendReset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_loading"
-            android:background="@color/colorMainBackground"
-            android:text="@string/trend_reset" />
-
-        <Button
-            android:id="@+id/bTrendInitDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:text="@string/default_date" />
-
-        <TextView
+        <LinearLayout
+            android:id="@+id/checkBoxes"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="to"
-            android:textSize="20dp"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white"/>
+            android:layout_marginEnd="10dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/getTheGraph"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/bTrendEndDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:text="@string/default_date" />
-    </LinearLayout>
+            <CheckBox
+                android:id="@+id/checkMood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="25sp"
+                android:autoSizeTextType="uniform"
+                android:checked="true"
+                android:padding="10dp"
+                android:text="@string/trend_check_mood"
+                android:textColor="@color/colorOnPrimaryText" />
+
+            <CheckBox
+                android:id="@+id/checkFatigue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="25sp"
+                android:autoSizeTextType="uniform"
+                android:checked="true"
+                android:padding="10dp"
+                android:text="@string/trend_check_fatigue"
+                android:textColor="@color/colorOnPrimaryText"
+                app:layout_constraintStart_toEndOf="@+id/checkMood" />
+
+            <CheckBox
+                android:id="@+id/checkRitaline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="25sp"
+                android:autoSizeTextType="uniform"
+                android:checked="true"
+                android:padding="10dp"
+                android:text="@string/trend_check_ritaline"
+                android:textColor="@color/colorOnPrimaryText"
+                app:layout_constraintStart_toEndOf="@+id/checkMood" />
+
+            <Button
+                android:id="@+id/bTrendInitDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="@string/default_date" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="à"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/bTrendEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="@string/default_date" />
+        </LinearLayout>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/getTheGraph"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="#4E4E4E"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checkBoxes"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

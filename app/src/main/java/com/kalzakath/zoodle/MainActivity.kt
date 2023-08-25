@@ -30,16 +30,15 @@ import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity(), MainActivityInterface {
 
-    private lateinit var getActivitiesActivityResult: ActivityResultLauncher<Intent>
     private lateinit var getSettingsActivityResult: ActivityResultLauncher<Intent>
-    private lateinit var getFeelingsActivityResult: ActivityResultLauncher<Intent>
+    private lateinit var getNoteActivityResult: ActivityResultLauncher<Intent>
     private lateinit var getTrendViewActivitiesResult: ActivityResultLauncher<Intent>
     private lateinit var getFrontPageActivityResult: ActivityResultLauncher<Intent>
     private lateinit var rowController: DataController
+    private lateinit var dataHandler : DataHandler
     private lateinit var secureFileHandler: SecureFileHandler
     private lateinit var onlineDataHandler: FirebaseConnectionHandler
     private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         onlineDataHandler = FirebaseConnectionHandler()
         MoodTrackerMain(secureFileHandler,rowController,onlineDataHandler)
 
-        //dataHandler = DataHandler(secureFileHandler, applicationContext)
+        dataHandler = DataHandler(secureFileHandler, applicationContext)
 
         setupRecycleView()
         initButtons()
@@ -60,10 +59,11 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         //dataHandler = TestSuite.useLocalData(secureFileHandler, applicationContext)
         //TestSuite.setDefaultSettings()
 
-        //rowController.update(dataHandler.read())
+        rowController.update(dataHandler.read())
 
         val moodEntry = intent.getSerializableExtra("MoodEntry")
-        if (moodEntry != null) rowController.update(moodEntry as MoodEntryModel)
+        if (moodEntry != null)
+            rowController.update(moodEntry as MoodEntryModel)
 
         val todayMoodEntry: RowEntryModel? = rowController.find("Date", DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
         if (todayMoodEntry == null) startActivityFrontPage(null)
@@ -72,8 +72,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     override fun setupRecycleView(): RecyclerViewAdaptor {
         val recyclerViewAdaptor = RecyclerViewAdaptor(
             { moodEntry -> setMoodValue(moodEntry) },
-            { moodEntry -> startActivityActivities(moodEntry) },
-            { moodEntry -> startActivityFeelings(moodEntry) },
+            { moodEntry -> startNoteActivity(moodEntry) },
             rowController)
 
         recyclerViewAdaptor.onLongPress = {
@@ -92,26 +91,9 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         return recyclerViewAdaptor
     }
 
-    override fun startActivityActivities(moodEntry: MoodEntryModel) {
-        val intent = Intent(this, ActivitiesActivity::class.java)
-        val jsonArray = secureFileHandler.read("available.json")
-
-        // Get activities that are stored in local json file
-        if (jsonArray.isNotEmpty()) {
-            val gson = GsonBuilder().create()
-            val activities = gson.fromJson(jsonArray, ArrayList::class.java)
-            if (activities.isNotEmpty()) {
-                val data = activities.filterIsInstance<String>() as ArrayList<String>
-                intent.putStringArrayListExtra("AvailableActivities", data)
-            }
-        }
-
-        intent.putExtra("MoodEntry", moodEntry)
-        getActivitiesActivityResult.launch(intent)
-    }
-
     override fun startActivitySettings() {
         val intent = Intent(this, SettingsActivity::class.java)
+        intent.getParcelableArrayListExtra<Parcelable>("MoodEntries")
         getSettingsActivityResult.launch(intent)
     }
 
@@ -124,24 +106,6 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     override fun startActivityTrendView() {
         val intent = Intent(this, TrendViewActivity::class.java)
         getTrendViewActivitiesResult.launch(intent)
-    }
-
-    override fun startActivityFeelings(moodEntry: MoodEntryModel) {
-        val intent = Intent(this, FeelingsActivity::class.java)
-        val jsonArray = secureFileHandler.read("feelings.json")
-
-        // Get activities that are stored in local json file
-        if (jsonArray.isNotEmpty()) {
-            val gson = GsonBuilder().create()
-            val feelings = gson.fromJson(jsonArray, ArrayList::class.java)
-            var data = ArrayList<String>()
-            if (feelings.isNotEmpty()) data = feelings.filterIsInstance<String>() as ArrayList<String>
-            intent.putStringArrayListExtra("AvailableFeelings", data)
-        }
-
-        intent.putExtra("MoodEntry", moodEntry)
-
-        getFeelingsActivityResult.launch(intent)
     }
 
     private fun setMoodValue(moodEntry: MoodEntryModel, creation: Boolean = false) {
@@ -170,8 +134,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         val bNpConfirm: Button = findViewById(R.id.bNpConfirm)
         val bNpCancel: Button = findViewById(R.id.bNpCancel)
 
-        bNpConfirm.text = if (creation) "Create"
-                else "Update"
+        bNpConfirm.text = if (creation) "Créer"
+                else "Mettre à jour"
 
         bNpConfirm.setOnClickListener {
             val moodValue: Int = when (Settings.moodMode) {
@@ -188,19 +152,14 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             val timeValue: String = if (creation) timeFormat.format(LocalDateTime.now())
                     else moodEntry.time
 
-            val newMood = MoodEntryModel(
-                dateValue,
-                timeValue,
-                moodValue,
-                fatigueValue,
-                moodEntry.feelings,
-                moodEntry.activities,
-                moodEntry.key,
-                LocalDateTime.now().toString()
-            )
+            moodEntry.date = dateValue
+            moodEntry.time = timeValue
+            moodEntry.mood = moodValue
+            moodEntry.fatigue = fatigueValue
+            moodEntry.lastUpdated = LocalDateTime.now().toString()
+
             clNumberPicker.visibility = View.INVISIBLE
-            if (creation) rowController.add(newMood)
-            else rowController.update(newMood)
+            rowController.update(moodEntry)
         }
 
         bNpCancel.setOnClickListener {
@@ -208,16 +167,13 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         }
     }
 
-    private fun setActivityListeners() {
-        getActivitiesActivityResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                val data = it.data?.getStringArrayListExtra("AvailableActivities")
-                if (data != null) {
-                    secureFileHandler.write(data as ArrayList<*>, "available.json")
-                    rowController.update(it.data?.getSerializableExtra("MoodEntry") as MoodEntryModel)
-                }
-            }
+    private fun startNoteActivity(moodEntry: MoodEntryModel) {
+        val intent = Intent(this, NoteActivity::class.java)
+        intent.putExtra("MoodEntry", moodEntry)
+        getNoteActivityResult.launch(intent)
+    }
 
+    private fun setActivityListeners() {
         getTrendViewActivitiesResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         }
 
@@ -226,22 +182,18 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             if (data != null) rowController.update(data as MoodEntryModel)
         }
 
-        getFeelingsActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val data = it.data?.getStringArrayListExtra("AvailableFeelings")
-            if (data != null) {
-                secureFileHandler.write(data as ArrayList<*>, "feelings.json")
-                rowController.update(it.data?.getSerializableExtra("MoodEntry") as MoodEntryModel)
-            }
+        getNoteActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val data = it.data?.getSerializableExtra("MoodEntry")
+            if (data != null) rowController.update(data as MoodEntryModel)
         }
 
         getSettingsActivityResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 //val data = it.data?.getParcelableExtra<Settings>("Settings")
-                val moodEntries = it.data?.getParcelableArrayListExtra<Parcelable>("MoodEntries")
+                val moodEntries = it.data?.getSerializableExtra("MoodEntries")
                 var moodData = ArrayList<RowEntryModel>()
                 if (moodEntries != null) {
-                    val data = it.data?.getParcelableArrayListExtra<Parcelable>("MoodEntries")
-                    if (data != null) moodData = data.filterIsInstance<RowEntryModel>() as ArrayList<RowEntryModel>
+                    moodData = moodEntries as ArrayList<RowEntryModel>
                 }
 
                 secureFileHandler.write(Settings)

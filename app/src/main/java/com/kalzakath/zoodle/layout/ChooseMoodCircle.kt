@@ -18,7 +18,11 @@ class ChooseMoodCircle : FrameLayout {
 
     private var selectedMood: CircleMoodBO by Delegates.observable(CircleMoodBO.NONE) { _, _, value ->
         mediocreCircle.mood = value
-        onSelectedMoodChange.invoke(value)
+        mediocreCircle.state = CircleStateBO.EDIT
+        mediocreCircle.setOnClickListener { expand() }
+        circleCollapseAnimation()
+        mediocreCircle.bringToFront()
+        expanded = false
     }
 
     private val veryGoodCircle: MoodCircle
@@ -27,9 +31,6 @@ class ChooseMoodCircle : FrameLayout {
     private val badCircle: MoodCircle
     private val veryBadCircle: MoodCircle
     private var expanded: Boolean = false
-    private var isInit: Boolean = false
-
-    private var onSelectedMoodChange: (CircleMoodBO) -> Unit = { }
 
     constructor(context: Context) : super(context)
 
@@ -70,12 +71,7 @@ class ChooseMoodCircle : FrameLayout {
         goodCircle.mood = CircleMoodBO.GOOD
         badCircle.mood = CircleMoodBO.BAD
         veryBadCircle.mood = CircleMoodBO.VERY_BAD
-        if (isInit) {
-            mediocreCircle.mood = CircleMoodBO.MEDIOCRE
-        }
-        else {
-            mediocreCircle.mood = CircleMoodBO.NONE
-        }
+        mediocreCircle.mood = CircleMoodBO.NONE
     }
 
     private fun expand() {
@@ -88,15 +84,9 @@ class ChooseMoodCircle : FrameLayout {
         }
     }
 
-    private fun selectMood(fatigue: CircleMoodBO) {
+    private fun selectMood(mood: CircleMoodBO) {
         if (expanded) {
-            mediocreCircle.state = CircleStateBO.EDIT
-            selectedMood= fatigue
-            mediocreCircle.setOnClickListener { expand() }
-            circleCollapseAnimation()
-            mediocreCircle.bringToFront()
-            expanded = false
-            isInit = true
+            selectedMood= mood
         }
     }
 
@@ -121,17 +111,10 @@ class ChooseMoodCircle : FrameLayout {
     }
 
     fun setSelected(mood: MoodEntryModel) {
-        isInit = true
-        mediocreCircle.mood = CircleMoodBO.MEDIOCRE
         selectedMood = CircleMoodBO.from(mood.mood)
     }
 
     fun reset() {
-        isInit = false
-        mediocreCircle.mood = CircleMoodBO.NONE
         selectedMood = CircleMoodBO.NONE
-        circleCollapseAnimation()
-        expanded = false
-        isInit = false
     }
 }

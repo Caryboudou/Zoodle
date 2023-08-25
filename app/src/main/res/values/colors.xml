@@ -12,20 +12,24 @@
     <color name="gray">#808080</color>
 
     <color name="colorMoodNone">#B4B4B4</color>
-    <color name="colorMoodVeryGood">#477100</color>
+    <color name="colorMoodVeryGood">#518100</color>
     <color name="colorMoodGood">#8AB54C</color>
     <color name="colorMoodMediocre">#F8B212</color>
     <color name="colorMoodBad">#F17305</color>
     <color name="colorMoodVeryBad">#C01C1D</color>
 
     <color name="colorFatigueVeryGood">#00218D</color>
-    <color name="colorFatigueGood">#4333CD</color>
+    <color name="colorFatigueGood">#415ed7</color>
     <color name="colorFatigueMediocre">#7B68EE</color>
     <color name="colorFatigueBad">#A94DC0</color>
     <color name="colorFatigueVeryBad">#660066</color>
 
     <color name="colorPrimaryBackground">#232527</color>
-    <color name="colorMainBackground">#4E4E4E</color>
+    <color name="colorOnPrimary">#4E4E4E</color>
+    <color name="colorOnPrimaryNone">#808080</color>
+    <color name="colorOnPrimaryText">#FFFFFFFF</color>
     <color name="colorRecycleBackground">#d2d2d2</color>
     <color name="colorIcon">#CCCCCC</color>
+
+    <color name="colorIconNotif">#21CC99</color>
 </resources>

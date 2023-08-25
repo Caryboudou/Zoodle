@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
-    android:background="@color/colorMainBackground">
+    android:background="@color/colorPrimaryBackground">
 
 
     <ImageButton
@@ -17,7 +17,7 @@
         android:contentDescription="@string/activities_add_new_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="@color/colorMainBackground"
+        android:backgroundTint="@color/colorPrimaryBackground"
         app:srcCompat="@drawable/ic_add"
         tools:ignore="RedundantDescriptionCheck" />
 
@@ -28,7 +28,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:text="@string/feelings_welcome"
-        android:textColor="@color/white"
+        android:textColor="@color/colorOnPrimaryText"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,7 @@
         android:layout_marginBottom="5dp"
         android:text="@string/return_to_main"
         app:srcCompat="@drawable/ic_arrow_left"
-        android:background="@color/colorMainBackground"
+        android:background="@color/colorPrimaryBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/activities_selected"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/activities_available"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -152,7 +152,6 @@
             android:ems="10"
             android:inputType="text"
             android:minWidth="100dp"
-            android:text="@string/feelings_add_new_feeling"
             android:textColor="@color/black" />
 
         <Button

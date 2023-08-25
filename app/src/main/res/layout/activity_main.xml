@@ -5,7 +5,7 @@
     android:id="@+id/constraintMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMainBackground"
+    android:background="@color/colorPrimaryBackground"
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,7 +15,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
-        android:background="@color/colorMainBackground"
+        android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
         android:text="@string/welcome_text"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/white"
+        android:textColor="@color/colorOnPrimaryText"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +47,7 @@
         android:contentDescription="@string/main_settings"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="@color/colorMainBackground"
+        android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_settings" />
 
     <View
@@ -70,38 +70,26 @@
         android:layout_marginTop="324dp"
         android:text="@string/fui_progress_dialog_loading"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/white"
+        android:textColor="@color/colorOnPrimaryText"
         android:textSize="60sp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clNumberPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNumberPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/background_notif"
+            android:visibility="invisible"
             android:layout_marginStart="11dp"
             android:layout_marginTop="11dp"
             android:layout_marginEnd="11dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/mood_picker_layout_round"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TableLayout
                 android:id="@+id/tableLayout"
@@ -132,7 +120,7 @@
                         android:autoSizeTextType="uniform"
                         android:text="@string/mood_picker_mood_title"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorOnPrimaryText"
                         android:textStyle="bold" />
                 </TableRow>
 
@@ -165,7 +153,7 @@
                         android:autoSizeTextType="uniform"
                         android:text="@string/mood_picker_fatigue_title"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorOnPrimaryText"
                         android:textStyle="bold" />
                 </TableRow>
 
@@ -220,7 +208,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -234,7 +221,7 @@
         android:layout_marginEnd="10dp"
         app:srcCompat="@drawable/ic_trend"
         app:layout_constraintStart_toStartOf="parent"
-        android:backgroundTint="@color/colorMainBackground"
+        android:backgroundTint="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/addNewButton"
         app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -248,7 +235,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/bViewTrend"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="@color/colorMainBackground"
+        android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_add"/>
 
     <ImageButton
@@ -258,6 +245,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="#F31010"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/addNewButton"

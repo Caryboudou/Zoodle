@@ -3,15 +3,18 @@ package com.kalzakath.zoodle
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.widget.*
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.GsonBuilder
+import com.kalzakath.zoodle.layout.ChooseFatigueCircle
+import com.kalzakath.zoodle.layout.ChooseMoodCircle
 import com.kalzakath.zoodle.model.MoodEntryModel
-import com.kalzakath.zoodle.model.update
-import com.kalzakath.zoodle.model.updateDateTime
+import com.kalzakath.zoodle.model.updateDateOnly
+import com.kalzakath.zoodle.model.updateTime
+import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
+import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,11 +23,11 @@ import java.util.*
 import java.util.logging.Logger
 
 class DetailedViewActivity : AppCompatActivity() {
-    private lateinit var getActivitiesActivityResult: ActivityResultLauncher<Intent>
-    private lateinit var getFeelingsActivityResult: ActivityResultLauncher<Intent>
     private lateinit var secureFileHandler: SecureFileHandler
     private lateinit var securityHandler: SecurityHandler
     private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
+
+    private lateinit var moodEntry: MoodEntryModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,70 +37,10 @@ class DetailedViewActivity : AppCompatActivity() {
         secureFileHandler = SecureFileHandler(securityHandler)
 
         val data = intent.getSerializableExtra("MoodEntry")
-        val moodEntry = if (data != null) data as MoodEntryModel
-        else prepMoodEntry()
+        moodEntry = if (data != null) data as MoodEntryModel
+            else prepMoodEntry()
 
-        initActivityListeners(moodEntry)
-        if (data != null) initButtons(moodEntry, true)
-        else initButtons(moodEntry)
-    }
-
-    private fun initActivityListeners(moodEntry: MoodEntryModel) {
-
-        getActivitiesActivityResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                val data = it.data?.getStringArrayListExtra("AvailableActivities")
-                if (data != null) {
-                    secureFileHandler.write(data as ArrayList<*>, "available.json")
-                    moodEntry.update(it.data?.getSerializableExtra("MoodEntry") as MoodEntryModel)
-                    updateButtons(moodEntry)
-                }
-            }
-
-        getFeelingsActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val data = it.data?.getStringArrayListExtra("AvailableFeelings")
-            if (data != null) {
-                secureFileHandler.write(data as ArrayList<*>, "feelings.json")
-                moodEntry.update(it.data?.getSerializableExtra("MoodEntry") as MoodEntryModel)
-                updateButtons(moodEntry)
-            }
-        }
-    }
-
-    private fun startActivityActivities(moodEntry: MoodEntryModel) {
-        val intent = Intent(this, ActivitiesActivity::class.java)
-        val jsonArray = secureFileHandler.read("available.json")
-
-        // Get activities that are stored in local json file
-        if (jsonArray.isNotEmpty()) {
-            val gson = GsonBuilder().create()
-            val activities = gson.fromJson(jsonArray, ArrayList::class.java)
-            if (activities.isNotEmpty()) {
-                val data = activities.filterIsInstance<String>() as ArrayList<String>
-                intent.putStringArrayListExtra("AvailableActivities", data)
-            }
-        }
-
-        intent.putExtra("MoodEntry", moodEntry)
-        getActivitiesActivityResult.launch(intent)
-    }
-
-    private fun startActivityFeelings(moodEntry: MoodEntryModel) {
-        val intent = Intent(this, FeelingsActivity::class.java)
-        val jsonArray = secureFileHandler.read("feelings.json")
-
-        // Get activities that are stored in local json file
-        if (jsonArray.isNotEmpty()) {
-            val gson = GsonBuilder().create()
-            val feelings = gson.fromJson(jsonArray, ArrayList::class.java)
-            var data = ArrayList<String>()
-            if (feelings.isNotEmpty()) data = feelings.filterIsInstance<String>() as ArrayList<String>
-            intent.putStringArrayListExtra("AvailableFeelings", data)
-        }
-
-        intent.putExtra("MoodEntry", moodEntry)
-
-        getFeelingsActivityResult.launch(intent)
+        initButtons()
     }
 
     private fun prepMoodEntry(): MoodEntryModel {
@@ -106,110 +49,70 @@ class DetailedViewActivity : AppCompatActivity() {
         return MoodEntryModel(dateFormat.format(LocalDate.now()), timeFormat.format(LocalDateTime.now()))
     }
 
-    private fun updateButtons(moodEntry: MoodEntryModel) {
-        val activities: TextView = findViewById(R.id.tvFrontActivities)
-        val feelings: TextView = findViewById(R.id.tvFrontFeelings)
-        val activityTitle: TextView = findViewById(R.id.tvFrontActivitiesTitle)
-        val feelingsTitle: TextView = findViewById(R.id.tvFrontFeelingsTitle)
+    private fun initButtons() {
+        val numberPickerMood: ChooseMoodCircle = findViewById(R.id.tvmpFrontMoodValue)
+        val numberPickerFatigue: ChooseFatigueCircle = findViewById(R.id.tvmpFrontFatigueValue)
+        val resetMood : TextView = findViewById(R.id.tvFrontMoodTitle)
+        val resetFatigue : TextView = findViewById(R.id.tvFrontFatigueTitle)
 
-        if (moodEntry.activities.isNotEmpty()) {
-            activityTitle.text = resources.getString(R.string.main_row_activities)
-            activities.text = moodEntry.activities.toString().removeSurrounding("[","]")
-            activities.visibility = View.VISIBLE
-        } else {
-            activities.text = ""
-            activities.visibility = View.INVISIBLE
-            activityTitle.text = resources.getString(R.string.activities_add_new)
-        }
-
-        if (moodEntry.feelings.isNotEmpty()) {
-            feelingsTitle.text = resources.getString(R.string.main_row_feelings)
-            feelings.text = moodEntry.feelings.toString().removeSurrounding("[","]")
-            feelings.visibility = View.VISIBLE
-        } else {
-            feelings.text = ""
-            feelings.visibility = View.INVISIBLE
-            feelingsTitle.text = resources.getString(R.string.feelings_add_new)
-        }
-    }
-
-    private fun initButtons(moodEntry: MoodEntryModel, preset: Boolean = false) {
-        val moodVeryBad: ImageButton = findViewById(R.id.ibFrontVeryBad)
-        val moodBad: ImageButton = findViewById(R.id.ibFrontBad)
-        val moodOk: ImageButton = findViewById(R.id.ibFrontOk)
-        val moodGood: ImageButton = findViewById(R.id.ibFrontGood)
-        val moodVeryGood: ImageButton = findViewById(R.id.ibFrontVeryGood)
-
-        val fatigueVeryBad: ImageButton = findViewById(R.id.ibFatigueVeryBad)
-        val fatigueBad: ImageButton = findViewById(R.id.ibFatigueBad)
-        val fatigueOk: ImageButton = findViewById(R.id.ibFatigueOk)
-        val fatigueGood: ImageButton = findViewById(R.id.ibFatigueGood)
-        val fatigueVeryGood: ImageButton = findViewById(R.id.ibFatigueVeryGood)
-
-        val activityTitle: LinearLayout = findViewById(R.id.llActivities)
-        val feelingsTitle: LinearLayout = findViewById(R.id.llFeelings)
+        val etNote: EditText = findViewById(R.id.etFrontNote)
+        val etRitaline: EditText = findViewById(R.id.etFrontRitaline)
 
         val mainActivity: Button = findViewById(R.id.bFrontSeeData)
-
-        val btnMoodArray = arrayOf(moodVeryBad, moodBad, moodOk, moodGood, moodVeryGood)
-        val btnFatigueArray = arrayOf(fatigueVeryBad, fatigueBad, fatigueOk, fatigueGood, fatigueVeryGood)
+        val close: ImageButton = findViewById(R.id.ibClose)
 
         val date: TextView = findViewById(R.id.tvFrontDate)
         val time: TextView = findViewById(R.id.tvFrontTime)
 
-        date.text = moodEntry.date
-        time.text = moodEntry.time
+        date.text = getDateStringFR(moodEntry.date)
+        time.text = getTimeStringFR(moodEntry.time)
+        etNote.setText(moodEntry.note)
+        etRitaline.setText(moodEntry.ritaline)
+        numberPickerMood.setSelected(moodEntry)
+        numberPickerFatigue.setSelected(moodEntry)
 
-        if (preset) {
-            btnMoodArray.indices.forEach { if(it == moodEntry.mood-1) btnMoodArray[it].setBackgroundColor(Color.WHITE) else btnMoodArray[it].setBackgroundColor(Color.DKGRAY) }
-            btnFatigueArray.indices.forEach { if(it == moodEntry.fatigue-1) btnFatigueArray[it].setBackgroundColor(Color.WHITE) else btnFatigueArray[it].setBackgroundColor(Color.DKGRAY) }
-            updateButtons(moodEntry)
+        val dtPickerDate = DatePicker()
+        dtPickerDate.onUpdateListener = {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            date.text = getDateStringFR(dateFormat.format(it.time))
+            moodEntry.updateDateOnly(it)
         }
 
-        val dtPicker = DateTimePicker()
-        dtPicker.onUpdateListener = {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val dtPickerTime = TimePicker()
+        dtPickerTime.onUpdateListener = {
             val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-
-            date.text = dateFormat.format(it.time)
-            time.text = timeFormat.format(it.time)
-            moodEntry.updateDateTime(it)
+            time.text = getTimeStringFR(timeFormat.format(it.time))
+            moodEntry.updateTime(it)
         }
 
         date.setOnClickListener {
-            dtPicker.show(this)
+            dtPickerDate.show(this)
         }
 
         time.setOnClickListener {
-            dtPicker.show(this)
+            dtPickerTime.show(this)
         }
 
-        btnMoodArray.forEach { btn -> btn.setOnClickListener {
-            it.setBackgroundColor(resources.getColor(R.color.white, theme))
-            moodEntry.mood = btnMoodArray.indexOf(it) + 1
-            btnMoodArray.forEach { ib ->
-                if (ib != it) ib.setBackgroundColor(resources.getColor(R.color.dark_gray, theme))
-            } } }
-
-        btnFatigueArray.forEach { btn -> btn.setOnClickListener {
-            it.setBackgroundColor(resources.getColor(R.color.white, theme))
-            moodEntry.fatigue = btnFatigueArray.indexOf(it) + 1
-            btnFatigueArray.forEach { ib ->
-                if (ib != it) ib.setBackgroundColor(resources.getColor(R.color.dark_gray, theme))
-            } } }
-
-        activityTitle.setOnClickListener {
-            startActivityActivities(moodEntry)
+        resetMood.setOnClickListener {
+            numberPickerMood.reset()
         }
 
-        feelingsTitle.setOnClickListener {
-            startActivityFeelings(moodEntry)
+        resetFatigue.setOnClickListener {
+            numberPickerFatigue.reset()
         }
 
         mainActivity.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
+            moodEntry.mood = numberPickerMood.toInt()
+            moodEntry.fatigue = numberPickerFatigue.toInt()
+            moodEntry.note = etNote.text.toString()
+            moodEntry.ritaline = etRitaline.text.toString()
             intent.putExtra("MoodEntry", moodEntry)
             setResult(RESULT_OK, intent)
+            finish()
+        }
+
+        close.setOnClickListener {
             finish()
         }
     }

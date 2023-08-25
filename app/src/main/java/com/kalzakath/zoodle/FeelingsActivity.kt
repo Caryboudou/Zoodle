@@ -101,14 +101,14 @@ class FeelingsActivity: AppCompatActivity()  {
 
         bActivityCancel.setOnClickListener {
             llAddActivity.visibility = View.INVISIBLE
-            etAddActivity.setText(applicationContext.resources.getString(R.string.feelings_add_new_feeling))
+            etAddActivity.setText("")
         }
 
         bActivityAdd.setOnClickListener {
             selectedAdaptor.addItem(etAddActivity.text.toString())
 
             llAddActivity.visibility = View.INVISIBLE
-            etAddActivity.setText(applicationContext.resources.getString(R.string.feelings_add_new_feeling))
+            etAddActivity.setText("")
         }
 
         bDeleteActivity.setOnClickListener {

@@ -37,6 +37,39 @@ object ResUtil {
         return slipped[0]+":"+slipped[1]
     }
 
+    fun getMonthNameFR(month: Int) : String {
+        val m = when (month) {
+            1 -> "janvier"
+            2 -> "février"
+            3 -> "mars"
+            4 -> "avril"
+            5 -> "mai"
+            6 -> "juin"
+            7 -> "juillet"
+            8 -> "août"
+            9 -> "septembre"
+            10 -> "octobre"
+            11 -> "novembre"
+            12 -> "décembre"
+            else -> ""
+        }
+        return m
+    }
+
+    fun getDayNameFR(day: Int) : String {
+        val d = when (day) {
+            1 -> "Lundi"
+            2 -> "Mardi"
+            3 -> "Mercredi"
+            4 -> "Jeudi"
+            5 -> "Vendredi"
+            6 -> "Samedi"
+            7 -> "Dimanche"
+            else -> ""
+        }
+        return d
+    }
+
     fun getColor(context: Context?, resourceId: Int): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             context!!.getColor(resourceId)

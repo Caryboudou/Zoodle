@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:background="@color/colorMainBackground"
+    android:background="@color/colorPrimaryBackground"
     tools:context=".SettingsActivity">
 
     <TextView
@@ -17,7 +17,7 @@
         android:text="@string/settings_title"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/white"
+        android:textColor="@color/colorOnPrimaryText"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
         android:layout_marginBottom="5dp"
         android:text="@string/return_to_main"
         app:srcCompat="@drawable/ic_arrow_left"
-        android:background="@color/colorMainBackground"
+        android:background="@color/colorPrimaryBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,7 +57,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:background="#4E4E4E"
+        android:background="@android:color/transparent"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +79,28 @@
                 android:background="@drawable/activity_row_rounded_corner"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/settings_import"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSettingsImportCSV"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/activity_row_rounded_corner"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/settings_import_csv"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -101,8 +122,65 @@
                 android:background="@drawable/activity_row_rounded_corner"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/settings_export"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSettingsExportCSV"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/activity_row_rounded_corner"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/settings_export_csv"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0"
+            android:background="@drawable/activity_row_rounded_corner"
+            android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvMedictaionName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="40dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/settings_medication_name"
+            android:textColor="@color/colorOnPrimaryText"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/etMedictaionName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:background="@android:color/transparent"
+            android:ems="1"
+            android:gravity="center_vertical"
+            android:inputType="text"
+            android:textColor="@color/colorOnPrimaryText"
+            android:textSize="16sp"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -121,7 +199,7 @@
                 android:background="@drawable/activity_row_rounded_corner"
                 android:text="@string/settings_mood_use_numerals"
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -143,7 +221,7 @@
                 android:background="@drawable/activity_row_rounded_corner"
                 android:text="@string/settings_reminder"
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -158,7 +236,7 @@
 
             <TextView
                 android:id="@+id/tvReminderTime"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
@@ -166,7 +244,7 @@
                 android:background="@drawable/activity_row_rounded_corner"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/settings_reminder_time"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -196,7 +274,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:timePickerMode="spinner"
-            android:textColor="@color/white"
+            android:textColor="@color/colorOnPrimaryText"
             android:numbersTextColor="@color/white"
             android:numbersBackgroundColor="@android:color/transparent"
             app:layout_constraintTop_toBottomOf="@id/closeTextView"
@@ -214,7 +292,7 @@
             android:focusable="true"
             android:gravity="center"
             android:text="Save"
-            android:textColor="@color/white"
+            android:textColor="@color/colorOnPrimaryText"
             android:textSize="@dimen/text_size_medium"
             app:layout_constraintTop_toBottomOf="@id/timePicker"
 

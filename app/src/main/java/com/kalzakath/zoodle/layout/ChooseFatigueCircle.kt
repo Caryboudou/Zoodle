@@ -16,7 +16,11 @@ class ChooseFatigueCircle : FrameLayout {
 
     private var selectedFatigue: CircleFatigueBO by Delegates.observable(CircleFatigueBO.NONE) { _, _, value ->
         mediocreCircle.fatigue = value
-        onSelectedFatigueChange.invoke(value)
+        mediocreCircle.state = CircleStateBO.EDIT
+        mediocreCircle.setOnClickListener { expand() }
+        circleCollapseAnimation()
+        mediocreCircle.bringToFront()
+        expanded = false
     }
 
     private val veryGoodCircle: FatigueCircle
@@ -25,10 +29,7 @@ class ChooseFatigueCircle : FrameLayout {
     private val badCircle: FatigueCircle
     private val veryBadCircle: FatigueCircle
     private var expanded: Boolean = false
-    private var isInit: Boolean = false
 
-
-    private var onSelectedFatigueChange: (CircleFatigueBO) -> Unit = { }
 
     constructor(context: Context) : super(context)
 
@@ -69,12 +70,7 @@ class ChooseFatigueCircle : FrameLayout {
         goodCircle.fatigue = CircleFatigueBO.GOOD
         badCircle.fatigue = CircleFatigueBO.BAD
         veryBadCircle.fatigue = CircleFatigueBO.VERY_BAD
-        if (isInit) {
-            mediocreCircle.fatigue = CircleFatigueBO.MEDIOCRE
-        }
-        else {
-            mediocreCircle.fatigue = CircleFatigueBO.NONE
-        }
+        mediocreCircle.fatigue = CircleFatigueBO.NONE
     }
 
     private fun expand() {
@@ -89,13 +85,7 @@ class ChooseFatigueCircle : FrameLayout {
 
     private fun selectFatigue(fatigue: CircleFatigueBO) {
         if (expanded) {
-            mediocreCircle.state = CircleStateBO.EDIT
             selectedFatigue = fatigue
-            mediocreCircle.setOnClickListener { expand() }
-            circleCollapseAnimation()
-            mediocreCircle.bringToFront()
-            expanded = false
-            isInit = true
         }
     }
 
@@ -120,17 +110,10 @@ class ChooseFatigueCircle : FrameLayout {
     }
 
     fun setSelected(mood: MoodEntryModel) {
-        isInit = true
-        mediocreCircle.fatigue = CircleFatigueBO.MEDIOCRE
         selectedFatigue = CircleFatigueBO.from(mood.fatigue)
     }
 
     fun reset() {
-        isInit = false
-        mediocreCircle.fatigue = CircleFatigueBO.NONE
         selectedFatigue = CircleFatigueBO.NONE
-        circleCollapseAnimation()
-        expanded = false
-        isInit = false
     }
 }

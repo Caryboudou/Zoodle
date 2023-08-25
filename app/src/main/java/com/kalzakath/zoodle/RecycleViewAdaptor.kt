@@ -21,16 +21,15 @@ interface RecycleRowOnEvent {
 @SuppressLint("NotifyDataSetChanged")
 class RecyclerViewAdaptor(
     val setMoodValue: (MoodEntryModel) -> Unit,
-    val onStartActivitiesActivity: (MoodEntryModel) -> Unit,
-    val startFeelingsActivity: (MoodEntryModel) -> Unit,
+    val startNoteActivity: (MoodEntryModel) -> Unit,
     private val rowController: DataController
 ):
     Adapter<ViewHolder>(), SwipeHelperCallback.ItemTouchHelperAdaptor, RecycleRowOnEvent, DataControllerEventListener {
 
     override var onLongPress: ((MoodEntryModel) -> Unit)? = null
     private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
-    var moodList: ArrayList<RowEntryModel> = arrayListOf()
-    lateinit var viewHolder: ViewHolder
+    private var moodList: ArrayList<RowEntryModel> = arrayListOf()
+    private lateinit var viewHolder: ViewHolder
 
     init {
         rowController.registerForUpdates(this)
@@ -58,37 +57,15 @@ class RecyclerViewAdaptor(
         var maxDate: LocalDate = LocalDate.now()
         var minDate: LocalDate
         var pos: OptionalInt = OptionalInt.empty()
-        var posLast: OptionalInt = OptionalInt.empty()
 
         log.info("Adding FilterEntryViews")
 
-        for (title in arrayListOf("Today", "Last Week", "Last Month", "Last Year", "Years Ago")) {
+        for (title in arrayListOf("Cette semaine", "Ce mois", "Cette année", "Avant")) {
             when (title) {
-                "Today" -> {
-                    pos = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) == maxDate
-                        }
-                        .findFirst()
-                    posLast = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) != maxDate
-                        }
-                        .findFirst()
-                }
-
-                "Last Week" -> {
-                    maxDate = LocalDate.parse("${LocalDate.now().minusWeeks(1)}", format)
-                    minDate = LocalDate.parse("${LocalDate.now().minusWeeks(2)}", format)
-
+                "Cette semaine" -> {
+                    maxDate = LocalDate.now().plusDays(1)
+                    val minusDay = LocalDate.now().dayOfWeek.value.toLong()
+                    minDate = LocalDate.parse("${LocalDate.now().minusDays(minusDay)}", format)
                     pos = IntStream.range(0, moodList.size - 1)
                         .filter { moodList[it].viewType == MoodEntryModel().viewType }
                         .filter {
@@ -101,94 +78,62 @@ class RecyclerViewAdaptor(
                             ) > minDate
                         }
                         .findFirst()
-                    posLast = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) >= maxDate
-                                    && LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) <= minDate
-                        }
-                        .findFirst()
                 }
 
-                "Last Month" -> {
-                    var date: String = LocalDate.now().minusMonths(0)
+                "Ce mois" -> {
+                    val minusDay = LocalDate.now().dayOfWeek.value.toLong()-1
+                    maxDate = LocalDate.parse("${LocalDate.now().minusDays(minusDay)}", format)
+
+                    val date = LocalDate.now().minusMonths(1)
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM")) + "-" + LocalDate.now()
+                        .lengthOfMonth()
+                    minDate = LocalDate.parse(date, format)
+
+                    for (i in moodList.indices) {
+                        val view = MoodEntryModel().viewType
+                        if (moodList[i].viewType == view) {
+                            val date = LocalDate.parse((moodList[i] as MoodEntryModel).date, format)
+                            val b1: Boolean = date < maxDate
+                            val b2: Boolean = date > minDate
+                            if (b1 && b2) {
+                                pos = OptionalInt.of(i)
+                                break
+                            }
+                        }
+                    }
+                }
+
+                "Cette année" -> {
+                    val date: String = LocalDate.now().minusMonths(0)
                         .format(DateTimeFormatter.ofPattern("yyyy-MM")) + "-01"
                     maxDate = LocalDate.parse(date, format)
+                    minDate = LocalDate.parse("${LocalDate.now().year - 1}-12-31", format)
 
-                    date = LocalDate.now().minusMonths(2)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM")) + "-" + LocalDate.now()
-                        .minusMonths(1).lengthOfMonth()
-                    minDate = LocalDate.parse(date, format)
-                    pos = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse((moodList[it] as MoodEntryModel).date, format) < maxDate
-                                    && LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) > minDate
+                    for (i in moodList.indices) {
+                        val view = MoodEntryModel().viewType
+                        if (moodList[i].viewType == view) {
+                            val date = LocalDate.parse((moodList[i] as MoodEntryModel).date, format)
+                            val b1: Boolean = date < maxDate
+                            val b2: Boolean = date > minDate
+                            if (b1 && b2) {
+                                pos = OptionalInt.of(i)
+                                break
+                            }
                         }
-                        .findFirst()
-                    posLast = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) >= maxDate
-                                    && LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) <= minDate
-                        }
-                        .findFirst()
+                    }
                 }
 
-                "Last Year" -> {
+                "Avant" -> {
                     maxDate = LocalDate.parse("${LocalDate.now().year}-01-01", format)
-                    minDate = LocalDate.parse("${LocalDate.now().year - 2}-12-31", format)
-                    pos = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse((moodList[it] as MoodEntryModel).date, format) < maxDate
-                                    && LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) > minDate
+                    for (i in moodList.indices) {
+                        val view = MoodEntryModel().viewType
+                        if (moodList[i].viewType == view) {
+                            if (LocalDate.parse((moodList[i] as MoodEntryModel).date, format) < maxDate) {
+                                pos = OptionalInt.of(i)
+                                break
+                            }
                         }
-                        .findFirst()
-                    posLast = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) >= maxDate
-                                    && LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) <= minDate
-                        }
-                        .findFirst()
-                }
-
-                "Years Ago" -> {
-                    maxDate = LocalDate.parse("${LocalDate.now().year - 1}-01-01", format)
-                    pos = IntStream.range(0, moodList.size - 1)
-                        .filter { moodList[it].viewType == MoodEntryModel().viewType }
-                        .filter {
-                            LocalDate.parse(
-                                (moodList[it] as MoodEntryModel).date,
-                                format
-                            ) < maxDate
-                        }
-                        .findFirst()
+                    }
                 }
             }
 
@@ -201,43 +146,16 @@ class RecyclerViewAdaptor(
                     )
                 )
                 notifyItemInserted(pos.asInt)
-                pos = OptionalInt.of(pos.asInt + 1)
-
-                if (posLast != OptionalInt.empty()) {
-
-                    posLast = OptionalInt.of(posLast.asInt + 1)
-                    if (posLast == OptionalInt.of(pos.asInt + 1)) posLast =
-                        OptionalInt.of(pos.asInt + 1)
-
-                    moodList.add(
-                        posLast.asInt, FilterEntryModel(
-                            "",
-                            moodList[posLast.asInt].date,
-                            convertStringToTime(moodList[posLast.asInt].time).plusMinutes(1)
-                                .toString()
-                        )
-                    )
-                    notifyItemInserted(posLast.asInt)
-                } else {
-                    moodList.add(
-                        FilterEntryModel(
-                            "",
-                            moodList[moodList.size - 1].date,
-                            convertStringToTime(moodList[moodList.size - 1].time).minusMinutes(1)
-                                .toString()
-                        )
-                    )
-                    notifyItemInserted(moodList.size - 1)
-                }
+                pos = OptionalInt.empty()
             }
         }
         for (i in moodList.indices) {
             // Prevent two filter rows one after the other
-            if (i < moodList.size)
-                if( moodList[i].viewType == FilterEntryModel().viewType)
+            if( moodList[i].viewType == FilterEntryModel().viewType)
                     if (i > 0)
                         if (moodList[i - 1].key != "")
                             if (moodList[i -1].viewType == FilterEntryModel().viewType) {
+                                val test = moodList[i-1]
                                 moodList.removeAt(i - 1)
                                 notifyItemRemoved(i-1)
                             }
@@ -280,10 +198,17 @@ class RecyclerViewAdaptor(
                 val moodEntry = row as MoodEntryModel
                 val mHolder = viewHolder as MoodViewHolder
 
-                val dtPicker = DateTimePicker()
-                dtPicker.onUpdateListener = {
-                    mHolder.updateDateTimeText(it)
-                    moodEntry.updateDateTime(it)
+                val dtPickerDate = DatePicker()
+                dtPickerDate.onUpdateListener = {
+                    mHolder.updateDateText(it)
+                    moodEntry.updateDate(it)
+                    rowController.update(moodEntry)
+                }
+
+                val dtPickerTime = TimePicker()
+                dtPickerTime.onUpdateListener = {
+                    mHolder.updateTimeText(it)
+                    moodEntry.updateTime(it)
                     rowController.update(moodEntry)
                 }
 
@@ -305,6 +230,28 @@ class RecyclerViewAdaptor(
                     setMoodValue(moodEntry)
                 }
 
+                mHolder.moodFace.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
+                }
+
+                mHolder.moodFace.setOnClickListener {
+                    setMoodValue(moodEntry)
+                }
+
+                mHolder.fatigueFace.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
+                }
+
+                mHolder.fatigueFace.setOnClickListener {
+                    setMoodValue(moodEntry)
+                }
+
+                mHolder.note.setOnClickListener {
+                    startNoteActivity(moodEntry)
+                }
+
                 mHolder.dateText.setOnLongClickListener {
                     onLongPress?.invoke(row)
                     return@setOnLongClickListener true
@@ -315,28 +262,12 @@ class RecyclerViewAdaptor(
                     return@setOnLongClickListener true
                 }
 
-                mHolder.activityText.setOnLongClickListener {
-                    onLongPress?.invoke(row)
-                    return@setOnLongClickListener true
-                }
-                mHolder.activityText.setOnClickListener {
-                    onStartActivitiesActivity(moodEntry)
-                }
-
-                mHolder.feelingsText.setOnLongClickListener {
-                    onLongPress?.invoke(row)
-                    return@setOnLongClickListener true
-                }
-                mHolder.feelingsText.setOnClickListener {
-                    startFeelingsActivity(moodEntry)
-                }
-
                 mHolder.dateText.setOnClickListener {
-                    dtPicker.show(mHolder.itemView.context)
+                    dtPickerDate.show(mHolder.itemView.context)
                 }
 
                 mHolder.timeText.setOnClickListener {
-                    dtPicker.show(mHolder.itemView.context)
+                    dtPickerTime.show(mHolder.itemView.context)
                 }
             }
         }

@@ -36,7 +36,7 @@ enum class CircleFatigueBO(
     NONE(
         R.color.colorMoodNone,
         R.drawable.mood_circle_none,
-        R.drawable.ic_mood_none
+        R.drawable.ic_unknow
     );
 
     fun toInt(): Int {

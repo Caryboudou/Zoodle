@@ -11,10 +11,14 @@ import com.kalzakath.zoodle.data.CircleStateBO
 import com.kalzakath.zoodle.interfaces.RowEntryModel
 import com.kalzakath.zoodle.layout.MoodCircle
 import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
+import com.kalzakath.zoodle.utils.ResUtil.getDayNameFR
+import com.kalzakath.zoodle.utils.ResUtil.getMonthNameFR
 import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import java.io.Serializable
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @IgnoreExtraProperties
@@ -25,10 +29,12 @@ data class MoodEntryModel(
     var fatigue: Int = 0,
     var feelings: MutableList<String> = ArrayList(),
     var activities: MutableList<String> = ArrayList(),
+    var note: String = "",
     override var key: String = "local_" + UUID.randomUUID().toString(),
     var lastUpdated: String = LocalDateTime.now().toString(),
     var sleep: Int = 0,
-    var medication: Boolean = false
+    var ritaline: String = ""
+
 ): RowEntryModel,
     Serializable {
 
@@ -36,14 +42,33 @@ data class MoodEntryModel(
     override var viewType: Int = 1
 
     @Transient var viewHolder: RecyclerView.ViewHolder? = null
+
+    fun textMood(): String {
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateLocal = LocalDate.parse(date, format)
+        val monthName = getMonthNameFR(dateLocal.month.value)
+        val dayName = getDayNameFR(dateLocal.dayOfWeek.value)
+        val dayNumber = dateLocal.dayOfMonth
+        return "$dayName $dayNumber $monthName"
+    }
 }
 
-fun MoodEntryModel.updateDateTime(calendar: Calendar) {
+fun MoodEntryModel.updateDate(calendar: Calendar) {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
     val dateStr = dateFormat.format(calendar.time)
 
     date = dateStr
+    time = timeFormat.format(calendar.time)
+}
+fun MoodEntryModel.updateDateOnly(calendar: Calendar) {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+    val dateStr = dateFormat.format(calendar.time)
+
+    date = dateStr
+}
+fun MoodEntryModel.updateTime(calendar: Calendar) {
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
     time = timeFormat.format(calendar.time)
 }
 
@@ -73,6 +98,7 @@ fun MoodEntryModel.toMap(): Map<String, Any?> {
         "fatigue" to fatigue,
         "feelings" to feelings,
         "activities" to activities,
+        "note" to note,
         "key" to key,
         "lastUpdated" to lastUpdated
     )
@@ -86,14 +112,14 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
     fatigue = moodEntry.fatigue
     activities = moodEntry.activities
     feelings = moodEntry.feelings
+    note = moodEntry.note
     sleep = moodEntry.sleep
-    medication = moodEntry.medication
-
+    ritaline = moodEntry.ritaline
 }
 
 fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
     val mViewHolder = holder as MoodViewHolder
-    mViewHolder.dateText.text = getDateStringFR(date)
+    mViewHolder.dateText.text = textMood()
     mViewHolder.timeText.text = getTimeStringFR(time)
     val moodHelper = MoodValueHelper()
 
@@ -118,21 +144,6 @@ fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
             )
         )
     else mViewHolder.fatigueText.text = fatigue.toString()
-    mViewHolder.activityText.text = when (activities.toString()) {
-        "[]" -> "Click to add an activity"
-        else -> activities.toString().removeSurrounding(
-            "[",
-            "]"
-        )
-    }
-
-    mViewHolder.feelingsText.text = when (feelings.toString()) {
-        "[]" -> "Click to add feelings"
-        else -> feelings.toString().removeSurrounding(
-            "[",
-            "]"
-        )
-    }
 
     viewHolder = holder
     applyDrawableFatigue()
@@ -184,4 +195,18 @@ fun MoodEntryModel.applyDrawableFatigue() {
         face.visibility = android.view.View.VISIBLE
         mViewHolder.fatigueText.setBackgroundResource(0)
     }
+}
+
+fun MoodEntryModel.getRitalineInt(): Int {
+    val regex = Regex("""\d+mg|\d+\h""")
+    val listWord = regex.findAll(ritaline)
+    var dose = 0
+
+    for (word in listWord) {
+        var intValue = word.value
+        intValue = intValue.replace(Regex("[^0-9]"), "")
+        dose += intValue.toInt()
+    }
+
+    return dose
 }

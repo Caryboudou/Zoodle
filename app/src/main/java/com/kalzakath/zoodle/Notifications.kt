@@ -2,6 +2,7 @@ package com.kalzakath.zoodle
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.Notification.VISIBILITY_PUBLIC
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -11,76 +12,68 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
+import androidx.work.Worker
+import androidx.work.WorkerParameters
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val CHANNEL_ID = "notification_channel_id"
+private const val TAG = "123"
 
 object RemindersManager {
-    private const val REMINDER_NOTIFICATION_REQUEST_CODE = 123
     @SuppressLint("ScheduleExactAlarm")
     fun startReminder(
         context: Context,
-        reminderTime: String = "20:00",
-        reminderId: Int = REMINDER_NOTIFICATION_REQUEST_CODE
+        reminderTime: String = Settings.notificationTime,
+        tag: String = TAG
     ) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
         val (hours, min) = reminderTime.split(":").map { it.toInt() }
 
-        val action = PendingIntent.getBroadcast(
-            context,
-            reminderId,
-            Intent(context, AlarmReceiver::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
+        val calendarDelay: Calendar = Calendar.getInstance()
         val calendar: Calendar = Calendar.getInstance()
 
-        calendar.set(Calendar.HOUR_OF_DAY, hours)
-        calendar.set(Calendar.MINUTE, min)
-        calendar.set(Calendar.SECOND, 0)
+        //calendar.add(Calendar.MINUTE, -1)
+
+        calendarDelay.set(Calendar.HOUR_OF_DAY, hours)
+        calendarDelay.set(Calendar.MINUTE, min)
+        calendarDelay.set(Calendar.SECOND, 0)
 
 
         // si heure de l alarme est deja passee aujourd hui -> debute demain
-        if (Calendar.getInstance()
-                .apply { add(Calendar.MINUTE, 1) }.timeInMillis - calendar.timeInMillis > 0
-        ) {
-            calendar.add(Calendar.DATE, 1)
+        if (calendarDelay.timeInMillis - calendar.timeInMillis < 0) {
+            calendarDelay.add(Calendar.DATE, 1)
         }
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            action)
+        val alarmWorkRequest =
+            PeriodicWorkRequestBuilder<AlarmWorker>(1, TimeUnit.DAYS)
+                .addTag(tag)
+                .setInitialDelay(calendarDelay.timeInMillis - calendar.timeInMillis, TimeUnit.MILLISECONDS)
+                .build()
+        WorkManager.getInstance(context).enqueue(alarmWorkRequest)
     }
 
     fun stopReminder(
         context: Context,
-        reminderId: Int = REMINDER_NOTIFICATION_REQUEST_CODE
+        tag: String = TAG
     ) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = PendingIntent.getBroadcast(
-            context.applicationContext,
-            reminderId,
-            Intent(context.applicationContext, AlarmReceiver::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        alarmManager.cancel(intent)
+        WorkManager.getInstance(context).cancelAllWorkByTag(tag)
     }
 }
 
-class AlarmReceiver : BroadcastReceiver() {
-
-    /**
-     * sends notification when receives alarm
-     * and then reschedule the reminder again
-     * */
-
+class AlarmWorker (appcontext: Context, workerParams: WorkerParameters):
+    Worker(appcontext, workerParams) {
     private var notificationId = AtomicInteger()
+    private var context = appcontext
 
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun doWork(): Result {
         val notificationManager = getSystemService(
             context,
             NotificationManager::class.java
@@ -90,18 +83,7 @@ class AlarmReceiver : BroadcastReceiver() {
             applicationContext = context,
             channelId = CHANNEL_ID
         )
-    }
-
-    fun send(context: Context) {
-        val notificationManager = getSystemService(
-            context,
-            NotificationManager::class.java
-        ) as NotificationManager
-
-        notificationManager.sendReminderNotification(
-            applicationContext = context,
-            channelId = CHANNEL_ID
-        )
+        return Result.success()
     }
 
     private fun NotificationManager.sendReminderNotification(
@@ -116,39 +98,27 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder = NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(R.drawable.ic_edit)
+            .setSmallIcon(R.drawable.icon_foreground)
             .setContentTitle(applicationContext.getString(R.string.app_notification))
-            .setContentText(applicationContext.getString(R.string.notification_title))
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setColor(applicationContext.getColor(R.color.colorIconNotif))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
 
         notify(generateNextNotificationId(), builder.build())
     }
-
     private fun generateNextNotificationId() = notificationId.getAndIncrement()
 }
 
-class BootReceiver : BroadcastReceiver() {
-    /*
-    * restart reminders alarms when user's device reboots
-    * */
-    override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == "android.intent.action.BOOT_COMPLETED") {
-            RemindersManager.startReminder(context)
-        }
-    }
-}
-
-
-fun createNotif(context: Context, time: String = "20:00") {
+fun createNotif(context: Context, time: String = Settings.notificationTime, tag: String = TAG) {
     createNotificationsChannels(context)
-    RemindersManager.startReminder(context, time)
+    RemindersManager.startReminder(context, time, tag)
     /*val a = AlarmReceiver ()
     a.send(context)*/
 }
 
-fun deleteNotif(context: Context) {
-    RemindersManager.stopReminder(context)
+fun deleteNotif(context: Context, tag: String = TAG) {
+    RemindersManager.stopReminder(context, tag)
 }
 
 fun createNotificationsChannels(context: Context) {

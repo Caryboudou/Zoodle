@@ -4,35 +4,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMainBackground"
+    android:background="@color/colorPrimaryBackground"
     tools:context=".DetailedViewActivity">
+
+    <ImageButton
+        android:id="@+id/ibClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:layout_marginStart="0dp"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/llFront" />
 
     <TextView
         android:id="@+id/tvFrontTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="10dp"
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="@color/colorOnPrimaryText"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/llFront"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:background="#4E4E4E"
+        android:background="@android:color/transparent"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvFrontTitle">
+        app:layout_constraintTop_toBottomOf="@+id/ibClose"
+        app:layout_constraintBottom_toTopOf="@+id/bFrontSeeData">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,7 +70,7 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/mood_picker_date_title"
                     android:textAlignment="gravity"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorOnPrimaryText"
                     android:textSize="16sp" />
 
                 <TextView
@@ -70,7 +83,7 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/mood_picker_date_value"
                     android:textAlignment="gravity"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorOnPrimaryText"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -89,7 +102,7 @@
                     android:background="@drawable/activity_row_rounded_corner"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/mood_picker_time_title"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorOnPrimaryText"
                     android:textSize="16sp" />
 
                 <TextView
@@ -101,7 +114,7 @@
                     android:background="@drawable/activity_row_rounded_corner"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="@string/mood_picker_time_value"
-                    android:textColor="@color/black"
+                    android:textColor="@color/colorOnPrimaryText"
                     android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
@@ -124,51 +137,15 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/front_mood_title"
                 android:textAlignment="gravity"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
-            <LinearLayout
+            <com.kalzakath.zoodle.layout.ChooseMoodCircle
+                android:id="@+id/tvmpFrontMoodValue"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_weight="0"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/ibFrontVeryBad"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/mood_rating_colour_very_bad" />
-
-                <ImageButton
-                    android:id="@+id/ibFrontBad"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/mood_rating_colour_bad" />
-
-                <ImageButton
-                    android:id="@+id/ibFrontOk"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/mood_rating_colour_mediocre" />
-
-                <ImageButton
-                    android:id="@+id/ibFrontGood"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/mood_rating_colour_good" />
-
-                <ImageButton
-                    android:id="@+id/ibFrontVeryGood"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/mood_rating_colour_very_good" />
-
-            </LinearLayout>
+                android:layout_height="@dimen/choose_high_tab"
+                android:layout_marginTop="5dp"
+                android:clickable="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -188,144 +165,101 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/front_sleep_title"
                 android:textAlignment="gravity"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
-            <LinearLayout
+            <com.kalzakath.zoodle.layout.ChooseFatigueCircle
+                android:id="@+id/tvmpFrontFatigueValue"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_weight="0"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/ibFatigueVeryBad"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/fatigue_rating_colour_very_bad" />
-
-                <ImageButton
-                    android:id="@+id/ibFatigueBad"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/fatigue_rating_colour_bad" />
-
-                <ImageButton
-                    android:id="@+id/ibFatigueOk"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/fatigue_rating_colour_mediocre" />
-
-                <ImageButton
-                    android:id="@+id/ibFatigueGood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/fatigue_rating_colour_good" />
-
-                <ImageButton
-                    android:id="@+id/ibFatigueVeryGood"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/fatigue_rating_colour_very_good" />
-
-            </LinearLayout>
+                android:layout_height="@dimen/choose_high_tab"
+                android:layout_marginTop="5dp"
+                android:clickable="true" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llActivities"
+            android:id="@+id/llRitaline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="0"
+            android:visibility="visible"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvFrontActivitiesTitle"
+                android:id="@+id/tvFrontRitalineTitle"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
                 android:layout_weight="0"
                 android:background="@drawable/activity_row_rounded_corner"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="@string/activities_add_new"
+                android:text="Ritaline"
                 android:textAlignment="gravity"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tvFrontActivities"
+            <EditText
+                android:id="@+id/etFrontRitaline"
+                android:inputType="textMultiLine"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="0"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:textAlignment="gravity"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:visibility="invisible" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:baselineAligned="false"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ems="1"
+                android:gravity="top"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llFeelings"
+            android:id="@+id/llNote"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:layout_weight="0"
+            android:visibility="visible"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvFrontFeelingsTitle"
+                android:id="@+id/tvFrontNoteTitle"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
                 android:layout_weight="0"
                 android:background="@drawable/activity_row_rounded_corner"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="@string/feelings_add_new"
+                android:text="Note du jour"
                 android:textAlignment="gravity"
-                android:textColor="@color/black"
+                android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tvFrontFeelings"
+            <EditText
+                android:id="@+id/etFrontNote"
+                android:inputType="textMultiLine"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="0"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:textAlignment="gravity"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:visibility="invisible" />
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:baselineAligned="false"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:gravity="top"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textSize="16sp"/>
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/llFrontButtons"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_weight="0"
-        android:orientation="horizontal"
+    <Button
+        android:id="@+id/bFrontSeeData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/front_enregistrer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llFront">
-
-        <Button
-            android:id="@+id/bFrontSeeData"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="See Data" />
-    </LinearLayout>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
