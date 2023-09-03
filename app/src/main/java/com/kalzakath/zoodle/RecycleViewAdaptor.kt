@@ -109,6 +109,10 @@ class RecyclerViewAdaptor(
                     maxDate = LocalDate.parse(date, format)
                     minDate = LocalDate.parse("${LocalDate.now().year - 1}-12-31", format)
 
+                    val minusDay = LocalDate.now().dayOfWeek.value.toLong() - 1
+                    val maxDateWeek = LocalDate.parse("${LocalDate.now().minusDays(minusDay)}", format)
+                    if (maxDateWeek.isBefore(maxDate)) maxDate = maxDateWeek
+
                     for (i in moodList.indices) {
                         val view = MoodEntryModel().viewType
                         if (moodList[i].viewType == view) {
@@ -149,17 +153,18 @@ class RecyclerViewAdaptor(
                 pos = OptionalInt.empty()
             }
         }
-        for (i in moodList.indices) {
+        /*for (i in moodList.indices) {
             // Prevent two filter rows one after the other
+            val t = moodList[i]
+            val test = moodList[i-1]
             if( moodList[i].viewType == FilterEntryModel().viewType)
                     if (i > 0)
                         if (moodList[i - 1].key != "")
                             if (moodList[i -1].viewType == FilterEntryModel().viewType) {
-                                val test = moodList[i-1]
                                 moodList.removeAt(i - 1)
                                 notifyItemRemoved(i-1)
                             }
-        }
+        }*/
     }
 
 
@@ -212,36 +217,24 @@ class RecyclerViewAdaptor(
                     rowController.update(moodEntry)
                 }
 
-                mHolder.moodText.setOnLongClickListener {
-                    onLongPress?.invoke(row)
-                    return@setOnLongClickListener true
+                mHolder.dateText.setOnClickListener {
+                    dtPickerDate.show(mHolder.itemView.context)
+                }
+
+                mHolder.timeText.setOnClickListener {
+                    dtPickerTime.show(mHolder.itemView.context)
                 }
 
                 mHolder.moodText.setOnClickListener {
                     setMoodValue(moodEntry)
                 }
 
-                mHolder.fatigueText.setOnLongClickListener {
-                    onLongPress?.invoke(row)
-                    return@setOnLongClickListener true
-                }
-
                 mHolder.fatigueText.setOnClickListener {
                     setMoodValue(moodEntry)
                 }
 
-                mHolder.moodFace.setOnLongClickListener {
-                    onLongPress?.invoke(row)
-                    return@setOnLongClickListener true
-                }
-
                 mHolder.moodFace.setOnClickListener {
                     setMoodValue(moodEntry)
-                }
-
-                mHolder.fatigueFace.setOnLongClickListener {
-                    onLongPress?.invoke(row)
-                    return@setOnLongClickListener true
                 }
 
                 mHolder.fatigueFace.setOnClickListener {
@@ -262,12 +255,24 @@ class RecyclerViewAdaptor(
                     return@setOnLongClickListener true
                 }
 
-                mHolder.dateText.setOnClickListener {
-                    dtPickerDate.show(mHolder.itemView.context)
+                mHolder.moodText.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
                 }
 
-                mHolder.timeText.setOnClickListener {
-                    dtPickerTime.show(mHolder.itemView.context)
+                mHolder.fatigueText.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
+                }
+
+                mHolder.moodFace.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
+                }
+
+                mHolder.fatigueFace.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
                 }
             }
         }

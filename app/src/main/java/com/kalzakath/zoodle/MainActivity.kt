@@ -27,6 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity(), MainActivityInterface {
 
@@ -38,11 +39,17 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private lateinit var dataHandler : DataHandler
     private lateinit var secureFileHandler: SecureFileHandler
     private lateinit var onlineDataHandler: FirebaseConnectionHandler
+    private lateinit var clNumberPicker: ConstraintLayout
+    private var clNumberInvisible: Boolean by Delegates.observable(true) { _, _, bool ->
+       clNumberPicker.visibility = if (bool) View.INVISIBLE else View.VISIBLE }
     private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        clNumberPicker = findViewById(R.id.clNumberPicker)
+        clNumberInvisible = (clNumberPicker.visibility == View.INVISIBLE)
 
         val securityHandler = SecurityHandler(applicationContext)
         secureFileHandler = SecureFileHandler(securityHandler)
@@ -77,7 +84,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
         recyclerViewAdaptor.onLongPress = {
             log.info("Consumed onLongPress")
-            startActivityFrontPage(it)
+            if (clNumberInvisible) startActivityFrontPage(it)
         }
 
         val callback: ItemTouchHelper.Callback = SwipeHelperCallback(recyclerViewAdaptor)
@@ -94,18 +101,18 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     override fun startActivitySettings() {
         val intent = Intent(this, SettingsActivity::class.java)
         intent.getParcelableArrayListExtra<Parcelable>("MoodEntries")
-        getSettingsActivityResult.launch(intent)
+        if (clNumberInvisible) getSettingsActivityResult.launch(intent)
     }
 
     override fun startActivityFrontPage(moodEntry: MoodEntryModel?) {
         val intent = Intent(this, DetailedViewActivity::class.java)
         if (moodEntry != null) intent.putExtra("MoodEntry", moodEntry)
-        getFrontPageActivityResult.launch(intent)
+        if (clNumberInvisible) getFrontPageActivityResult.launch(intent)
     }
 
     override fun startActivityTrendView() {
         val intent = Intent(this, TrendViewActivity::class.java)
-        getTrendViewActivitiesResult.launch(intent)
+        if (clNumberInvisible) getTrendViewActivitiesResult.launch(intent)
     }
 
     private fun setMoodValue(moodEntry: MoodEntryModel, creation: Boolean = false) {
@@ -128,8 +135,9 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         numberPickerMood.setSelected(moodEntry)
         numberPickerFatigue.setSelected(moodEntry)
 
-        val clNumberPicker: ConstraintLayout = findViewById(R.id.clNumberPicker)
-        clNumberPicker.visibility = View.VISIBLE
+        if (!clNumberInvisible) return
+
+        clNumberInvisible = false
 
         val bNpConfirm: Button = findViewById(R.id.bNpConfirm)
         val bNpCancel: Button = findViewById(R.id.bNpCancel)
@@ -158,19 +166,19 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             moodEntry.fatigue = fatigueValue
             moodEntry.lastUpdated = LocalDateTime.now().toString()
 
-            clNumberPicker.visibility = View.INVISIBLE
+            clNumberInvisible = true
             rowController.update(moodEntry)
         }
 
         bNpCancel.setOnClickListener {
-            clNumberPicker.visibility = View.INVISIBLE
+            clNumberInvisible = true
         }
     }
 
     private fun startNoteActivity(moodEntry: MoodEntryModel) {
         val intent = Intent(this, NoteActivity::class.java)
         intent.putExtra("MoodEntry", moodEntry)
-        getNoteActivityResult.launch(intent)
+        if (clNumberInvisible) getNoteActivityResult.launch(intent)
     }
 
     private fun setActivityListeners() {
@@ -205,19 +213,18 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
     private fun initButtons() {
         val addNewButton: ImageButton = findViewById(R.id.addNewButton)
-
         addNewButton.setOnClickListener {
-            setMoodValue(MoodEntryModel(), true)
+            if (clNumberInvisible) setMoodValue(MoodEntryModel(), true)
         }
 
         val bViewTrend: ImageButton = findViewById(R.id.bViewTrend)
         bViewTrend.setOnClickListener {
-            startActivityTrendView()
+            if (clNumberInvisible) startActivityTrendView()
         }
 
         val ibSettings: ImageButton = findViewById(R.id.ibSettings)
         ibSettings.setOnClickListener {
-            startActivitySettings()
+            if (clNumberInvisible) startActivitySettings()
         }
 
         val ibAddNewDebug: ImageButton = findViewById(R.id.ibAddNewDebug)

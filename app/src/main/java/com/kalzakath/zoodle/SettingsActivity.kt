@@ -312,10 +312,10 @@ class SettingsActivity() : AppCompatActivity() {
                 if (inputAsString.isNotEmpty() && exception == 0) {
                     val moodEntryList: MutableList<Map<String, String>> = LinkedList()
                     val moodE = inputAsString.split("\n")
-                    val header = moodE.first().replace(" ","").split(",")
+                    val header = moodE.first().replace(" ","").split("|")
                     val nMoodE = moodE.subList(1, moodE.size)
                     for (next in nMoodE) {
-                        val value = next.split(",")
+                        val value = next.split("|")
                         val mapValue = mutableMapOf<String, String>()
                         for (p in header.zip(value)) {
                             mapValue[p.first] = p.second
@@ -327,12 +327,12 @@ class SettingsActivity() : AppCompatActivity() {
                         val moodFeelings = when (mood["feelings"]) {
                             null -> ArrayList<String>()
                             "" -> ArrayList<String>()
-                            else -> mood["feelings"]?.let { (it.split(" ")) } as MutableList<String>
+                            else -> mood["feelings"]?.let { (it.split(",")) } as MutableList<String>
                         }
                         val moodActivities = when (mood["activities"]) {
                             null -> ArrayList<String>()
                             "" -> ArrayList<String>()
-                            else -> mood["activities"]?.let { (it.split(" ")) } as MutableList<String>
+                            else -> mood["activities"]?.let { (it.split(",")) } as MutableList<String>
                         }
                         var date = "1987-11-06"
                         var exceptions = 0
@@ -383,8 +383,13 @@ class SettingsActivity() : AppCompatActivity() {
                         }
                         if (fatigueValue in 6..10) Settings.moodMax = 10
 
-                        val ritaline = if (mood["ritaline"] != null) mood["ritaline"].toString()
-                        else ""
+                        val ritaline =
+                            if (mood["ritaline"] != null) mood["ritaline"].toString()
+                            else ""
+
+                        val note =
+                            if (mood["note"] != null) mood["note"].toString()
+                            else ""
 
                         dataImport.add(
                             MoodEntryModel(
@@ -394,11 +399,11 @@ class SettingsActivity() : AppCompatActivity() {
                                 fatigueValue,
                                 moodFeelings,
                                 moodActivities,
-                                mood["note"].toString(),
+                                note,
                                 key,
                                 lastUpdated,
                                 0,
-                                //ritaline
+                                ritaline
                             )
                         )
                     }

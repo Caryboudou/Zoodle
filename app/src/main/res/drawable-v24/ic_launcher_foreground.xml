@@ -9,43 +9,44 @@
         android:translateX="4.8"
         android:translateY="4.8">
         <path
-            android:fillType="evenOdd"
-            android:pathData="
-                M2 12 a 10 10 0 0 0 20 0 a 10 10 0 0 0 -20 0
-                M4 12 a 8 8 0 1 1 16 0 a 8 8 0 1 1 -16 0
-                M12,17.5c2.33,0 4.31,-1.46 5.11,-3.5L6.89,14c0.8,2.04 2.78,3.5 5.11,3.5z">
-            <aapt:attr name="android:fillColor">
-                <gradient
-                    android:endX="12"
-                    android:endY="22"
-                    android:startX="12"
-                    android:startY="2"
-                    android:type="linear">
-                    <item
-                        android:color="#c4c3d0"
-                        android:offset="0.0" />
-                    <item
-                        android:color="#deddea"
-                        android:offset="1.0" />
-                </gradient>
-            </aapt:attr>
-        </path>
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="
-                M13,9.94L14.06,11l1.06,-1.06L16.18,11l1.06,-1.06 -2.12,-2.12L13,9.94z
-                M8.88,9.94L9.94,11 11,9.94 8.88,7.82 6.76,9.94 7.82,11l1.06,-1.06z
-                M12,17.5c2.33,0 4.31,-1.46 5.11,-3.5L6.89,14c0.8,2.04 2.78,3.5 5.11,3.5z">
-        </path>
-        <path
-            android:strokeColor="#FFFFFFFF"
+            android:fillColor="@color/colorIconNotif"
             android:strokeWidth="0.05"
             android:pathData="
                 M2 12 a 10 10 0 0 0 20 0 a 10 10 0 0 0 -20 0
-                M4 12 a 8 8 0 1 1 16 0 a 8 8 0 1 1 -16 0
-                M13,9.94L14.06,11l1.06,-1.06L16.18,11l1.06,-1.06 -2.12,-2.12L13,9.94z
-                M8.88,9.94L9.94,11 11,9.94 8.88,7.82 6.76,9.94 7.82,11l1.06,-1.06z
-                M12,17.5c2.33,0 4.31,-1.46 5.11,-3.5L6.89,14c0.8,2.04 2.78,3.5 5.11,3.5z"/>
-
+                M3.4 12 a 8.6 8.6 0 1 1 17.2 0 a 8.6 8.6 0 1 1 -17.2 0">
+        </path>
+        <path
+            android:fillColor="@color/colorIconNotif"
+            android:pathData="
+                M 15.12, 9.94
+                l0.52545,0.52545
+                c 0.2875,0.2875 0.764,0.2875 1.0517,0 0.2875,-0.2875 0.2875,-0.764 0,-1.0517
+                l-0.8731,-0.8731
+                c-0.387,-0.387 -1.01205,-0.387 -1.398,0
+                l-0.8731,0.8731
+                c-0.2875,0.2875 -0.2875,0.764 0,1.0517 0.2875,0.2875 0.764,0.2875 1.0517,0
+                z">
+        </path>
+        <path
+            android:fillColor="@color/colorIconNotif"
+            android:pathData="
+                M 8.88, 9.94
+                l0.52545,0.52545
+                c 0.2875,0.2875 0.764,0.2875 1.0517,0 0.2875,-0.2875 0.2875,-0.764 0,-1.0517
+                l-0.8731,-0.8731
+                c-0.387,-0.387 -1.01205,-0.387 -1.398,0
+                l-0.8731,0.8731
+                c-0.2875,0.2875 -0.2875,0.764 0,1.0517 0.2875,0.2875 0.764,0.2875 1.0517,0
+                z">
+        </path>
+        <path
+            android:fillColor="@color/colorIconNotif"
+            android:pathData="
+            M12,17.5
+            c 2.01435,0 3.57035,-1.10135 4.7129,-2.7255 0.1885,-0.32745 -0.05,-0.74415 -0.4365,-0.74415
+            h-8.55265
+            c-0.377,0 -0.6251,0.4167 -0.4365,0.74415 0.8876,1.6272 2.69875,2.7255 4.7629,2.7255
+            "
+            android:strokeWidth="0.01"/>
     </group>
 </vector>

@@ -19,6 +19,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/llFront" />
 
+    <ImageButton
+        android:id="@+id/ibFrontSeeData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/llFront"
+        app:layout_constraintStart_toEndOf="@+id/ibClose"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_check" />
+
     <TextView
         android:id="@+id/tvFrontTitle"
         android:layout_width="wrap_content"
@@ -33,19 +44,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <LinearLayout
+    <ScrollView
         android:id="@+id/llFront"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ibClose"
+        app:layout_constraintBottom_toBottomOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ibClose"
-        app:layout_constraintBottom_toTopOf="@+id/bFrontSeeData">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -200,7 +218,7 @@
 
             <EditText
                 android:id="@+id/etFrontRitaline"
-                android:inputType="textMultiLine"
+                android:inputType="text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="8dp"
@@ -210,7 +228,10 @@
                 android:ems="1"
                 android:gravity="top"
                 android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:maxLines="1"/>
         </LinearLayout>
 
         <LinearLayout
@@ -239,7 +260,7 @@
                 android:id="@+id/etFrontNote"
                 android:inputType="textMultiLine"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="180dp"
                 android:layout_marginHorizontal="8dp"
                 android:baselineAligned="false"
                 android:layout_weight="1"
@@ -251,15 +272,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/bFrontSeeData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/front_enregistrer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

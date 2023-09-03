@@ -1,12 +1,13 @@
 package com.kalzakath.zoodle
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.widget.Button
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.kalzakath.zoodle.layout.ChooseFatigueCircle
 import com.kalzakath.zoodle.layout.ChooseMoodCircle
@@ -21,6 +22,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
+
 
 class DetailedViewActivity : AppCompatActivity() {
     private lateinit var secureFileHandler: SecureFileHandler
@@ -58,7 +60,7 @@ class DetailedViewActivity : AppCompatActivity() {
         val etNote: EditText = findViewById(R.id.etFrontNote)
         val etRitaline: EditText = findViewById(R.id.etFrontRitaline)
 
-        val mainActivity: Button = findViewById(R.id.bFrontSeeData)
+        val mainActivity: ImageButton = findViewById(R.id.ibFrontSeeData)
         val close: ImageButton = findViewById(R.id.ibClose)
 
         val date: TextView = findViewById(R.id.tvFrontDate)
@@ -99,6 +101,13 @@ class DetailedViewActivity : AppCompatActivity() {
 
         resetFatigue.setOnClickListener {
             numberPickerFatigue.reset()
+        }
+
+        etRitaline.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                etNote.requestFocus()
+                true
+            } else false
         }
 
         mainActivity.setOnClickListener {
