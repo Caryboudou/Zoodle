@@ -78,12 +78,12 @@ class SettingsActivity() : AppCompatActivity() {
         val dtPickerTime = TimePicker()
         dtPickerTime.onUpdateListener = {
             val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-            val time = getTimeStringFR(timeFormat.format(it.time))
-            val timeReminder = getString(R.string.settings_reminder_time) + " " + time
-            Settings.notificationTime = timeFormat.format(it.time)
+            val time = timeFormat.format(it.time)
+            val timeReminder = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(time)
+            Settings.notificationTime = time
             tvReminderTime.text = timeReminder
             deleteNotif(this)
-            createNotif(this, timeFormat.format(it.time))
+            createNotif(this, time)
         }
 
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->

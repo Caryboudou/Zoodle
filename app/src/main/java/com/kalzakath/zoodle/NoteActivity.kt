@@ -3,6 +3,7 @@ package com.kalzakath.zoodle
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -35,6 +36,7 @@ class NoteActivity: AppCompatActivity()  {
         val etAddNote: EditText = findViewById(R.id.etAddNote)
         val etRitaline: EditText = findViewById(R.id.etRitaline)
         val tvRitaline: TextView = findViewById(R.id.tvRitaline)
+        val line: View = findViewById(R.id.line2)
 
         val newText = applicationContext.resources.getString(R.string.note_title) + getDateStringFR(moodEntry.date)
         tvTitle.text = newText
@@ -42,6 +44,17 @@ class NoteActivity: AppCompatActivity()  {
         etRitaline.setText(moodEntry.ritaline)
         val str = "${Settings.medicationName} (${moodEntry.getRitalineInt()}mg) :"
         tvRitaline.text = str
+
+        if (Settings.medicationName == "") {
+            tvRitaline.visibility = View.GONE
+            etRitaline.visibility = View.GONE
+            line.visibility = View.GONE
+        }
+        else {
+            tvRitaline.visibility = View.VISIBLE
+            etRitaline.visibility = View.VISIBLE
+            line.visibility = View.VISIBLE
+        }
 
         bConfirm.setOnClickListener {
             val finishIntent = Intent()

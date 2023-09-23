@@ -53,7 +53,7 @@
     <LinearLayout
         android:id="@+id/llFront"
         android:layout_width="0dp"
-        android:layout_height="500dp"
+        android:layout_height="800dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
@@ -240,7 +240,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:background="@drawable/activity_row_rounded_corner"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/settings_reminder_time"
@@ -248,6 +248,19 @@
                 android:textSize="16sp" />
 
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:visibility="gone"
+            android:background="@android:color/transparent"
+            tools:itemCount="2"
+            tools:listitem="@layout/settings_activity" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

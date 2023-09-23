@@ -7,6 +7,9 @@ import android.graphics.LinearGradient
 import android.graphics.Shader
 import android.opengl.ETC1.getHeight
 import android.os.Bundle
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
@@ -78,6 +81,15 @@ class TrendViewActivity : AppCompatActivity() {
         var date = dateFormatLocal.format(LocalDate.now())
 
         cRitaline.text = Settings.medicationName
+
+        if (Settings.medicationName == "") {
+            cRitaline.visibility = View.GONE
+            cRitaline.isChecked = false
+        }
+        else {
+            cRitaline.visibility = VISIBLE
+            cRitaline.isChecked = true
+        }
 
         bendDate.text = getDateStringFR(date)
         maxDate = LocalDate.parse(date, dateFormatLocal)
