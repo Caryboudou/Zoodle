@@ -120,30 +120,26 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
 fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
     val mViewHolder = holder as MoodViewHolder
     mViewHolder.dateText.text = textMood()
+    mViewHolder.dateTextNote.text = textMood()
     mViewHolder.timeText.text = getTimeStringFR(time)
-    val moodHelper = MoodValueHelper()
+    mViewHolder.timeTextNote.text = getTimeStringFR(time)
+    mViewHolder.noteText.text = note
+
+    if (Settings.modeNote) {
+        mViewHolder.modeNote.visibility = android.view.View.VISIBLE
+        mViewHolder.modeMood.visibility = android.view.View.GONE
+    } else {
+        mViewHolder.modeNote.visibility = android.view.View.GONE
+        mViewHolder.modeMood.visibility = android.view.View.VISIBLE
+    }
 
     hideRow(mViewHolder)
 
-    if (Settings.moodMode == Settings.MoodModes.FACES)
-        mViewHolder.moodText.text = mViewHolder.itemView.resources.getString(
-            moodHelper.getEmojiMood(
-                toFaces(
-                    moodHelper.getSanitisedNumber(mood, 5)
-                )
-            )
-        )
-    else mViewHolder.moodText.text = mood.toString()
+    mViewHolder.moodText.text = mood.toString()
+    mViewHolder.moodText.text = mood.toString()
 
-    if (Settings.fatigueMode == Settings.FatigueModes.FACES)
-        mViewHolder.fatigueText.text = mViewHolder.itemView.resources.getString(
-            moodHelper.getEmojiFatigue(
-                toFaces(
-                    moodHelper.getSanitisedNumber(fatigue, 5)
-                )
-            )
-        )
-    else mViewHolder.fatigueText.text = fatigue.toString()
+    mViewHolder.fatigueText.text = fatigue.toString()
+    mViewHolder.fatigueText.text = fatigue.toString()
 
     viewHolder = holder
     applyDrawableFatigue()
@@ -154,23 +150,36 @@ fun MoodEntryModel.applyDrawableMood() {
     if (viewHolder != null && Settings.moodMode == Settings.MoodModes.NUMBERS) {
         val mViewHolder = viewHolder as MoodViewHolder
         mViewHolder.moodFace.visibility = android.view.View.INVISIBLE
+        mViewHolder.moodFaceNote.visibility = android.view.View.INVISIBLE
 
         when {
-            mood == 1 -> mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_bad)
-            mood == 2 -> mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_bad)
-            mood == 3 -> mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_mediocre)
-            mood == 4 -> mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_good)
-            mood == 5 -> mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_good)
-            else -> mViewHolder.moodText.setBackgroundResource(R.drawable.none_rating_color)
+            mood == 1 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_bad)
+                            mViewHolder.moodTextNote.setBackgroundResource(R.drawable.mood_rating_colour_very_bad) }
+            mood == 2 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_bad)
+                            mViewHolder.moodTextNote.setBackgroundResource(R.drawable.mood_rating_colour_bad) }
+            mood == 3 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_mediocre)
+                            mViewHolder.moodTextNote.setBackgroundResource(R.drawable.mood_rating_colour_mediocre) }
+            mood == 4 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_good)
+                            mViewHolder.moodTextNote.setBackgroundResource(R.drawable.mood_rating_colour_good) }
+            mood == 5 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_good)
+                            mViewHolder.moodTextNote.setBackgroundResource(R.drawable.mood_rating_colour_very_good) }
+            else -> { mViewHolder.moodText.setBackgroundResource(R.drawable.none_rating_color)
+                        mViewHolder.moodTextNote.setBackgroundResource(R.drawable.none_rating_color) }
         }
     }
     else if (viewHolder != null && Settings.moodMode == Settings.MoodModes.FACES) {
         val mViewHolder = viewHolder as MoodViewHolder
         val face = mViewHolder.moodFace
+        val faceNote = mViewHolder.moodFaceNote
         face.state = CircleStateBO.CHOOSE_MOOD
         face.mood = CircleMoodBO.from(mood)
         face.visibility = android.view.View.VISIBLE
         mViewHolder.moodText.setBackgroundResource(0)
+
+        faceNote.state = CircleStateBO.CHOOSE_MOOD
+        faceNote.mood = CircleMoodBO.from(mood)
+        faceNote.visibility = android.view.View.VISIBLE
+        mViewHolder.moodTextNote.setBackgroundResource(0)
     }
 }
 
@@ -178,22 +187,35 @@ fun MoodEntryModel.applyDrawableFatigue() {
     if (viewHolder != null && Settings.fatigueMode == Settings.FatigueModes.NUMBERS) {
         val mViewHolder = viewHolder as MoodViewHolder
         mViewHolder.fatigueFace.visibility = android.view.View.INVISIBLE
+        mViewHolder.fatigueFaceNote.visibility = android.view.View.INVISIBLE
 
         when {
-            fatigue == 1 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_bad)
-            fatigue == 2 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_bad)
-            fatigue == 3 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_mediocre)
-            fatigue == 4 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_good)
-            fatigue == 5 -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good)
-            else -> mViewHolder.fatigueText.setBackgroundResource(R.drawable.none_rating_color)
+            fatigue == 1 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_bad)
+                                mViewHolder.fatigueTextNote.setBackgroundResource(R.drawable.fatigue_rating_colour_very_bad) }
+            fatigue == 2 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_bad)
+                                mViewHolder.fatigueTextNote.setBackgroundResource(R.drawable.fatigue_rating_colour_bad) }
+            fatigue == 3 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_mediocre)
+                                mViewHolder.fatigueTextNote.setBackgroundResource(R.drawable.fatigue_rating_colour_mediocre) }
+            fatigue == 4 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_good)
+                                mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_good) }
+            fatigue == 5 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good)
+                                mViewHolder.fatigueTextNote.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good) }
+            else -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.none_rating_color)
+                        mViewHolder.fatigueTextNote.setBackgroundResource(R.drawable.none_rating_color) }
         }
     } else if (viewHolder != null && Settings.fatigueMode == Settings.FatigueModes.FACES) {
         val mViewHolder = viewHolder as MoodViewHolder
         val face = mViewHolder.fatigueFace
+        val faceNote = mViewHolder.fatigueFaceNote
         face.state = CircleStateBO.CHOOSE_MOOD
         face.fatigue = CircleFatigueBO.from(fatigue)
         face.visibility = android.view.View.VISIBLE
         mViewHolder.fatigueText.setBackgroundResource(0)
+
+        faceNote.state = CircleStateBO.CHOOSE_MOOD
+        faceNote.fatigue = CircleFatigueBO.from(fatigue)
+        faceNote.visibility = android.view.View.VISIBLE
+        mViewHolder.fatigueTextNote.setBackgroundResource(0)
     }
 }
 
