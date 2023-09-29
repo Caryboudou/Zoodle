@@ -11,7 +11,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMain"
         android:layout_width="0dp"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
@@ -20,6 +20,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintBottom_toTopOf="@+id/bViewTrend"
         tools:itemCount="5"
         tools:listitem="@layout/mood_entry_layout" />
 
@@ -68,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="76dp"
         android:layout_marginTop="324dp"
-        android:text="@string/fui_progress_dialog_loading"
+        android:text="Loading..."
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/colorOnPrimaryText"
         android:textSize="60sp"

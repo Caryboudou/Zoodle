@@ -1,5 +1,7 @@
 package com.kalzakath.zoodle.interfaces
 
+import com.kalzakath.zoodle.MoodTrackerMain
+import com.kalzakath.zoodle.RecyclerViewAdaptor
 import com.kalzakath.zoodle.RowControllerEvent
 
 interface DataController: DataControllerAccessors, DataControllerEventHandlers

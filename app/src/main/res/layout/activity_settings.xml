@@ -50,218 +50,291 @@
         app:layout_constraintTop_toBottomOf="@+id/bSettingsConfirm"
         android:translationY="2dp" />
 
-    <LinearLayout
-        android:id="@+id/llFront"
-        android:layout_width="0dp"
-        android:layout_height="800dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@android:color/transparent"
-        android:orientation="vertical"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line">
-
-        <LinearLayout
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/llFront"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/gene"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <TextView
+                        android:id="@+id/tvAddAlarm"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:minEms="6"
+                        android:layout_marginStart="15dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/settings_add_alarm"
+                        android:textColor="@color/colorOnPrimaryText"
+                        android:textSize="16sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/ibAddAlarm" />
+                    <ImageButton
+                        android:id="@+id/ibAddAlarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_add"
+                        android:backgroundTint="@android:color/transparent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+                <View
+                    android:id="@+id/lineV"
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="-10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="35dp"
+                    android:background="@drawable/top_divider"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="5dp"
+                    android:visibility="visible"
+                    android:background="@android:color/transparent"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/settings_activity" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0"
+                android:background="@drawable/activity_row_rounded_corner"
+                android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvSettingsImport"
+                android:id="@+id/tvMedictaionName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner"
+                android:layout_marginStart="40dp"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="@string/settings_import"
+                android:text="@string/settings_medication_name"
                 android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvSettingsImportCSV"
+            <EditText
+                android:id="@+id/etMedictaionName"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/settings_import_csv"
+                android:baselineAligned="false"
+                android:background="@android:color/transparent"
+                android:ems="1"
+                android:gravity="center_vertical"
+                android:inputType="text"
                 android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/sMoodNumerals"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:text="@string/settings_mood_use_numerals"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/sReminder"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:text="@string/settings_reminder"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvReminderTime"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/settings_reminder_time"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvSettingsExportCSV"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/settings_export_csv"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvSettingsImportCSV"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/settings_import_csv"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvSettingsExport"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/settings_export"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvSettingsImport"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/activity_row_rounded_corner"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="@string/settings_import"
+                    android:textColor="@color/colorOnPrimaryText"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="0"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvSettingsExport"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/settings_export"
-                android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="0"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvSettingsExportCSV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/settings_export_csv"
-                android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0"
-            android:background="@drawable/activity_row_rounded_corner"
-            android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tvMedictaionName"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="40dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/settings_medication_name"
-            android:textColor="@color/colorOnPrimaryText"
-            android:textSize="16sp"/>
-
-        <EditText
-            android:id="@+id/etMedictaionName"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:baselineAligned="false"
-            android:background="@android:color/transparent"
-            android:ems="1"
-            android:gravity="center_vertical"
-            android:inputType="text"
-            android:textColor="@color/colorOnPrimaryText"
-            android:textSize="16sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:orientation="horizontal">
-
-            <Switch
-                android:id="@+id/sMoodNumerals"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:text="@string/settings_mood_use_numerals"
-                android:textAlignment="center"
-                android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:orientation="horizontal">
-
-            <Switch
-                android:id="@+id/sReminder"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:text="@string/settings_reminder"
-                android:textAlignment="center"
-                android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvReminderTime"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:visibility="visible"
-                android:background="@drawable/activity_row_rounded_corner"
-                android:gravity="center_horizontal|center_vertical"
-                android:text="@string/settings_reminder_time"
-                android:textColor="@color/colorOnPrimaryText"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:visibility="gone"
-            android:background="@android:color/transparent"
-            tools:itemCount="2"
-            tools:listitem="@layout/settings_activity" />
-    </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clock"

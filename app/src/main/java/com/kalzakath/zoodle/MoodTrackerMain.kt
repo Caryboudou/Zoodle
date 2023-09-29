@@ -8,21 +8,17 @@ import java.lang.reflect.Modifier
 import java.util.logging.Logger
 
 class MoodTrackerMain(secureFileHandler: SecureFileHandler,
-                      rowController: DataController,
-                      onlineDataHandler: OnlineDataHandler
-                        ): DataControllerEventListener, OnlineDataHandlerEventListener,
-                        MoodTracker {
+                      rowController: DataController
+): DataControllerEventListener,
+    MoodTracker {
     private val _secureFileHandler = secureFileHandler
     private val _rowController = rowController
-    private val _onlineDataHandler = onlineDataHandler
     private val log = Logger.getLogger(MainActivity::class.java.name)
 
     init {
         _rowController.registerForUpdates(this)
-        _onlineDataHandler.registerForUpdates(this)
 
         loadLocalData()
-        loadOnlineData()
         loadSettingData()
     }
 
@@ -51,11 +47,6 @@ class MoodTrackerMain(secureFileHandler: SecureFileHandler,
         if (data.isNotEmpty()) _rowController.update(convertToArrayList(data), false)
     }
 
-    override fun loadOnlineData() {
-        val data = _onlineDataHandler.read()
-        if (data.isNotEmpty()) _rowController.update(data, false)
-    }
-
     override fun loadSettingData() {
         readSettingsDataFromJson(_secureFileHandler.read("settings.json"))
     }
@@ -63,29 +54,6 @@ class MoodTrackerMain(secureFileHandler: SecureFileHandler,
     override fun onUpdateFromDataController(event: RowControllerEvent) {
         // this writes a local dump of the whole list
         _secureFileHandler.write(_rowController.mainRowEntryList)
-
-        // this is more specific in it's operations
-        when (event.type) {
-            RowControllerEvent.REMOVE -> { _onlineDataHandler.remove(event.data) }
-            else -> { _onlineDataHandler.write (event.data) }
-        }
-    }
-
-    override fun saveLocalDataToOnline() {
-        _onlineDataHandler.write(_rowController.mainRowEntryList)
-    }
-
-    override fun onUpdateFromDatabase(data: ArrayList<RowEntryModel>) {
-        _rowController.update(data)
-    }
-
-    override fun onLoginUpdateFromDatabase(result: String) {
-        when (result) {
-            "SUCCESS" -> {
-                loadOnlineData()
-                saveLocalDataToOnline()
-            }
-        }
     }
 
     override fun readSettingsDataFromJson(jsonSettings: String?) {

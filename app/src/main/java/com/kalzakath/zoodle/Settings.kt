@@ -2,18 +2,21 @@ package com.kalzakath.zoodle
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.ArrayList
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 
 object Settings {
     object Default {
-        const val moodMode: Int = MoodModes.NUMBERS
-        const val fatigueMode: Int = FatigueModes.NUMBERS
+        const val moodMode: Int = MoodModes.FACES
+        const val fatigueMode: Int = FatigueModes.FACES
+        const val modeNote = false
         const val moodMax: Int = 5
         const val fatigueMax: Int = 5
         const val notificationTime = "20:00"
         const val notificationAct = false
         const val medicationName = "Ritaline"
+        val notificationList: ArrayList<String> = arrayListOf()
     }
 
     object MoodModes {
@@ -29,9 +32,11 @@ object Settings {
     var moodMax: Int = Default.moodMax
     var fatigueMode: Int = Default.fatigueMode
     var fatigueMax: Int = Default.fatigueMax
+    var modeNote = Default.modeNote
     var notificationTime = Default.notificationTime
     var notificationAct = Default.notificationAct
     var medicationName = Default.medicationName
+    var notificationList = Default.notificationList
 
     fun setDefaultSettings() {
         for (prop in Settings::class.memberProperties) {

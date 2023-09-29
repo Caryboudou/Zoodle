@@ -5,7 +5,7 @@ interface MoodTracker {
     fun readSettingsDataFromJson(jsonSettings: String?)
 
     fun loadLocalData()
-    fun loadOnlineData()
+    //fun loadOnlineData()
     fun loadSettingData()
-    fun saveLocalDataToOnline()
+    //fun saveLocalDataToOnline()
 }

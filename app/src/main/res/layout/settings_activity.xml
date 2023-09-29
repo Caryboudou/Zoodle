@@ -24,7 +24,7 @@
 
         <LinearLayout
             android:id="@+id/line"
-            android:layout_width="35dp"
+            android:layout_width="25dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent"
@@ -47,13 +47,12 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginTop="-10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/top_divider"/>
+                    android:layout_marginBottom="5dp"/>
                 <View
                     android:id="@+id/lineH"
                     android:layout_width="match_parent"
                     android:layout_height="5dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="0dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginTop="-10dp"
                     android:background="@drawable/top_divider" />
@@ -65,7 +64,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="-10dp"
-                android:background="@drawable/top_divider"/>
+                />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

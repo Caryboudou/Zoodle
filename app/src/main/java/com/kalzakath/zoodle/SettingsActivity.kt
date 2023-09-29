@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.TimePicker
@@ -17,6 +18,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fasterxml.jackson.databind.MappingIterator
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -25,6 +28,7 @@ import com.kalzakath.zoodle.model.MoodEntryModel
 import com.kalzakath.zoodle.utils.ResUtil.getTimeStringFR
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.kalzakath.zoodle.alarm_rc.AlarmAdapter
 import com.kalzakath.zoodle.model.updateTime
 import java.io.OutputStream
 import java.text.SimpleDateFormat
@@ -57,7 +61,14 @@ class SettingsActivity() : AppCompatActivity() {
         val tvSettingsExportCSV: TextView = findViewById(R.id.tvSettingsExportCSV)
         val etMedicationName: EditText = findViewById(R.id.etMedictaionName)
         val bSettingsConfirm: ImageButton = findViewById(R.id.bSettingsConfirm)
+        val ibAddAlarm: ImageButton = findViewById(R.id.ibAddAlarm)
+        val rvAlarm: RecyclerView = findViewById(R.id.recyclerViewSettings)
+        val llRecycle: LinearLayout = findViewById(R.id.llRecyclerView)
         val dataImport = ArrayList<MoodEntryModel>()
+
+        val alarmRecycleView = AlarmAdapter(Settings.notificationList, llRecycle)
+        rvAlarm.adapter = alarmRecycleView
+        rvAlarm.layoutManager = LinearLayoutManager(this)
 
         val securityHandler = SecurityHandler(applicationContext)
         val secureFileHandler = SecureFileHandler(securityHandler)
@@ -85,6 +96,12 @@ class SettingsActivity() : AppCompatActivity() {
             deleteNotif(this)
             createNotif(this, time)
         }
+        val dtPickerTimeRV = TimePicker()
+        dtPickerTimeRV.onUpdateListener = {
+            val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
+            val time = timeFormat.format(it.time)
+            alarmRecycleView.addAlarm(time, this)
+        }
 
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) { Settings.moodMode = Settings.MoodModes.NUMBERS; Settings.fatigueMode = Settings.FatigueModes.NUMBERS }
@@ -110,7 +127,11 @@ class SettingsActivity() : AppCompatActivity() {
             dtPickerTime.show(this)
         }
 
-        tvSettingsExport.setOnClickListener {
+        ibAddAlarm.setOnClickListener {
+            dtPickerTimeRV.show(this)
+        }
+
+         tvSettingsExport.setOnClickListener {
             val intent = Intent()
                 .setType("text/json")
                 .addCategory(Intent.CATEGORY_OPENABLE)

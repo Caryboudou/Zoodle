@@ -130,6 +130,7 @@
     <string name="fatigue_terrible">&#128557;</string>
     <string name="front_enregistrer">Enregistrer</string>
     <string name="alarm_text">Rappel à 20h00</string>
+    <string name="settings_add_alarm">Ajouter un rappel</string>
 
     <string-array name="available_activities">
         <item>Guitar</item>

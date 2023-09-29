@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private lateinit var rowController: DataController
     private lateinit var dataHandler : DataHandler
     private lateinit var secureFileHandler: SecureFileHandler
-    private lateinit var onlineDataHandler: FirebaseConnectionHandler
     private lateinit var clNumberPicker: ConstraintLayout
     private var clNumberInvisible: Boolean by Delegates.observable(true) { _, _, bool ->
        clNumberPicker.visibility = if (bool) View.INVISIBLE else View.VISIBLE }
@@ -54,8 +53,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         val securityHandler = SecurityHandler(applicationContext)
         secureFileHandler = SecureFileHandler(securityHandler)
         rowController = RowController()
-        onlineDataHandler = FirebaseConnectionHandler()
-        MoodTrackerMain(secureFileHandler,rowController,onlineDataHandler)
+        MoodTrackerMain(secureFileHandler,rowController)
 
         dataHandler = DataHandler(secureFileHandler, applicationContext)
 
@@ -65,6 +63,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
         //dataHandler = TestSuite.useLocalData(secureFileHandler, applicationContext)
         //TestSuite.setDefaultSettings()
+        //Settings.setDefaultSettings()
 
         rowController.update(dataHandler.read())
 
