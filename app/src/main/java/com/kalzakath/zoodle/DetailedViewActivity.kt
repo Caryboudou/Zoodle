@@ -98,11 +98,11 @@ class DetailedViewActivity : AppCompatActivity() {
         }
 
         date.setOnClickListener {
-            dtPickerDate.show(this)
+            dtPickerDate.show(this, moodEntry.date)
         }
 
         time.setOnClickListener {
-            dtPickerTime.show(this)
+            dtPickerTime.show(this, moodEntry.time)
         }
 
         resetMood.setOnClickListener {

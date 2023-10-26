@@ -206,7 +206,7 @@ class RecyclerViewAdaptor(
                 val dtPickerDate = DatePicker()
                 dtPickerDate.onUpdateListener = {
                     mHolder.updateDateText(it)
-                    moodEntry.updateDate(it)
+                    moodEntry.updateDateOnly(it)
                     rowController.update(moodEntry)
                 }
 
@@ -218,11 +218,11 @@ class RecyclerViewAdaptor(
                 }
 
                 mHolder.dateText.setOnClickListener {
-                    dtPickerDate.show(mHolder.itemView.context)
+                    dtPickerDate.show(mHolder.itemView.context, moodEntry.date)
                 }
 
                 mHolder.timeText.setOnClickListener {
-                    dtPickerTime.show(mHolder.itemView.context)
+                    dtPickerTime.show(mHolder.itemView.context, moodEntry.time)
                 }
 
                 mHolder.moodText.setOnClickListener {

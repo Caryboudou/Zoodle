@@ -133,11 +133,11 @@ class TrendViewActivity : AppCompatActivity() {
         }
 
         binitDate.setOnClickListener {
-            dtPickerInit.show(this)
+            dtPickerInit.show(this, dateFormatLocal.format(minDate))
         }
 
         bendDate.setOnClickListener {
-            dtPickerEnd.show(this)
+            dtPickerEnd.show(this, dateFormatLocal.format(maxDate))
         }
 
         bViewData.setOnClickListener {

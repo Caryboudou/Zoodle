@@ -124,7 +124,7 @@ class SettingsActivity() : AppCompatActivity() {
         }
 
         tvReminderTime.setOnClickListener {
-            dtPickerTime.show(this)
+            dtPickerTime.show(this, Settings.notificationTime)
         }
 
         ibAddAlarm.setOnClickListener {

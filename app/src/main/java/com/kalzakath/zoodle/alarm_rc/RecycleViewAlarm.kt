@@ -69,7 +69,7 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
         }
 
         mHolder.ibSet.setOnClickListener {
-            dtPickerTime.show(mHolder.itemView.context)
+            dtPickerTime.show(mHolder.itemView.context, time)
         }
         mHolder.ibDelete.setOnClickListener {
             deleteAlarm(position, context)
