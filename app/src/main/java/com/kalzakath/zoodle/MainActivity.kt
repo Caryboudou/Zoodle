@@ -221,6 +221,22 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             if (clNumberInvisible) startActivityTrendView()
         }
 
+        val ibModeNote: ImageButton = findViewById(R.id.ibModeNote)
+        if (Settings.modeNote) {
+            ibModeNote.setImageResource(R.drawable.ic_mode_note_no)
+        } else {
+            ibModeNote.setImageResource(R.drawable.ic_mode_note)
+        }
+        ibModeNote.setOnClickListener {
+            Settings.modeNote = !Settings.modeNote
+            if (Settings.modeNote) {
+                ibModeNote.setImageResource(R.drawable.ic_mode_note_no)
+            } else {
+                ibModeNote.setImageResource(R.drawable.ic_mode_note)
+            }
+            setupRecycleView()
+        }
+
         val ibSettings: ImageButton = findViewById(R.id.ibSettings)
         ibSettings.setOnClickListener {
             if (clNumberInvisible) startActivitySettings()

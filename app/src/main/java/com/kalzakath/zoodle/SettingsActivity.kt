@@ -53,6 +53,7 @@ class SettingsActivity() : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val sMoodNumerals: Switch = findViewById(R.id.sMoodNumerals)
+        val sModeNote: Switch = findViewById(R.id.sModeNote)
         val sReminder: Switch = findViewById(R.id.sReminder)
         val tvReminderTime: TextView = findViewById(R.id.tvReminderTime)
         val tvSettingsImport: TextView = findViewById(R.id.tvSettingsImport)
@@ -78,6 +79,7 @@ class SettingsActivity() : AppCompatActivity() {
 
         sMoodNumerals.isChecked = Settings.moodMode == Settings.MoodModes.NUMBERS
         sMoodNumerals.isChecked = Settings.fatigueMode == Settings.FatigueModes.NUMBERS
+        sModeNote.isChecked = Settings.modeNote
         etMedicationName.setText(Settings.medicationName)
 
         sReminder.isChecked = Settings.notificationAct
@@ -106,6 +108,10 @@ class SettingsActivity() : AppCompatActivity() {
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) { Settings.moodMode = Settings.MoodModes.NUMBERS; Settings.fatigueMode = Settings.FatigueModes.NUMBERS }
             else {Settings.moodMode = Settings.MoodModes.FACES; Settings.fatigueMode = Settings.FatigueModes.FACES }
+        }
+
+        sModeNote.setOnCheckedChangeListener { _, isChecked ->
+            Settings.modeNote = isChecked
         }
 
         sReminder.setOnCheckedChangeListener { _, isChecked ->

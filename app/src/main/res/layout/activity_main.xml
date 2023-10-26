@@ -235,9 +235,22 @@
         android:contentDescription="@string/add_new_mood_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/bViewTrend"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ibModeNote"
         android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_add"/>
+
+    <ImageButton
+        android:id="@+id/ibModeNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/add_new_mood_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/addNewButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_mode_note"/>
 
     <ImageButton
         android:id="@+id/ibAddNewDebug"
