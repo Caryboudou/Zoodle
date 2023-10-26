@@ -163,7 +163,7 @@ class AlarmWorker (appcontext: Context, workerParams: WorkerParameters):
         applicationContext: Context,
         channelId: String,
     ) {
-        val contentIntent = Intent(applicationContext, MainActivity::class.java)
+        val contentIntent = Intent(applicationContext, DetailedViewActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             1,
@@ -226,11 +226,14 @@ class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
                         TimeUnit.MILLISECONDS
                     )
                     .build()
-            WorkManager.getInstance(context).enqueueUniqueWork(workName, ExistingWorkPolicy.KEEP,alarmWorkRequest)
+            WorkManager.getInstance(context).enqueueUniqueWork(workName, ExistingWorkPolicy.REPLACE,alarmWorkRequest)
         }
         fun cancel(context: Context, reminderTime: String) {
             val workName = NAME_NOTIF+reminderTime
             WorkManager.getInstance(context).cancelUniqueWork(workName)
+        }
+        fun cancelAll(context: Context) {
+            WorkManager.getInstance(context).cancelAllWork()
         }
     }
 
@@ -273,12 +276,11 @@ class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
         }
     }
 
-
     private fun NotificationManager.sendReminderNotification(
         applicationContext: Context,
         channelId: String,
     ) {
-        val contentIntent = Intent(applicationContext, MainActivity::class.java)
+        val contentIntent = Intent(applicationContext, DetailedViewActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             1,
@@ -317,8 +319,11 @@ fun createNotifSeveral(context: Context, time: String = Settings.notificationTim
 }
 
 fun deleteNotifSeveral(context: Context, time: String) {
-    val tag_notif = NAME_NOTIF+time
-    AlarmWorkerSeveral.cancel(context, tag_notif)
+    AlarmWorkerSeveral.cancel(context, time)
+}
+
+fun deleteAllNotifSeveral(context: Context) {
+    AlarmWorkerSeveral.cancelAll(context)
 }
 
 fun createNotificationsChannels(context: Context) {

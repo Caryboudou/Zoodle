@@ -16,6 +16,7 @@ import com.kalzakath.zoodle.Settings
 import com.kalzakath.zoodle.TimePicker
 import com.kalzakath.zoodle.createNotif
 import com.kalzakath.zoodle.createNotifSeveral
+import com.kalzakath.zoodle.deleteAllNotifSeveral
 import com.kalzakath.zoodle.deleteNotif
 import com.kalzakath.zoodle.deleteNotifSeveral
 import com.kalzakath.zoodle.model.*
@@ -54,6 +55,8 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
         val context = mHolder.itemView.context
 
         mHolder.updateTime(time)
+        /*deleteAlarm(position, context)
+        addAlarm(time, context)*/
 
         val dtPickerTime = TimePicker()
         dtPickerTime.onUpdateListener = {
@@ -78,7 +81,10 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
         alarmList.removeAt(position)
         notifyItemRemoved(position)
         sortList()
-        if (itemCount == 0) rcLayer.visibility = View.GONE
+        if (itemCount == 0) {
+            rcLayer.visibility = View.GONE
+            deleteAllNotifSeveral(context)
+        }
     }
 
     fun addAlarm(time: String, context: Context) {
@@ -107,8 +113,6 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
             val time = getTimeStringFR(newTime)
             val timeReminder = context.getString(R.string.settings_reminder_time) + " " + time
             text.text = timeReminder
-            //deleteNotifSeveral(context, oldTime)
-            //createNotif(context, newTime)
         }
     }
 }

@@ -1,20 +1,14 @@
 package com.kalzakath.zoodle
 
-import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.LinearGradient
-import android.graphics.Shader
-import android.opengl.ETC1.getHeight
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import com.github.mikephil.charting.animation.Easing
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -23,14 +17,11 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.github.mikephil.charting.model.GradientColor
 import com.github.mikephil.charting.utils.EntryXComparator
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.kalzakath.zoodle.data.CircleFatigueBO
 import com.kalzakath.zoodle.data.CircleMoodBO
-import com.kalzakath.zoodle.data.MoodDO
-import com.kalzakath.zoodle.layout.MoodCircle
 import com.kalzakath.zoodle.model.MoodEntryModel
 import com.kalzakath.zoodle.model.getRitalineInt
 import com.kalzakath.zoodle.utils.ResUtil.getDateStringFR
@@ -38,7 +29,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class TrendViewActivity : AppCompatActivity() {
@@ -46,6 +36,8 @@ class TrendViewActivity : AppCompatActivity() {
     private var moodData = ArrayList<MoodEntryModel>()
     private var maxDate: LocalDate = LocalDate.now()
     private var minDate: LocalDate = LocalDate.now()
+    private lateinit var mainLayout: ConstraintLayout
+
 
     class ChartValueFormatter(): ValueFormatter() {
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {

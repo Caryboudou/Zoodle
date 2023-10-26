@@ -434,37 +434,6 @@ class SettingsActivity() : AppCompatActivity() {
                 }
             }
 
-    private fun getNewTime(tvReminderTime: TextView) {
-        val ibClose: ImageButton = findViewById(R.id.closeTextView)
-        val tpPicker: TimePicker = findViewById(R.id.timePicker)
-        val bSave: Button = findViewById(R.id.saveTime)
-        val clTimePicker: ConstraintLayout = findViewById(R.id.clock)
-
-        tpPicker.setIs24HourView(true)
-        tpPicker.hour = LocalDateTime.now().hour
-        tpPicker.minute = LocalDateTime.now().minute
-
-        clTimePicker.visibility = View.VISIBLE
-
-        bSave.setOnClickListener {
-            val hour = tpPicker.hour
-            val minute = tpPicker.minute
-            val hourStr = if (hour<10) "0$hour" else hour.toString()
-            val minuteStr = if (minute<10) "0$minute" else minute.toString()
-            Settings.notificationTime = "$hourStr:$minuteStr"
-
-            val newText = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
-            tvReminderTime.text = newText
-            deleteNotif(this)
-            createNotif(this, Settings.notificationTime)
-            clTimePicker.visibility = View.INVISIBLE
-        }
-
-        ibClose.setOnClickListener{
-            clTimePicker.visibility = View.INVISIBLE
-        }
-    }
-
     private fun getMoodListFromJSON(jsonString: String): ArrayList<MoodEntryModel> {
         val moodList = ArrayList<MoodEntryModel>()
 
