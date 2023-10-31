@@ -62,6 +62,7 @@ class DetailedViewActivity : AppCompatActivity() {
 
         val etNote: EditText = findViewById(R.id.etFrontNote)
         val etRitaline: EditText = findViewById(R.id.etFrontRitaline)
+        val tvFrontRitalineTitle: TextView = findViewById(R.id.tvFrontRitalineTitle)
 
         val mainActivity: ImageButton = findViewById(R.id.ibFrontSeeData)
         val close: ImageButton = findViewById(R.id.ibClose)
@@ -80,6 +81,7 @@ class DetailedViewActivity : AppCompatActivity() {
             llRitaline.visibility = View.GONE
         }
         else {
+            tvFrontRitalineTitle.text = Settings.medicationName
             llRitaline.visibility = View.VISIBLE
         }
 

@@ -163,7 +163,7 @@ class AlarmWorker (appcontext: Context, workerParams: WorkerParameters):
         applicationContext: Context,
         channelId: String,
     ) {
-        val contentIntent = Intent(applicationContext, DetailedViewActivity::class.java)
+        val contentIntent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             1,
@@ -280,7 +280,7 @@ class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
         applicationContext: Context,
         channelId: String,
     ) {
-        val contentIntent = Intent(applicationContext, DetailedViewActivity::class.java)
+        val contentIntent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             1,

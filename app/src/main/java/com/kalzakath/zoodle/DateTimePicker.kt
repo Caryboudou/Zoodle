@@ -55,7 +55,7 @@ class DatePicker {
         if (date != "") {
             val slipped = date.split('-')
             year = slipped[0].toInt()
-            month = slipped[1].toInt()
+            month = slipped[1].toInt() - 1
             day = slipped[2].toInt()
         }
 

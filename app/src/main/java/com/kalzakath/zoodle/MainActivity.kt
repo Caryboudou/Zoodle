@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.gson.GsonBuilder
 import com.kalzakath.zoodle.debug.TestSuite
 import com.kalzakath.zoodle.interfaces.DataController
@@ -71,7 +72,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         if (moodEntry != null)
             rowController.update(moodEntry as MoodEntryModel)
 
-        val todayMoodEntry: RowEntryModel? = rowController.find("Date", DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
+        val todayMoodEntry: RowEntryModel? = rowController.find("Date",
+            DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
         if (todayMoodEntry == null) startActivityFrontPage(null)
     }
 
@@ -91,7 +93,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         mItemTouchHelper.attachToRecyclerView(findViewById(R.id.recyclerViewMain))
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewMain)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val layoutManager = StaggeredGridLayoutManager(1, 1)
+        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = recyclerViewAdaptor
 
         return recyclerViewAdaptor
