@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private lateinit var getFrontPageActivityResult: ActivityResultLauncher<Intent>
     private lateinit var rowController: DataController
     private lateinit var dataHandler : DataHandler
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var layoutManager : LinearLayoutManager
     private lateinit var secureFileHandler: SecureFileHandler
     private lateinit var clNumberPicker: ConstraintLayout
     private var clNumberInvisible: Boolean by Delegates.observable(true) { _, _, bool ->
@@ -92,8 +94,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         val mItemTouchHelper = ItemTouchHelper(callback)
         mItemTouchHelper.attachToRecyclerView(findViewById(R.id.recyclerViewMain))
 
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerViewMain)
-        val layoutManager = StaggeredGridLayoutManager(1, 1)
+        recyclerView = findViewById(R.id.recyclerViewMain)
+        layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = recyclerViewAdaptor
 
@@ -237,7 +239,11 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             } else {
                 ibModeNote.setImageResource(R.drawable.ic_mode_note)
             }
+
+            val scrollPosition = layoutManager.findFirstVisibleItemPosition()
             setupRecycleView()
+            layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            layoutManager.scrollToPosition(scrollPosition)
         }
 
         val ibSettings: ImageButton = findViewById(R.id.ibSettings)
