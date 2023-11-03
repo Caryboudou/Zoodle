@@ -239,7 +239,7 @@ class TrendViewActivity : AppCompatActivity() {
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.textColor = Color.WHITE
         xAxis.valueFormatter = ChartValueFormatter()
-        xAxis.labelRotationAngle = 90f
+        xAxis.labelRotationAngle = 0f
         xAxis.setDrawGridLines(false)
 
         if (cMood or cFatigue) {

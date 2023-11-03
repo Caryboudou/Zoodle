@@ -8,11 +8,13 @@ import com.kalzakath.zoodle.interfaces.DataController
 import com.kalzakath.zoodle.interfaces.DataControllerEventListener
 import com.kalzakath.zoodle.interfaces.RowEntryModel
 import com.kalzakath.zoodle.model.*
+import com.kalzakath.zoodle.utils.ResUtil.getMonthNameFRMaj
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import java.util.stream.IntStream
+import kotlin.collections.ArrayList
 
 interface RecycleRowOnEvent {
     var onLongPress: ((MoodEntryModel) -> Unit)?
@@ -39,7 +41,7 @@ class RecyclerViewAdaptor(
     override fun onUpdateFromDataController(event: RowControllerEvent) {
         moodList.clear()
         moodList.addAll(rowController.mainRowEntryList)
-        addFilterView()
+        addFilterView2()
         notifyDataSetChanged()
     }
 
@@ -167,7 +169,86 @@ class RecyclerViewAdaptor(
         }*/
     }
 
+    private fun getListFilter() : Pair<ArrayList<Pair<LocalDate, LocalDate>>, ArrayList<String>> {
+        val arrayFilter = arrayListOf<Pair<LocalDate, LocalDate>>()
+        val arrayFilterName = arrayListOf<String>()
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+        if (moodList.isEmpty()) return Pair(arrayFilter, arrayFilterName)
 
+        val lastDate = moodList.last().date
+        val fisrtDate = moodList.first().date
+        val today = LocalDate.parse(fisrtDate, format)
+        var minDate = LocalDate.parse(lastDate, format)
+        val toMinus = minDate.dayOfMonth.toLong()
+        minDate = minDate.minusDays(toMinus)
+        var maxDate = minDate.plusMonths(2)
+        maxDate = maxDate.minusDays((maxDate.dayOfMonth - 1).toLong())
+
+        while (minDate.isBefore(today)) {
+            arrayFilter.add(Pair(minDate, maxDate))
+            arrayFilterName.add("${getMonthNameFRMaj(minDate.monthValue + 1)} ${minDate.year}")
+            minDate = maxDate.minusDays(1)
+            maxDate = minDate.plusMonths(2)
+            maxDate = maxDate.minusDays((maxDate.dayOfMonth - 1).toLong())
+        }
+        arrayFilter.reverse()
+        arrayFilterName.reverse()
+
+        return Pair(arrayFilter, arrayFilterName)
+    }
+
+    private fun addFilterView2() {
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+        if (moodList.isEmpty()) return
+
+        var maxDate: LocalDate
+        var minDate: LocalDate
+        var pos: OptionalInt = OptionalInt.empty()
+
+        val (arrayFilter, arrayFilterName) = getListFilter()
+
+        log.info("Adding FilterEntryViews")
+
+        for (i in 0 until arrayFilter.size) {
+            minDate = arrayFilter[i].first
+            maxDate = arrayFilter[i].second
+            pos = IntStream.range(0, moodList.size - 1)
+                .filter { moodList[it].viewType == MoodEntryModel().viewType }
+                .filter {
+                    LocalDate.parse(
+                        (moodList[it] as MoodEntryModel).date, format
+                    ) < maxDate
+                            && LocalDate.parse(
+                        (moodList[it] as MoodEntryModel).date,
+                        format
+                    ) > minDate
+                }
+                .findFirst()
+
+            if (pos != OptionalInt.empty()) {
+                moodList.add(
+                    pos.asInt, FilterEntryModel(
+                        arrayFilterName[i],
+                        moodList[pos.asInt].date,
+                        convertStringToTime(moodList[pos.asInt].time).plusMinutes(1).toString()
+                    )
+                )
+                notifyItemInserted(pos.asInt)
+            }
+        }
+        /*for (i in moodList.indices) {
+            // Prevent two filter rows one after the other
+            val t = moodList[i]
+            val test = moodList[i-1]
+            if( moodList[i].viewType == FilterEntryModel().viewType)
+                    if (i > 0)
+                        if (moodList[i - 1].key != "")
+                            if (moodList[i -1].viewType == FilterEntryModel().viewType) {
+                                moodList.removeAt(i - 1)
+                                notifyItemRemoved(i-1)
+                            }
+        }*/
+    }
 
     override fun getItemViewType(position: Int): Int {
         return moodList[position].viewType
