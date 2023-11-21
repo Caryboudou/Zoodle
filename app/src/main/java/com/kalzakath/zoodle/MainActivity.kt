@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
             if (clNumberInvisible) startActivityFrontPage(it)
         }
 
-        val callback: ItemTouchHelper.Callback = SwipeHelperCallback(recyclerViewAdaptor)
+        val callback: ItemTouchHelper.Callback = SwipeHelperCallback(this, findViewById(R.id.constraintMain), recyclerViewAdaptor)
         val mItemTouchHelper = ItemTouchHelper(callback)
         mItemTouchHelper.attachToRecyclerView(findViewById(R.id.recyclerViewMain))
 

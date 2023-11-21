@@ -1,15 +1,33 @@
 package com.kalzakath.zoodle
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.app.SearchManager.OnCancelListener
+import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Canvas
 import android.graphics.Color
+import android.os.Bundle
+import android.os.Parcelable
+import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import com.kalzakath.zoodle.interfaces.RowEntryModel
 import com.kalzakath.zoodle.model.MoodEntryModel
 
-class SwipeHelperCallback(val adaptor: ItemTouchHelperAdaptor): ItemTouchHelper.Callback() {
+class SwipeHelperCallback(
+    val context: Context,
+    val view: View,
+    val adaptor: ItemTouchHelperAdaptor): ItemTouchHelper.Callback() {
+
     interface ItemTouchHelperAdaptor {
         fun onItemMove(fromPosition: Int, toPosition: Int): Boolean
-        fun onItemDismiss(position: Int)
+        fun onItemDismiss(position: Int) : RowEntryModel
+        fun onItemAdd(row: RowEntryModel)
     }
 
     override fun onMove(
@@ -45,20 +63,18 @@ class SwipeHelperCallback(val adaptor: ItemTouchHelperAdaptor): ItemTouchHelper.
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
-    override fun onMoved(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        fromPos: Int,
-        target: RecyclerView.ViewHolder,
-        toPos: Int,
-        x: Int,
-        y: Int
-    ) {
-        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y)
-    }
-
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        adaptor.onItemDismiss(viewHolder.adapterPosition)
+        val position = viewHolder.adapterPosition
+        val row = adaptor.onItemDismiss(position)
+        val date = (row as MoodEntryModel).textMoodSnackbar()
+        val textSnackbar = "Entrée du $date supprimée"
+
+        val onClickListenner = View.OnClickListener { _ -> adaptor.onItemAdd(row) }
+        Snackbar.make(view,
+            textSnackbar,
+            Snackbar.LENGTH_SHORT)
+            .setAction("ANNULER", onClickListenner)
+            .show()
     }
 
     override fun getMovementFlags(
@@ -66,9 +82,7 @@ class SwipeHelperCallback(val adaptor: ItemTouchHelperAdaptor): ItemTouchHelper.
         viewHolder: RecyclerView.ViewHolder
     ): Int {
         if (viewHolder.itemViewType == MoodEntryModel().viewType) {
-            val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
-            val swipeFlags = ItemTouchHelper.RIGHT
-            return makeMovementFlags(dragFlags, swipeFlags)
+            return makeMovementFlags(0, ItemTouchHelper.RIGHT)
         }
         return 0
     }

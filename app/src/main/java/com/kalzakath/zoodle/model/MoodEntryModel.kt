@@ -47,6 +47,15 @@ data class MoodEntryModel(
         val dayNumber = dateLocal.dayOfMonth
         return "$dayName $dayNumber $monthName"
     }
+
+    fun textMoodSnackbar(): String {
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateLocal = LocalDate.parse(date, format)
+        val monthName = getMonthNameFR(dateLocal.month.value)
+        val dayNumber = dateLocal.dayOfMonth
+        val yearNumber = dateLocal.year
+        return "$dayNumber $monthName $yearNumber"
+    }
 }
 
 fun MoodEntryModel.updateDate(calendar: Calendar) {
@@ -83,7 +92,7 @@ fun MoodEntryModel.compare(moodEntry: MoodEntryModel): Boolean {
 
 fun MoodEntryModel.hideRow(mViewHolder: MoodViewHolder) {
     if (isVisible) mViewHolder.body.maxHeight = 1000
-    else mViewHolder.body.maxHeight = 1
+    else mViewHolder.body.maxHeight = 0
 }
 
 fun MoodEntryModel.toMap(): Map<String, Any?> {

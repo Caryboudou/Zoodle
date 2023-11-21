@@ -3,6 +3,7 @@ package com.kalzakath.zoodle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.kalzakath.zoodle.layout.FatigueCircle
@@ -20,6 +21,7 @@ class MoodViewHolder(itemView: View) : RowViewHolder(itemView)  {
     val moodFace: MoodCircle = itemView.findViewById(R.id.moodCircle)
     val fatigueFace: FatigueCircle= itemView.findViewById(R.id.fatigueCircle)
     val noteText: TextView = itemView.findViewById(R.id.tvNote)
+    val scrollView: ScrollView = itemView.findViewById(R.id.SCROLLER_ID)
 
     val note: ImageButton = itemView.findViewById(R.id.ibNote)
     val body: ConstraintLayout = itemView.findViewById(R.id.cMoodEntry)

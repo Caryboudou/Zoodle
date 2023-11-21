@@ -1,6 +1,8 @@
 package com.kalzakath.zoodle
 
 import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -9,12 +11,13 @@ import com.kalzakath.zoodle.interfaces.DataControllerEventListener
 import com.kalzakath.zoodle.interfaces.RowEntryModel
 import com.kalzakath.zoodle.model.*
 import com.kalzakath.zoodle.utils.ResUtil.getMonthNameFRMaj
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import java.util.stream.IntStream
-import kotlin.collections.ArrayList
+
 
 interface RecycleRowOnEvent {
     var onLongPress: ((MoodEntryModel) -> Unit)?
@@ -32,6 +35,7 @@ class RecyclerViewAdaptor(
     private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
     private var moodList: ArrayList<RowEntryModel> = arrayListOf()
     private lateinit var viewHolder: ViewHolder
+    private var isVerticalScrollEnabled = true
 
     init {
         rowController.registerForUpdates(this)
@@ -41,7 +45,8 @@ class RecyclerViewAdaptor(
     override fun onUpdateFromDataController(event: RowControllerEvent) {
         moodList.clear()
         moodList.addAll(rowController.mainRowEntryList)
-        addFilterView2()
+        addFilterViewMonth()
+        addFilterViewWeek()
         notifyDataSetChanged()
     }
 
@@ -197,7 +202,7 @@ class RecyclerViewAdaptor(
         return Pair(arrayFilter, arrayFilterName)
     }
 
-    private fun addFilterView2() {
+    private fun addFilterViewMonth() {
         val format = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
         if (moodList.isEmpty()) return
 
@@ -250,21 +255,59 @@ class RecyclerViewAdaptor(
         }*/
     }
 
+    private fun addFilterViewWeek() {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        val cal1 = Calendar.getInstance()
+        val cal2 = Calendar.getInstance()
+        if (moodList.isEmpty()) return
+        val view = MoodEntryModel().viewType
+        for (i in moodList.indices) {
+            if (moodList[i].viewType == view && moodList[i+1].viewType == view) {
+                val date1 = dateFormat.parse((moodList[i] as MoodEntryModel).date)
+                val date2 = dateFormat.parse((moodList[i+1] as MoodEntryModel).date)
+                if (date1 != null && date2 != null) {
+                    cal1.time = date1
+                    cal2.time = date2
+                    if (cal1.get(Calendar.WEEK_OF_YEAR) != cal2.get(Calendar.WEEK_OF_YEAR)) {
+                        moodList.add(i + 1, WeekFilterEntryModel())
+                        notifyItemInserted(i + 1)
+                    }
+                }
+            }
+        }
+    }
+
     override fun getItemViewType(position: Int): Int {
         return moodList[position].viewType
     }
 
     private fun toggleFilterView(position: Int) {
+        var visibility: Boolean? = null
         for (i in position + 1 until moodList.size) {
             val row = moodList[i]
             if (row.viewType == MoodEntryModel().viewType) {
                 val mood = row as MoodEntryModel
-                mood.isVisible = !mood.isVisible
+                if (visibility == null) {
+                    visibility = !mood.isVisible
+                }
+                mood.isVisible = visibility
 
                 val viewHolder = mood.viewHolder
                 if (viewHolder != null) {
                     val mVH = viewHolder as MoodViewHolder
                     mood.hideRow(mVH)
+                }
+            }else if (row.viewType == WeekFilterEntryModel().viewType) {
+                val sep = row as WeekFilterEntryModel
+                if (visibility == null) {
+                    visibility = !sep.isVisible
+                }
+                sep.isVisible = visibility
+
+                val viewHolder = sep.viewHolder
+                if (viewHolder != null) {
+                    val wVH = viewHolder as WeekFilterViewHolder
+                    sep.hideRow(wVH)
                 }
             }else {
                 break
@@ -277,6 +320,11 @@ class RecyclerViewAdaptor(
         when (row.viewType) {
             FilterEntryModel().viewType -> {
                 (viewHolder as FilterViewHolder).tvFilterTitle.setOnClickListener {
+                    toggleFilterView(moodList.indexOf(row))
+                }
+            }
+            WeekFilterEntryModel().viewType -> {
+                (viewHolder as WeekFilterViewHolder).sepWeekFilter.setOnClickListener {
                     toggleFilterView(moodList.indexOf(row))
                 }
             }
@@ -297,6 +345,15 @@ class RecyclerViewAdaptor(
                     moodEntry.updateTime(it)
                     rowController.update(moodEntry)
                 }
+
+                /*mHolder.scrollView.setOnTouchListener(object : View.OnTouchListener {
+                    @SuppressLint("ClickableViewAccessibility")
+                    override fun onTouch(view: View, motionEvent: MotionEvent?): Boolean {
+                        // Disallow the touch request for parent scroll on touch of child view
+                        view.getParent().requestDisallowInterceptTouchEvent(false)
+                        return true
+                    }
+                })*/
 
                 mHolder.dateText.setOnClickListener {
                     dtPickerDate.show(mHolder.itemView.context, moodEntry.date)
@@ -363,6 +420,7 @@ class RecyclerViewAdaptor(
         when (moodList[position].viewType) {
             MoodEntryModel().viewType -> (moodList[position] as MoodEntryModel).bindToViewHolder(holder)
             FilterEntryModel().viewType -> (moodList[position] as FilterEntryModel).bindToViewHolder(holder)
+            WeekFilterEntryModel().viewType -> (moodList[position] as WeekFilterEntryModel).bindToViewHolder(holder)
         }
         initButtons(holder, moodList[position])
     }
@@ -380,7 +438,13 @@ class RecyclerViewAdaptor(
         return null
     }
 
-    override fun onItemDismiss(position: Int) {
+    override fun onItemDismiss(position: Int) : RowEntryModel {
+        val row = moodList[position]
         rowController.remove(moodList[position])
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        return row
+    }
+
+    override fun onItemAdd(row: RowEntryModel) {
+        rowController.add(row)
+    }
 }

@@ -24,6 +24,20 @@
         tools:itemCount="5"
         tools:listitem="@layout/mood_entry_layout" />
 
+    <!--
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/recyclerViewMain"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintBottom_toTopOf="@+id/bViewTrend" /> -->
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"

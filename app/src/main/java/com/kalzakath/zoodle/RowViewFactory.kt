@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kalzakath.zoodle.model.FilterEntryModel
+import com.kalzakath.zoodle.model.WeekFilterEntryModel
 
 class RowViewFactory {
 
@@ -12,6 +13,10 @@ class RowViewFactory {
             FilterEntryModel().viewType -> FilterViewHolder(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.filter_entry_layout, parent, false)
+            )
+            WeekFilterEntryModel().viewType -> WeekFilterViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.week_entry_layout, parent, false)
             )
             else -> MoodViewHolder(
                 LayoutInflater.from(parent.context)
