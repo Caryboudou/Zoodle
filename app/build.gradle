@@ -13,7 +13,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.kalzakath.zoodle'
+        applicationId 'com.niaouh.moodtracker'
         minSdk 29
         targetSdk 32
         versionCode 1
@@ -44,7 +44,7 @@ android {
     packagingOptions {
         resources.excludes += "DebugProbesKt.bin"
     }
-    namespace 'com.kalzakath.zoodle'
+    namespace 'com.niaouh.moodtracker'
 }
 
 dependencies {

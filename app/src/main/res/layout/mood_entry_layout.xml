@@ -58,7 +58,7 @@
                 android:textSize="24sp"
                 tools:ignore="RtlCompat,TouchTargetSizeCheck" />
 
-            <com.kalzakath.zoodle.layout.MoodCircle
+            <com.niaouh.moodtracker.layout.MoodCircle
                 android:id="@+id/moodCircle"
                 android:layout_width="@dimen/choose_mood_circle_size"
                 android:layout_height="@dimen/choose_mood_circle_size"
@@ -95,7 +95,7 @@
                 android:textSize="24sp"
                 tools:ignore="RtlCompat,TouchTargetSizeCheck" />
 
-            <com.kalzakath.zoodle.layout.FatigueCircle
+            <com.niaouh.moodtracker.layout.FatigueCircle
                 android:id="@+id/fatigueCircle"
                 android:layout_width="@dimen/choose_fatigue_circle_size"
                 android:layout_height="@dimen/choose_fatigue_circle_size"
