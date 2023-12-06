@@ -23,13 +23,10 @@ data class MoodEntryModel(
     override var time: String = "08:30",
     var mood: Int = 0,
     var fatigue: Int = 0,
-    var feelings: MutableList<String> = ArrayList(),
-    var activities: MutableList<String> = ArrayList(),
     var note: String = "",
+    var ritaline: String = "",
     override var key: String = "local_" + UUID.randomUUID().toString(),
-    var lastUpdated: String = LocalDateTime.now().toString(),
-    var sleep: Int = 0,
-    var ritaline: String = ""
+    var lastUpdated: String = LocalDateTime.now().toString()
 
 ): RowEntryModel,
     Serializable {
@@ -84,8 +81,6 @@ fun MoodEntryModel.compare(moodEntry: MoodEntryModel): Boolean {
     if (time != moodEntry.time) isTheSame = false
     if (mood != moodEntry.mood) isTheSame = false
     if (fatigue != moodEntry.fatigue) isTheSame = false
-    if (activities != moodEntry.activities) isTheSame = false
-    if (feelings != moodEntry.feelings) isTheSame = false
 
     return isTheSame
 }
@@ -101,9 +96,8 @@ fun MoodEntryModel.toMap(): Map<String, Any?> {
         "time" to time,
         "mood" to mood,
         "fatigue" to fatigue,
-        "feelings" to feelings,
-        "activities" to activities,
         "note" to note,
+        "ritaline" to ritaline,
         "key" to key,
         "lastUpdated" to lastUpdated
     )
@@ -115,10 +109,7 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
     time = moodEntry.time
     mood = moodEntry.mood
     fatigue = moodEntry.fatigue
-    activities = moodEntry.activities
-    feelings = moodEntry.feelings
     note = moodEntry.note
-    sleep = moodEntry.sleep
     ritaline = moodEntry.ritaline
 }
 

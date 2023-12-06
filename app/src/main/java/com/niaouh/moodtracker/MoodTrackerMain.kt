@@ -67,5 +67,4 @@ class MoodTrackerMain(secureFileHandler: SecureFileHandler,
             Settings.fatigueMax = data.fatigueMax
         }
     }
-
 }

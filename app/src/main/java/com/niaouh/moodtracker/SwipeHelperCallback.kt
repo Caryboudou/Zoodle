@@ -1,18 +1,8 @@
 package com.niaouh.moodtracker
 
-import android.app.AlertDialog
-import android.app.Dialog
-import android.app.SearchManager.OnCancelListener
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Canvas
-import android.graphics.Color
-import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
-import android.widget.Toast
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar

@@ -61,8 +61,8 @@ class MoodEntryFactory: RowEntryFactory() {
                 time,
                 moodVal,
                 fatigue,
-                feelings,
-                list,
+                "",
+            "",
                 UUID.randomUUID().toString()
             )
     }

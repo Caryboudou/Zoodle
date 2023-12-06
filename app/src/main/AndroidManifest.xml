@@ -14,13 +14,7 @@
             android:name=".DetailedViewActivity"
             android:exported="false" />
         <activity
-            android:name=".FeelingsActivity"
-            android:exported="false" />
-        <activity
             android:name=".SettingsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ActivitiesActivity"
             android:exported="false" />
         <activity
             android:name=".NoteActivity"

@@ -71,8 +71,8 @@ open class DataHandler(var secureFileHandler: SecureFileHandler,
                 time,
                 3,
                 3,
-                feelings,
-                list,
+                "",
+            "",
                 UUID.randomUUID().toString()
             )
     }

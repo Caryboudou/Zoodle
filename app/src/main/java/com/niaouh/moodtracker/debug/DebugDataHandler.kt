@@ -65,8 +65,8 @@ class DebugDataHandler (secureFileHandler: SecureFileHandler,
             "12:34",
             randMood,
             randFatigue,
-            feelings,
-            list,
+            "",
+            "",
             "test_" + UUID.randomUUID().toString()
         )
     }

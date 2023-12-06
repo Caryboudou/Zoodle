@@ -201,10 +201,10 @@ class SettingsActivity() : AppCompatActivity() {
                 val data = exportResult.data?.data
                 val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
                 val writer = outStream?.bufferedWriter()
-                writer?.write("date|time|mood|fatigue|note|ritaline|activities|feelings|key|lastUpdated")
+                writer?.write("date|time|mood|fatigue|note|ritaline|key|lastUpdated")
                 for (m in moodData) {
                     writer?.newLine()
-                    writer?.write("${m.date}|${m.time}|${m.mood}|${m.fatigue}|${m.note}|${m.ritaline}|${m.activities}|${m.feelings}|${m.key}|${m.lastUpdated}")
+                    writer?.write("${m.date}|${m.time}|${m.mood}|${m.fatigue}|${m.note.replace("\n","/n")}|${m.ritaline}|${m.key}|${m.lastUpdated}")
                 }
                 writer?.flush()
                 outStream?.close()
@@ -238,14 +238,6 @@ class SettingsActivity() : AppCompatActivity() {
                             gson.fromJson<Array<HashMap<String, String>>>(inputAsString, type)
 
                         for (mood in moodEntryList) {
-                            val moodFeelings = when (mood["feelings"]) {
-                                null -> ArrayList<String>()
-                                else -> mood["feelings"]?.let { (it.split(",")) } as MutableList<String>
-                            }
-                            val moodActivities = when (mood["activities"]) {
-                                null -> ArrayList<String>()
-                                else -> mood["activities"]?.let { (it.split(",")) } as MutableList<String>
-                            }
                             var date = "1987-11-06"
                             var exceptions = 0
                             try {
@@ -300,15 +292,18 @@ class SettingsActivity() : AppCompatActivity() {
                                 else if (mood["fatigue"]!!.toInt() > Settings.moodMax) Settings.moodMax = mood["fatigue"]?.toInt() ?: 5
                             }
 
+                            val ritaline =
+                                if (mood["ritaline"] != null) mood["ritaline"].toString()
+                                else ""
+
                             dataImport.add(
                                 MoodEntryModel(
                                     date,
                                     time.toString(),
                                     mood["mood"].toString().toInt(),
                                     mood["fatigue"].toString().toInt(),
-                                    moodFeelings,
-                                    moodActivities,
                                     note,
+                                    ritaline,
                                     key.toString(),
                                     lastUpdated.toString()
                                 )
@@ -330,7 +325,7 @@ class SettingsActivity() : AppCompatActivity() {
                 try {
                     val csvFile = path?.let {contentResolver.openInputStream(it) }
                     inputAsString =
-                        csvFile?.bufferedReader().use { it?.readText() ?: "Failed to read" }.replace(" ", "")
+                        csvFile?.bufferedReader().use { it?.readText() ?: "Failed to read" }
                 } catch (e: Exception) {
                     Toast.makeText(this, "Unable to open file", Toast.LENGTH_SHORT).show()
                     exception = 1
@@ -351,16 +346,6 @@ class SettingsActivity() : AppCompatActivity() {
                     }
 
                     for (mood in moodEntryList) {
-                        val moodFeelings = when (mood["feelings"]) {
-                            null -> ArrayList<String>()
-                            "" -> ArrayList<String>()
-                            else -> mood["feelings"]?.let { (it.split(",")) } as MutableList<String>
-                        }
-                        val moodActivities = when (mood["activities"]) {
-                            null -> ArrayList<String>()
-                            "" -> ArrayList<String>()
-                            else -> mood["activities"]?.let { (it.split(",")) } as MutableList<String>
-                        }
                         var date = "1987-11-06"
                         var exceptions = 0
                         try {
@@ -378,11 +363,11 @@ class SettingsActivity() : AppCompatActivity() {
                         }
 
                         if (exceptions != 0) {
-                            /*Toast.makeText(
+                            Toast.makeText(
                                 this,
                                 "Date must be of format yyyy-MM-dd not ${mood["date"]}",
                                 Toast.LENGTH_SHORT
-                            ).show()*/
+                            ).show()
                             continue
                         }
 
@@ -415,7 +400,7 @@ class SettingsActivity() : AppCompatActivity() {
                             else ""
 
                         val note =
-                            if (mood["note"] != null) mood["note"].toString()
+                            if (mood["note"] != null) mood["note"].toString().replace("/n","\n")
                             else ""
 
                         dataImport.add(
@@ -424,13 +409,10 @@ class SettingsActivity() : AppCompatActivity() {
                                 time,
                                 moodValue,
                                 fatigueValue,
-                                moodFeelings,
-                                moodActivities,
                                 note,
+                                ritaline,
                                 key,
-                                lastUpdated,
-                                0,
-                                ritaline
+                                lastUpdated
                             )
                         )
                     }
