@@ -190,6 +190,10 @@ fun MoodEntryModel.getRitalineInt(): Int {
     val listWord = regex.findAll(ritaline)
     var dose = 0
 
+    try {
+        dose = ritaline.toInt()
+    } catch (_: Exception) {}
+
     for (word in listWord) {
         var intValue = word.value
         intValue = intValue.replace(Regex("[^0-9]"), "")

@@ -191,7 +191,10 @@ class RecyclerViewAdaptor(
 
         while (minDate.isBefore(today)) {
             arrayFilter.add(Pair(minDate, maxDate))
-            arrayFilterName.add("${getMonthNameFRMaj(minDate.monthValue + 1)} ${minDate.year}")
+            if (minDate.monthValue < 12)
+                arrayFilterName.add("${getMonthNameFRMaj(minDate.monthValue + 1)} ${minDate.year}")
+            else
+                arrayFilterName.add("${getMonthNameFRMaj(1)} ${minDate.year + 1}")
             minDate = maxDate.minusDays(1)
             maxDate = minDate.plusMonths(2)
             maxDate = maxDate.minusDays((maxDate.dayOfMonth - 1).toLong())

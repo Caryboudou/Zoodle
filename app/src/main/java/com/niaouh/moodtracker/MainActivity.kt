@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private fun initButtons() {
         val addNewButton: ImageButton = findViewById(R.id.addNewButton)
         addNewButton.setOnClickListener {
-            if (clNumberInvisible) setMoodValue(MoodEntryModel(), true)
+            startActivityFrontPage(null)
         }
 
         val bViewTrend: ImageButton = findViewById(R.id.bViewTrend)
