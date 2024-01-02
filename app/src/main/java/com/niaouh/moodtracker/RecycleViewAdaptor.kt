@@ -1,8 +1,6 @@
 package com.niaouh.moodtracker
 
 import android.annotation.SuppressLint
-import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -17,7 +15,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import java.util.stream.IntStream
-
 
 interface RecycleRowOnEvent {
     var onLongPress: ((MoodEntryModel) -> Unit)?
