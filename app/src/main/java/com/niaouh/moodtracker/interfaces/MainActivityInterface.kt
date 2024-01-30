@@ -7,5 +7,5 @@ interface MainActivityInterface {
     fun startActivitySettings()
     fun startActivityFrontPage(moodEntry: MoodEntryModel?)
     fun startActivityTrendView()
-    fun setupRecycleView(): RecyclerViewAdaptor
+    fun setupRecycleView()
 }

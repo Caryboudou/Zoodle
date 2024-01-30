@@ -14,6 +14,8 @@ object Settings {
         const val notificationTime = "20:00"
         const val notificationAct = false
         const val medicationName = "Ritaline"
+        val trackerList: ArrayList<String> = arrayListOf()
+        val trackerMode = false
         val notificationList: ArrayList<String> = arrayListOf()
     }
 
@@ -34,6 +36,8 @@ object Settings {
     var notificationTime = Default.notificationTime
     var notificationAct = Default.notificationAct
     var medicationName = Default.medicationName
+    var trackerList = Default.trackerList
+    var trackerMode = Default.trackerMode
     var notificationList = Default.notificationList
 
     fun setDefaultSettings() {

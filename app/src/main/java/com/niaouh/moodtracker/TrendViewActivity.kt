@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class TrendViewActivity : AppCompatActivity() {
@@ -67,6 +68,7 @@ class TrendViewActivity : AppCompatActivity() {
         val cMood: CheckBox = findViewById(R.id.checkMood)
         val cFatigue: CheckBox = findViewById(R.id.checkFatigue)
         val cRitaline: CheckBox = findViewById(R.id.checkRitaline)
+        val cMoy: CheckBox = findViewById(R.id.checkMoy)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
@@ -95,7 +97,7 @@ class TrendViewActivity : AppCompatActivity() {
             date = dateFormat.format(it.time)
             minDate = LocalDate.parse(date, dateFormatLocal)
             binitDate.text = getDateStringFR(date)
-            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
 
         val dtPickerEnd = DatePicker()
@@ -103,21 +105,26 @@ class TrendViewActivity : AppCompatActivity() {
             date = dateFormat.format(it.time)
             maxDate = LocalDate.parse(date, dateFormatLocal)
             bendDate.text = getDateStringFR(date)
-            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
         
-        if (moodData.isNotEmpty()) setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
+        if (moodData.isNotEmpty())
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
 
         cMood.setOnClickListener {
-            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
 
         cFatigue.setOnClickListener {
-            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
 
         cRitaline.setOnClickListener {
-            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
+        }
+
+        cMoy.setOnClickListener {
+            setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
 
         bReset.setOnClickListener {
@@ -145,11 +152,15 @@ class TrendViewActivity : AppCompatActivity() {
         }
     }
 
-    private fun setLineChartData(cMood: Boolean, cFatigue: Boolean, cRitaline: Boolean) {
+    private fun setLineChartData(cMood: Boolean, cFatigue: Boolean, cRitaline: Boolean, cMoy: Boolean = true) {
         var entryListMood: ArrayList<Entry> = ArrayList()
         var entryListFatigue: ArrayList<Entry> = ArrayList()
         var entryListRitaline: ArrayList<Entry> = ArrayList()
+        val entriesMood: ArrayList<Entry> = ArrayList()
+        val entriesFatigue: ArrayList<Entry> = ArrayList()
         val lines = mutableListOf<ILineDataSet>()
+        val linesMood = mutableListOf<ILineDataSet>()
+        val linesFatigue = mutableListOf<ILineDataSet>()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd,HH:mm", Locale.ENGLISH )
         val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
         var dateIt : LocalDate
@@ -171,22 +182,23 @@ class TrendViewActivity : AppCompatActivity() {
             if (dateIt <= maxDate && dateIt > minDate) {
                 if (cMood) {
                     val entryMood = Entry(xDate,moodNumber.toFloat())
+                    entriesMood.add(entryMood)
                     if (moodNumber != 0) {
                         entryListMood.add(entryMood)
                         colorsMood.add(applicationContext.getColor(CircleMoodBO.from(moodNumber).colorId))
                     } else if (entryListMood.isNotEmpty()) {
                         val lineDataSet = initMoodLine(entryListMood, colorsMood, chart)
-                        lines.add(lineDataSet)
+                        linesMood.add(lineDataSet)
                         entryListMood = ArrayList()
                         colorsMood = ArrayList()
                     }
                 }
 
                 if (cFatigue) {
+                    val entryFatigue = Entry(xDate, fatigueNumber.toFloat())
+                    entriesFatigue.add(entryFatigue)
                     if (fatigueNumber != 0) {
-                        entryListFatigue.add(
-                            Entry(xDate, fatigueNumber.toFloat())
-                        )
+                        entryListFatigue.add(entryFatigue)
                         colorsFatigue.add(
                             applicationContext.getColor(
                                 CircleFatigueBO.from(
@@ -196,7 +208,7 @@ class TrendViewActivity : AppCompatActivity() {
                         )
                     } else if (entryListFatigue.isNotEmpty()) {
                         val lineDataSet = initFatigueLine(entryListFatigue, colorsFatigue, chart)
-                        lines.add(lineDataSet)
+                        linesFatigue.add(lineDataSet)
                         entryListFatigue = ArrayList()
                         colorsFatigue = ArrayList()
                     }
@@ -221,9 +233,22 @@ class TrendViewActivity : AppCompatActivity() {
 
         val lineDataSetRitaline = initRitalineLine(entryListRitaline, chart)
 
-        if (cMood) { lines.add(lineDataSetMood) }
-        if (cFatigue) { lines.add(lineDataSetFatigue) }
+        if (cMood) { linesMood.add(lineDataSetMood) }
+        if (cFatigue) { linesFatigue.add(lineDataSetFatigue) }
         if (cRitaline) { lines.add(lineDataSetRitaline) }
+
+        if (cMoy) {
+            if (cMood) lines.add(getMoy(entriesMood, chart, "Mood", Color.RED))
+            if (cFatigue) lines.add(getMoy(entriesFatigue, chart, "Fatigue", Color.BLUE))
+        }
+        else {
+            if (cMood) {
+                for (l in linesMood) lines.add(l)
+            }
+            if (cFatigue) {
+                for (l in linesFatigue) lines.add(l)
+            }
+        }
 
         val data = LineData(lines)
         data.setValueTextColor(Color.WHITE)
@@ -299,6 +324,59 @@ class TrendViewActivity : AppCompatActivity() {
         lineDataSetRitaline.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
         lineDataSetRitaline.axisDependency = lineChart.axisRight.axisDependency
         return  lineDataSetRitaline
+    }
+
+    private fun getMoy(entry : ArrayList<Entry>, lineChart: LineChart, label : String, color : Int = Color.RED) : ILineDataSet {
+        val toReturn = ArrayList<Entry>()
+        entry.reverse()
+        if (entry.isEmpty()) return LineDataSet(toReturn, "Mood")
+
+        val dateArray = ArrayList<LocalDate>()
+        val dateInit = Date(entry[0].x.toLong())
+        var dateInitLocal = LocalDate.of(dateInit.year, dateInit.month + 1, dateInit.date)
+        dateInitLocal = dateInitLocal.plusDays(5)
+        for (e in entry) {
+            val dateTemp = Date(e.x.toLong())
+            val date = LocalDate.of(dateTemp.year, dateTemp.month + 1, dateTemp.date)
+            if (date > dateInitLocal) {
+                dateArray.add(date)
+                dateInitLocal = date
+            }
+        }
+        for (d in dateArray) {
+            var sum = 0f
+            var sum_div = 0
+            val d_min = d.minusDays(6)
+            var lastEntry = entry[0]
+            for (e in entry) {
+                val dateTemp = Date(e.x.toLong())
+                val date = LocalDate.of(dateTemp.year, dateTemp.month + 1, dateTemp.date)
+                if (date >= d_min && date <= d) {
+                    if (e.y != 0f) {
+                        sum += e.y
+                        sum_div++
+                    }
+                }
+                if (date > d) {
+                    if (sum_div !=0 )
+                        toReturn.add(Entry(e.x,sum/sum_div))
+                    break
+                }
+                lastEntry = e
+            }
+        }
+
+        Collections.sort(toReturn, EntryXComparator())
+        val lineDataSetMood = LineDataSet(toReturn, label)
+        lineDataSetMood.valueTextSize = 10F
+        lineDataSetMood.lineWidth = 2f
+        lineDataSetMood.color = color
+        lineDataSetMood.setDrawCircles(false)
+        lineDataSetMood.setDrawValues(false)
+        lineDataSetMood.valueTextColor = Color.WHITE
+        lineDataSetMood.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+        lineDataSetMood.axisDependency = lineChart.axisLeft.axisDependency
+        return  lineDataSetMood
     }
 
     private fun getMoodListFromJSON(jsonString: String): ArrayList<MoodEntryModel> {

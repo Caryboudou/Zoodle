@@ -363,6 +363,16 @@ class RecyclerViewAdaptor(
 
                 mHolder.timeText.setOnClickListener {
                     dtPickerTime.show(mHolder.itemView.context, moodEntry.time)
+                    //onLongPress?.invoke(row)
+                }
+
+                mHolder.dateTextTrack.setOnClickListener {
+                    dtPickerDate.show(mHolder.itemView.context, moodEntry.date)
+                }
+
+                mHolder.timeTextTrack.setOnClickListener {
+                    dtPickerTime.show(mHolder.itemView.context, moodEntry.time)
+                    //onLongPress?.invoke(row)
                 }
 
                 mHolder.moodText.setOnClickListener {
@@ -385,12 +395,26 @@ class RecyclerViewAdaptor(
                     startNoteActivity(moodEntry)
                 }
 
+                mHolder.noteTrack.setOnClickListener {
+                    startNoteActivity(moodEntry)
+                }
+
                 mHolder.dateText.setOnLongClickListener {
                     onLongPress?.invoke(row)
                     return@setOnLongClickListener true
                 }
 
                 mHolder.timeText.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
+                }
+
+                mHolder.dateTextTrack.setOnLongClickListener {
+                    onLongPress?.invoke(row)
+                    return@setOnLongClickListener true
+                }
+
+                mHolder.timeTextTrack.setOnLongClickListener {
                     onLongPress?.invoke(row)
                     return@setOnLongClickListener true
                 }
@@ -420,7 +444,7 @@ class RecyclerViewAdaptor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (moodList[position].viewType) {
-            MoodEntryModel().viewType -> (moodList[position] as MoodEntryModel).bindToViewHolder(holder)
+            MoodEntryModel().viewType -> (moodList[position] as MoodEntryModel).bindToViewHolder(holder, rowController)
             FilterEntryModel().viewType -> (moodList[position] as FilterEntryModel).bindToViewHolder(holder)
             WeekFilterEntryModel().viewType -> (moodList[position] as WeekFilterEntryModel).bindToViewHolder(holder)
         }
@@ -448,5 +472,13 @@ class RecyclerViewAdaptor(
 
     override fun onItemAdd(row: RowEntryModel) {
         rowController.add(row)
+    }
+
+    fun findFirst(date: String): Int {
+        val index = moodList.let { row ->
+            row.indexOfFirst { it.viewType == MoodEntryModel().viewType
+                    && (it as MoodEntryModel).date <= date}}
+        log.info("Looking for first row before $date")
+        return if (index == -1) 0 else index
     }
 }

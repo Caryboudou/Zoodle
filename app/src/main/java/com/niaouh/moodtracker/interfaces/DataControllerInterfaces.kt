@@ -35,4 +35,6 @@ interface DataControllerAccessors {
     fun get(position: Int): RowEntryModel
 
     fun <T> find(type: String, condition: T): RowEntryModel?
+
+    fun findFirst(date: String): Int
 }

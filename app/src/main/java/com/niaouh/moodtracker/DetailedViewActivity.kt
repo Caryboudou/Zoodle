@@ -11,11 +11,15 @@ import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.niaouh.moodtracker.layout.ChooseFatigueCircle
 import com.niaouh.moodtracker.layout.ChooseMoodCircle
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.model.updateDateOnly
 import com.niaouh.moodtracker.model.updateTime
+import com.niaouh.moodtracker.trackerpopup.TrackerMainRecycleViewAdaptor
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
 import java.text.SimpleDateFormat
@@ -32,6 +36,7 @@ class DetailedViewActivity : AppCompatActivity() {
     private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
 
     private lateinit var moodEntry: MoodEntryModel
+    private val trackerListMood = arrayListOf<Pair<String,Boolean>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,9 @@ class DetailedViewActivity : AppCompatActivity() {
         val resetFatigue : TextView = findViewById(R.id.tvFrontFatigueTitle)
         val llRitaline: LinearLayout = findViewById(R.id.llRitaline)
 
+        val llTracker: LinearLayout = findViewById(R.id.llTracker)
+        val rvTracker: RecyclerView = findViewById(R.id.rvTracker)
+
         val etNote: EditText = findViewById(R.id.etFrontNote)
         val etRitaline: EditText = findViewById(R.id.etFrontRitaline)
         val tvFrontRitalineTitle: TextView = findViewById(R.id.tvFrontRitalineTitle)
@@ -83,6 +91,19 @@ class DetailedViewActivity : AppCompatActivity() {
         else {
             tvFrontRitalineTitle.text = Settings.medicationName
             llRitaline.visibility = View.VISIBLE
+        }
+
+        if (Settings.trackerList.isEmpty()) llTracker.visibility = View.GONE
+        else {
+            llTracker.visibility = View.VISIBLE
+            for (t in Settings.trackerList) {
+                if (moodEntry.trackers.contains(t))
+                    trackerListMood.add(Pair(t,true))
+                else trackerListMood.add(Pair(t,false))
+            }
+            val adapter = TrackerMainRecycleViewAdaptor(trackerListMood)
+            rvTracker.layoutManager = GridLayoutManager(this,2)
+            rvTracker.adapter = adapter
         }
 
         val dtPickerDate = DatePicker()
@@ -128,6 +149,12 @@ class DetailedViewActivity : AppCompatActivity() {
             moodEntry.fatigue = numberPickerFatigue.toInt()
             moodEntry.note = etNote.text.toString()
             moodEntry.ritaline = etRitaline.text.toString()
+            for (t in trackerListMood) {
+                if (!t.second) moodEntry.trackers.remove(t.first)
+                else {
+                    if (!moodEntry.trackers.contains(t.first)) moodEntry.trackers.add(t.first)
+                }
+            }
             intent.putExtra("MoodEntry", moodEntry)
             setResult(RESULT_OK, intent)
             finish()

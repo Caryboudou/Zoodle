@@ -1,12 +1,20 @@
 package com.niaouh.moodtracker.model
 
+import android.content.Context
+import android.graphics.Color
+import android.widget.CheckBox
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.IgnoreExtraProperties
 import com.niaouh.moodtracker.*
 import com.niaouh.moodtracker.data.CircleFatigueBO
 import com.niaouh.moodtracker.data.CircleMoodBO
 import com.niaouh.moodtracker.data.CircleStateBO
+import com.niaouh.moodtracker.interfaces.DataController
 import com.niaouh.moodtracker.interfaces.RowEntryModel
+import com.niaouh.moodtracker.utils.ResUtil
+import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 import com.niaouh.moodtracker.utils.ResUtil.getDayNameFR
 import com.niaouh.moodtracker.utils.ResUtil.getMonthNameFR
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
@@ -33,6 +41,7 @@ data class MoodEntryModel(
 
     var isVisible = true
     override var viewType: Int = 1
+    var trackers = arrayListOf<String>()
 
     @Transient var viewHolder: RecyclerView.ViewHolder? = null
 
@@ -113,10 +122,12 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
     ritaline = moodEntry.ritaline
 }
 
-fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
+fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder, rowController: DataController) {
     val mViewHolder = holder as MoodViewHolder
     mViewHolder.dateText.text = textMood()
     mViewHolder.timeText.text = getTimeStringFR(time)
+    mViewHolder.dateTextTrack.text = getDateStringFR(date)
+    mViewHolder.timeTextTrack.text = getTimeStringFR(time)
     mViewHolder.noteText.text = note
 
     if (Settings.modeNote && note != "") {
@@ -124,6 +135,38 @@ fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder) {
     } else {
         mViewHolder.Note.visibility = android.view.View.GONE
     }
+
+    if (Settings.trackerMode) {
+        mViewHolder.trackMode.visibility = android.view.View.VISIBLE
+        mViewHolder.notTrackMode.visibility = android.view.View.GONE
+    } else {
+        mViewHolder.trackMode.visibility = android.view.View.GONE
+        mViewHolder.notTrackMode.visibility = android.view.View.VISIBLE
+    }
+    val header = TableRow(holder.itemView.context)
+    for (t in Settings.trackerList) {
+        val head = TextView(holder.itemView.context)
+        head.setTextColor(Color.WHITE)
+        val text = "$t  "
+        head.text = text
+        header.addView(head)
+    }
+    val newRow = TableRow(holder.itemView.context)
+    for (t in Settings.trackerList) {
+        val checkTrack = CheckBox(holder.itemView.context)
+        if (trackers.contains(t)) checkTrack.isChecked = true
+        checkTrack.setOnCheckedChangeListener {_, isChecked ->
+            if (!isChecked) trackers.remove(t)
+            else {
+                if (!trackers.contains(t)) trackers.add(t)
+            }
+            rowController.update(this)
+        }
+        newRow.addView(checkTrack)
+    }
+    mViewHolder.trackTable.removeAllViews()
+    mViewHolder.trackTable.addView(header)
+    mViewHolder.trackTable.addView(newRow)
 
     hideRow(mViewHolder)
 

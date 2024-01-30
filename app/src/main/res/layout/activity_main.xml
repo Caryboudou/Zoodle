@@ -65,6 +65,30 @@
         android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_settings" />
 
+    <ImageButton
+        android:id="@+id/ibFind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/main_settings"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_find" />
+
+    <ImageButton
+        android:id="@+id/ibModeTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/main_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ibModeNote"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_mode_track" />
+
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
@@ -230,10 +254,8 @@
         android:id="@+id/bViewTrend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
         app:srcCompat="@drawable/ic_trend"
         app:layout_constraintStart_toStartOf="parent"
         android:backgroundTint="@android:color/transparent"
@@ -244,7 +266,6 @@
         android:id="@+id/addNewButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/add_new_mood_description"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -257,12 +278,11 @@
         android:id="@+id/ibModeNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/add_new_mood_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/addNewButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ibModeTrack"
         android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_mode_note"/>
 

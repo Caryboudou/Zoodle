@@ -23,6 +23,8 @@ import com.niaouh.moodtracker.interfaces.RowEntryModel
 import com.niaouh.moodtracker.layout.ChooseFatigueCircle
 import com.niaouh.moodtracker.layout.ChooseMoodCircle
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.updateDateOnly
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -36,7 +38,9 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private lateinit var getNoteActivityResult: ActivityResultLauncher<Intent>
     private lateinit var getTrendViewActivitiesResult: ActivityResultLauncher<Intent>
     private lateinit var getFrontPageActivityResult: ActivityResultLauncher<Intent>
+    private lateinit var getTrackerActivityResult: ActivityResultLauncher<Intent>
     private lateinit var rowController: DataController
+    private lateinit var recyclerViewAdaptor: RecyclerViewAdaptor
     private lateinit var dataHandler : DataHandler
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager : LinearLayoutManager
@@ -79,8 +83,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         if (todayMoodEntry == null) startActivityFrontPage(null)
     }
 
-    override fun setupRecycleView(): RecyclerViewAdaptor {
-        val recyclerViewAdaptor = RecyclerViewAdaptor(
+    override fun setupRecycleView() {
+        recyclerViewAdaptor = RecyclerViewAdaptor(
             { moodEntry -> setMoodValue(moodEntry) },
             { moodEntry -> startNoteActivity(moodEntry) },
             rowController)
@@ -98,8 +102,6 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = recyclerViewAdaptor
-
-        return recyclerViewAdaptor
     }
 
     override fun startActivitySettings() {
@@ -117,6 +119,17 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     override fun startActivityTrendView() {
         val intent = Intent(this, TrendViewActivity::class.java)
         if (clNumberInvisible) getTrendViewActivitiesResult.launch(intent)
+    }
+
+    fun startActivityTracker() {
+        val intent = Intent(this, TrackerActivity::class.java)
+        getTrackerActivityResult.launch(intent)
+    }
+
+    private fun startNoteActivity(moodEntry: MoodEntryModel) {
+        val intent = Intent(this, NoteActivity::class.java)
+        intent.putExtra("MoodEntry", moodEntry)
+        if (clNumberInvisible) getNoteActivityResult.launch(intent)
     }
 
     private fun setMoodValue(moodEntry: MoodEntryModel, creation: Boolean = false) {
@@ -179,14 +192,11 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         }
     }
 
-    private fun startNoteActivity(moodEntry: MoodEntryModel) {
-        val intent = Intent(this, NoteActivity::class.java)
-        intent.putExtra("MoodEntry", moodEntry)
-        if (clNumberInvisible) getNoteActivityResult.launch(intent)
-    }
-
     private fun setActivityListeners() {
         getTrendViewActivitiesResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        }
+
+        getTrackerActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         }
 
         getFrontPageActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -216,6 +226,20 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     }
 
     private fun initButtons() {
+        val dtPickerDate = DatePicker()
+        dtPickerDate.onUpdateListener = {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            val dateText = dateFormat.format(it.time)
+            val scrollPosition = recyclerViewAdaptor.findFirst(dateText)
+            layoutManager.scrollToPositionWithOffset(scrollPosition, 0)
+        }
+
+        val ibFind: ImageButton = findViewById(R.id.ibFind)
+        ibFind.setOnClickListener {
+            dtPickerDate.show(this,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
+        }
+
         val addNewButton: ImageButton = findViewById(R.id.addNewButton)
         addNewButton.setOnClickListener {
             startActivityFrontPage(null)
@@ -238,6 +262,26 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
                 ibModeNote.setImageResource(R.drawable.ic_mode_note_no)
             } else {
                 ibModeNote.setImageResource(R.drawable.ic_mode_note)
+            }
+
+            val scrollPosition = layoutManager.findFirstVisibleItemPosition()
+            setupRecycleView()
+            layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            layoutManager.scrollToPosition(scrollPosition)
+        }
+
+        val ibModeTrack: ImageButton = findViewById(R.id.ibModeTrack)
+        if (Settings.trackerMode) {
+            ibModeTrack.setImageResource(R.drawable.ic_mode_track)
+        } else {
+            ibModeTrack.setImageResource(R.drawable.ic_mode_track_no)
+        }
+        ibModeTrack.setOnClickListener {
+            Settings.trackerMode = !Settings.trackerMode
+            if (Settings.trackerMode) {
+                ibModeTrack.setImageResource(R.drawable.ic_mode_track)
+            } else {
+                ibModeTrack.setImageResource(R.drawable.ic_mode_track_no)
             }
 
             val scrollPosition = layoutManager.findFirstVisibleItemPosition()

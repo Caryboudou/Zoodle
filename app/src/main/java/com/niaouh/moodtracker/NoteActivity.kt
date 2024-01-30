@@ -9,8 +9,11 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.model.getRitalineInt
+import com.niaouh.moodtracker.trackerpopup.TrackerMainRecycleViewAdaptor
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,6 +23,7 @@ import java.util.Locale
 class NoteActivity: AppCompatActivity()  {
 
     private lateinit var moodEntry: MoodEntryModel
+    private val trackerListMood = arrayListOf<Pair<String,Boolean>>()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +40,9 @@ class NoteActivity: AppCompatActivity()  {
         val etAddNote: EditText = findViewById(R.id.etAddNote)
         val etRitaline: EditText = findViewById(R.id.etRitaline)
         val tvRitaline: TextView = findViewById(R.id.tvRitaline)
+        val rvTracker: RecyclerView = findViewById(R.id.rvTracker)
         val line: View = findViewById(R.id.line2)
+        val line3: View = findViewById(R.id.line3)
 
         val newText = applicationContext.resources.getString(R.string.note_title) + getDateStringFR(moodEntry.date)
         tvTitle.text = newText
@@ -56,10 +62,33 @@ class NoteActivity: AppCompatActivity()  {
             line.visibility = View.VISIBLE
         }
 
+        if (Settings.trackerList.isEmpty()) {
+            rvTracker.visibility = View.GONE
+            line.visibility = View.GONE
+        }
+        else {
+            rvTracker.visibility = View.VISIBLE
+            line3.visibility = View.VISIBLE
+            for (t in Settings.trackerList) {
+                if (moodEntry.trackers.contains(t))
+                    trackerListMood.add(Pair(t,true))
+                else trackerListMood.add(Pair(t,false))
+            }
+            val adapter = TrackerMainRecycleViewAdaptor(trackerListMood)
+            rvTracker.layoutManager = GridLayoutManager(this,2)
+            rvTracker.adapter = adapter
+        }
+
         bConfirm.setOnClickListener {
             val finishIntent = Intent()
             moodEntry.note = etAddNote.text.toString()
             moodEntry.ritaline = etRitaline.text.toString()
+            for (t in trackerListMood) {
+                if (!t.second) moodEntry.trackers.remove(t.first)
+                else {
+                    if (!moodEntry.trackers.contains(t.first)) moodEntry.trackers.add(t.first)
+                }
+            }
             finishIntent.putExtra("MoodEntry", moodEntry)
             setResult(RESULT_OK, finishIntent)
             finish()

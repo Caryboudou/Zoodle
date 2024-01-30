@@ -39,6 +39,7 @@
     <string name="trend_check_mood">Moral</string>
     <string name="trend_check_fatigue">Fatigue</string>
     <string name="trend_check_ritaline">Ritaline</string>
+    <string name="trend_check_moy">Moyenne</string>
     <string name="trend_month">Mois</string>
     <string name="trend_year">Année</string>
     <string name="trend_title">Évolution</string>
@@ -79,7 +80,10 @@
     <string name="settings_reminder">Rappel</string>
     <string name="settings_reminder_time">Rappel à</string>
     <string name="settings_medication_name">Medicament surveillé :\ </string>
+    <string name="settings_tracker_name">Tracker :\ </string>
+    <string name="settings_tracker_none">aucun</string>
     <string name="settings_mode_note">Mode note</string>
+    <string name="settings_tracker_title">Trackers</string>
 
     <dimen name="text_size_xxlarge">30sp</dimen>
     <dimen name="text_size_xlarge">26sp</dimen>

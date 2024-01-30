@@ -4,33 +4,25 @@ package com.niaouh.moodtracker
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fasterxml.jackson.databind.MappingIterator
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
-import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.niaouh.moodtracker.alarm_rc.AlarmAdapter
-import com.niaouh.moodtracker.model.updateTime
-import java.io.OutputStream
+import com.niaouh.moodtracker.trackerpopup.TrackerPopup
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -46,6 +38,8 @@ class SettingsActivity() : AppCompatActivity() {
     private lateinit var getExportJsonFileResult: ActivityResultLauncher<Intent>
     private lateinit var getExportCSVFileResult: ActivityResultLauncher<Intent>
     private var moodData = ArrayList<MoodEntryModel>()
+    private lateinit var trackerPopup: TrackerPopup
+    private lateinit var tvTrakerName: TextView
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +54,8 @@ class SettingsActivity() : AppCompatActivity() {
         val tvSettingsImportCSV: TextView = findViewById(R.id.tvSettingsImportCSV)
         val tvSettingsExport: TextView = findViewById(R.id.tvSettingsExport)
         val tvSettingsExportCSV: TextView = findViewById(R.id.tvSettingsExportCSV)
+        val llTracker: LinearLayout = findViewById(R.id.llTracker)
+        tvTrakerName = findViewById(R.id.tvTrakerName)
         val etMedicationName: EditText = findViewById(R.id.etMedictaionName)
         val bSettingsConfirm: ImageButton = findViewById(R.id.bSettingsConfirm)
         val ibAddAlarm: ImageButton = findViewById(R.id.ibAddAlarm)
@@ -71,6 +67,8 @@ class SettingsActivity() : AppCompatActivity() {
         rvAlarm.adapter = alarmRecycleView
         rvAlarm.layoutManager = LinearLayoutManager(this)
 
+        trackerPopup = TrackerPopup(this) { l -> finishTracker(l) }
+
         val securityHandler = SecurityHandler(applicationContext)
         val secureFileHandler = SecureFileHandler(securityHandler)
 
@@ -81,6 +79,7 @@ class SettingsActivity() : AppCompatActivity() {
         sMoodNumerals.isChecked = Settings.fatigueMode == Settings.FatigueModes.NUMBERS
         sModeNote.isChecked = Settings.modeNote
         etMedicationName.setText(Settings.medicationName)
+        tvTrakerName.text = getTrackerList()
 
         sReminder.isChecked = Settings.notificationAct
         val timeReminder = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
@@ -103,6 +102,10 @@ class SettingsActivity() : AppCompatActivity() {
             val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
             val time = timeFormat.format(it.time)
             alarmRecycleView.addAlarm(time, this)
+        }
+
+        llTracker.setOnClickListener {
+            trackerPopup.showPopup(Settings.trackerList)
         }
 
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->
@@ -141,7 +144,7 @@ class SettingsActivity() : AppCompatActivity() {
             val intent = Intent()
                 .setType("text/json")
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .putExtra(Intent.EXTRA_TITLE, "mood_tracker_export.json")
+                .putExtra(Intent.EXTRA_TITLE, "mood_tracker_export_med_${Settings.medicationName}.json")
                 .setAction(Intent.ACTION_CREATE_DOCUMENT)
             getExportJsonFileResult.launch(intent)
         }
@@ -150,7 +153,7 @@ class SettingsActivity() : AppCompatActivity() {
             val intent = Intent()
                 .setType("text/csv")
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .putExtra(Intent.EXTRA_TITLE, "mood_tracker_export.csv")
+                .putExtra(Intent.EXTRA_TITLE, "mood_tracker_export_med_${Settings.medicationName}.csv")
                 .setAction(Intent.ACTION_CREATE_DOCUMENT)
             getExportCSVFileResult.launch(intent)
         }
@@ -178,6 +181,7 @@ class SettingsActivity() : AppCompatActivity() {
             }
             setResult(RESULT_OK, finishIntent)
             Settings.medicationName = etMedicationName.text.toString()
+            Settings.trackerList.sort()
             finish()
         }
 
@@ -201,10 +205,13 @@ class SettingsActivity() : AppCompatActivity() {
                 val data = exportResult.data?.data
                 val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
                 val writer = outStream?.bufferedWriter()
-                writer?.write("date|time|mood|fatigue|note|ritaline|key|lastUpdated")
+                writer?.write("date|time|mood|fatigue|note|medication|key|lastUpdated|tracker")
                 for (m in moodData) {
                     writer?.newLine()
-                    writer?.write("${m.date}|${m.time}|${m.mood}|${m.fatigue}|${m.note.replace("\n","/n")}|${m.ritaline}|${m.key}|${m.lastUpdated}")
+                    writer?.write("${m.date}|${m.time}|${m.mood}|${m.fatigue}|${m.note.replace("\n","/n")}|${m.ritaline}|${m.key}|${m.lastUpdated}|")
+                    for (t in m.trackers) {
+                        writer?.write("$t;")
+                    }
                 }
                 writer?.flush()
                 outStream?.close()
@@ -292,8 +299,8 @@ class SettingsActivity() : AppCompatActivity() {
                                 else if (mood["fatigue"]!!.toInt() > Settings.moodMax) Settings.moodMax = mood["fatigue"]?.toInt() ?: 5
                             }
 
-                            val ritaline =
-                                if (mood["ritaline"] != null) mood["ritaline"].toString()
+                            val medication =
+                                if (mood["medication"] != null) mood["medication"].toString()
                                 else ""
 
                             dataImport.add(
@@ -303,7 +310,7 @@ class SettingsActivity() : AppCompatActivity() {
                                     mood["mood"].toString().toInt(),
                                     mood["fatigue"].toString().toInt(),
                                     note,
-                                    ritaline,
+                                    medication,
                                     key.toString(),
                                     lastUpdated.toString()
                                 )
@@ -395,26 +402,31 @@ class SettingsActivity() : AppCompatActivity() {
                         }
                         if (fatigueValue in 6..10) Settings.moodMax = 10
 
-                        val ritaline =
-                            if (mood["ritaline"] != null) mood["ritaline"].toString()
+                        val medication =
+                            if (mood["medication"] != null) mood["medication"].toString()
                             else ""
 
                         val note =
                             if (mood["note"] != null) mood["note"].toString().replace("/n","\n")
                             else ""
 
-                        dataImport.add(
-                            MoodEntryModel(
-                                date,
-                                time,
-                                moodValue,
-                                fatigueValue,
-                                note,
-                                ritaline,
-                                key,
-                                lastUpdated
-                            )
+                        val trackers = arrayListOf<String>()
+                        val values = mood["tracker"]?.split(";") ?: listOf()
+                        for (v in values) trackers.add(v)
+
+                        val moodToAdd = MoodEntryModel(
+                            date,
+                            time,
+                            moodValue,
+                            fatigueValue,
+                            note,
+                            medication,
+                            key,
+                            lastUpdated
                         )
+                        moodToAdd.trackers = trackers
+
+                        dataImport.add(moodToAdd)
                     }
                     Toast.makeText(this, "File processed correctly", Toast.LENGTH_SHORT)
                         .show()
@@ -436,5 +448,22 @@ class SettingsActivity() : AppCompatActivity() {
         }
 
         return moodList
+    }
+
+    private fun getTrackerList(): String {
+        if (Settings.trackerList.size == 0) return "aucun"
+        var s = Settings.trackerList[0]
+        for (t in 1 until Settings.trackerList.size) {
+            s = "$s, ${Settings.trackerList[t]}"
+        }
+        if (s.length > 20) {
+            s = s.substring(0, 20) + "..."
+        }
+        return s
+    }
+
+    private fun finishTracker(newTrackerList: ArrayList<String>) {
+        Settings.trackerList = newTrackerList
+        tvTrakerName.text = getTrackerList()
     }
 }

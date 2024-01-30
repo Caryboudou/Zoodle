@@ -17,6 +17,9 @@
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
+            android:name=".TrackerActivity"
+            android:exported="false" />
+        <activity
             android:name=".NoteActivity"
             android:exported="false" />
         <activity

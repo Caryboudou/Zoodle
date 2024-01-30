@@ -147,4 +147,12 @@ class RowController: DataController {
         log.info("Looking for $type as ${condition.toString()}")
         return found
     }
+
+    override fun findFirst(date: String): Int {
+        val index = mainRowEntryList.let { row ->
+            row.indexOfFirst { it.viewType == MoodEntryModel().viewType
+                    && (it as MoodEntryModel).date <= date}}
+        log.info("Looking for first row before $date")
+        return if (index == -1) 0 else index
+    }
 }
