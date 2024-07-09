@@ -4,23 +4,25 @@
     android:viewportWidth="45"
     android:viewportHeight="42.75">
     <path
-        android:fillColor="@color/colorMoodMediocre"
+        android:fillColor="@color/colorMoodGood1"
         android:fillAlpha="0.65"
         android:pathData="m 36.927128,7.3183174 m -6.750068,0 a 6.750068,6.750068 0 1 1 13.49991,0 6.750068,6.750068 0 1 1 -13.49991,0" />
     <path
-        android:fillColor="@color/colorMoodMediocre"
+        android:fillColor="@color/colorMoodGood1"
         android:fillAlpha="0.65"
         android:pathData="m 8.0730981,7.3183174 m -6.7500681,0 a 6.750068,6.750068 0 1 1 13.499911,0 6.750068,6.750068 0 1 1 -13.499911,0" />
+
     <path
-        android:fillColor="@color/colorMoodMediocre"
+        android:fillColor="@color/colorMoodGood1"
         android:fillAlpha="0.65"
         android:pathData="
-        m42,31
-        h -39
-        c -1.5,0 -2,1.5 -2,2.5
-        c 0,1 0.5,2.5 2,2.5
-        h 39
-        c 1.5,0 2,-1.5 2,-2.5
-        c 0,-1 -0.5,-2.5 -2,-2.5"
-        />
+m 22.5 34 c 7.000000,0 12.000000,-3.000000 16.500000,-5.000000
+ c 1.827623,-0.812277 3.878622,-0.629515 4.893969,1.655014 s -0.223376,3.929390 -2.050999,4.741667
+ c -5.773287,3.079086 -11.362301,5.603319 -19.342969,5.603319 s -13.569683,-2.524233 -19.342969,-5.603319
+ c -1.827623,-0.812277 -3.066345,-2.457138 -2.050999,-4.741667
+ s 3.066345,-2.467291 4.893969, -1.655014
+ c 4.500000,2.000000 9.500000,5.000000 16.500000,5.000000
+
+"        />
+
 </vector>

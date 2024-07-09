@@ -169,6 +169,10 @@ class TrendViewActivity : AppCompatActivity() {
 
         val chart: LineChart = findViewById(R.id.getTheGraph)
 
+        if (cMoy) {
+            maxDate.minusDays(7)
+        }
+
         for (moods in moodData) {
             var moodNumber = moods.mood
             var fatigueNumber = moods.fatigue
@@ -249,6 +253,8 @@ class TrendViewActivity : AppCompatActivity() {
                 for (l in linesFatigue) lines.add(l)
             }
         }
+
+        if (cMoy) maxDate.minusDays(7)
 
         val data = LineData(lines)
         data.setValueTextColor(Color.WHITE)

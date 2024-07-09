@@ -54,6 +54,13 @@ data class MoodEntryModel(
         return "$dayName $dayNumber $monthName"
     }
 
+    fun textMoodDay(): String {
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateLocal = LocalDate.parse(date, format)
+        val dayName = getDayNameFR(dateLocal.dayOfWeek.value)
+        return "$dayName"
+    }
+
     fun textMoodSnackbar(): String {
         val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val dateLocal = LocalDate.parse(date, format)

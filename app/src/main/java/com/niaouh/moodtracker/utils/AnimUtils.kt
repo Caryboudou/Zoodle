@@ -3,6 +3,7 @@ package com.niaouh.moodtracker.utils
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.graphics.Path
 import android.view.View
 import androidx.core.animation.doOnEnd
 
@@ -12,6 +13,32 @@ object AnimUtils {
     fun animateMove(duration: Int, move: Int, view: View, doOnEnd: () -> Unit = {}) {
         val buttonAnimator =
             ObjectAnimator.ofFloat(view, "translationX", move.toFloat())
+        buttonAnimator.duration = duration.toLong()
+        buttonAnimator.doOnEnd {
+            doOnEnd.invoke()
+        }
+        buttonAnimator.start()
+    }
+
+    fun animateMove10(duration: Int, moveX: Int, moveY: Int, view: View, doOnEnd: () -> Unit = {}) {
+        val path = Path()
+        //path.moveTo(view.x, view.y)
+        path.lineTo(moveX.toFloat(), moveY.toFloat())
+        val buttonAnimator =
+            ObjectAnimator.ofFloat(view, "translationX", "translationY", path)
+        buttonAnimator.duration = duration.toLong()
+        buttonAnimator.doOnEnd {
+            doOnEnd.invoke()
+        }
+        buttonAnimator.start()
+    }
+
+    fun animateCollapse10(duration: Int, moveX: Int, moveY: Int, view: View, doOnEnd: () -> Unit = {}) {
+        val path = Path()
+        path.moveTo(moveX.toFloat(), moveY.toFloat())
+        path.lineTo(0f, 0f)
+        val buttonAnimator =
+            ObjectAnimator.ofFloat(view, "translationX", "translationY", path)
         buttonAnimator.duration = duration.toLong()
         buttonAnimator.doOnEnd {
             doOnEnd.invoke()

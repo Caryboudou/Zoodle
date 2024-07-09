@@ -22,6 +22,8 @@ import com.niaouh.moodtracker.interfaces.MainActivityInterface
 import com.niaouh.moodtracker.interfaces.RowEntryModel
 import com.niaouh.moodtracker.layout.ChooseFatigueCircle
 import com.niaouh.moodtracker.layout.ChooseMoodCircle
+import com.niaouh.moodtracker.layout.ChooseFatigueCircle10
+import com.niaouh.moodtracker.layout.ChooseMoodCircle10
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.model.updateDateOnly
 import java.text.SimpleDateFormat
@@ -48,14 +50,10 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private lateinit var clNumberPicker: ConstraintLayout
     private var clNumberInvisible: Boolean by Delegates.observable(true) { _, _, bool ->
        clNumberPicker.visibility = if (bool) View.INVISIBLE else View.VISIBLE }
-    private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
+    private val log = Logger.getLogger(MainActivity::class.java.name + "MainActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        clNumberPicker = findViewById(R.id.clNumberPicker)
-        clNumberInvisible = (clNumberPicker.visibility == View.INVISIBLE)
 
         val securityHandler = SecurityHandler(applicationContext)
         secureFileHandler = SecureFileHandler(securityHandler)
@@ -63,6 +61,10 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         MoodTrackerMain(secureFileHandler,rowController)
 
         dataHandler = DataHandler(secureFileHandler, applicationContext)
+
+        setContentView(R.layout.activity_main)
+        clNumberPicker = findViewById(R.id.clNumberPicker)
+        clNumberInvisible = true
 
         setupRecycleView()
         initButtons()
@@ -78,9 +80,22 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         if (moodEntry != null)
             rowController.update(moodEntry as MoodEntryModel)
 
-        val todayMoodEntry: RowEntryModel? = rowController.find("Date",
-            DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
-        if (todayMoodEntry == null) startActivityFrontPage(null)
+        val forgottenEntry = intent.getSerializableExtra("Forgotten entry")
+        if (forgottenEntry != null) {
+            val newMoodEntry = MoodEntryModel(date = forgottenEntry as String)
+            startActivityFrontPage(newMoodEntry)
+        }
+        else {
+            val todayMoodEntry: RowEntryModel? = rowController.find(
+                "Date",
+                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now())
+            )
+            if (todayMoodEntry == null) startActivityFrontPage(null)
+            else {
+                deleteNotifForgetTomorrow(applicationContext)
+                log.info("Delete tomorrow reminder")
+            }
+        }
     }
 
     override fun setupRecycleView() {
@@ -133,8 +148,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     }
 
     private fun setMoodValue(moodEntry: MoodEntryModel, creation: Boolean = false) {
-        val numberPickerMood: ChooseMoodCircle = findViewById(R.id.tvmpMoodValue)
-        val numberPickerFatigue: ChooseFatigueCircle = findViewById(R.id.tvmpFatigueValue)
+        val numberPickerMood: ChooseMoodCircle10 = findViewById(R.id.tvmpMoodValue)
+        val numberPickerFatigue: ChooseFatigueCircle10 = findViewById(R.id.tvmpFatigueValue)
         val resetMood : TextView = findViewById(R.id.tvmpMoodTitle)
         val resetFatigue : TextView = findViewById(R.id.tvmpFatigueTitle)
         val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -202,6 +217,12 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         getFrontPageActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val data = it.data?.getSerializableExtra("MoodEntry")
             if (data != null) rowController.update(data as MoodEntryModel)
+            val todayMoodEntry: RowEntryModel? = rowController.find("Date",
+                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
+            if (todayMoodEntry != null) {
+                deleteNotifForgetTomorrow(applicationContext)
+                log.info("Delete tomorrow reminder")
+            }
         }
 
         getNoteActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

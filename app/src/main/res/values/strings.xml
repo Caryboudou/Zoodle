@@ -79,10 +79,12 @@
     <string name="settings_export_csv">Exporter un fichier CSV</string>
     <string name="settings_reminder">Rappel</string>
     <string name="settings_reminder_time">Rappel à</string>
+    <string name="settings_reminder_time_forget">Rappel en cas d\'oubli à</string>
     <string name="settings_medication_name">Medicament surveillé :\ </string>
     <string name="settings_tracker_name">Tracker :\ </string>
     <string name="settings_tracker_none">aucun</string>
     <string name="settings_mode_note">Mode note</string>
+    <string name="settings_max_mood">Échelle notation :\ </string>
     <string name="settings_tracker_title">Trackers</string>
 
     <dimen name="text_size_xxlarge">30sp</dimen>
@@ -92,10 +94,18 @@
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_search">14sp</dimen>
     <dimen name="choose_mood_circle_size">50dp</dimen>
+    <dimen name="choose_mood_circle_size_10">50dp</dimen>
     <dimen name="choose_mood_circle_margin">5dp</dimen>
     <dimen name="choose_fatigue_circle_size">50sp</dimen>
+    <dimen name="choose_fatigue_circle_size_10">50sp</dimen>
     <dimen name="choose_fatigue_circle_margin">5dp</dimen>
     <dimen name="choose_high_tab">48dp</dimen>
+
+    <string-array name="max_mood">
+        <item>1 à 5</item>
+        // terrible
+        <item>1 à 9</item>
+    </string-array>
 
     <string-array name="mood_faces">
         <item>&#128557;</item>

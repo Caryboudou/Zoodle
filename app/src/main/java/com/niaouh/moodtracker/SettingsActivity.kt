@@ -5,9 +5,11 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -22,6 +24,7 @@ import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
 import com.niaouh.moodtracker.alarm_rc.AlarmAdapter
+import com.niaouh.moodtracker.layout.ChooseFatigueCircle10
 import com.niaouh.moodtracker.trackerpopup.TrackerPopup
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -48,8 +51,9 @@ class SettingsActivity() : AppCompatActivity() {
 
         val sMoodNumerals: Switch = findViewById(R.id.sMoodNumerals)
         val sModeNote: Switch = findViewById(R.id.sModeNote)
-        val sReminder: Switch = findViewById(R.id.sReminder)
-        val tvReminderTime: TextView = findViewById(R.id.tvReminderTime)
+        val sReminderForget: Switch = findViewById(R.id.sReminder)
+        val spMaxMood: Spinner = findViewById(R.id.spMaxMood)
+        val ibReminderTime: ImageButton = findViewById(R.id.ibReminderTime)
         val tvSettingsImport: TextView = findViewById(R.id.tvSettingsImport)
         val tvSettingsImportCSV: TextView = findViewById(R.id.tvSettingsImportCSV)
         val tvSettingsExport: TextView = findViewById(R.id.tvSettingsExport)
@@ -62,6 +66,20 @@ class SettingsActivity() : AppCompatActivity() {
         val rvAlarm: RecyclerView = findViewById(R.id.recyclerViewSettings)
         val llRecycle: LinearLayout = findViewById(R.id.llRecyclerView)
         val dataImport = ArrayList<MoodEntryModel>()
+
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.max_mood,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears.
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner.
+            spMaxMood.adapter = adapter
+            if (Settings.moodMax == 5)
+                spMaxMood.setSelection(0)
+            else spMaxMood.setSelection(1)
+        }
 
         val alarmRecycleView = AlarmAdapter(Settings.notificationList, llRecycle)
         rvAlarm.adapter = alarmRecycleView
@@ -81,21 +99,19 @@ class SettingsActivity() : AppCompatActivity() {
         etMedicationName.setText(Settings.medicationName)
         tvTrakerName.text = getTrackerList()
 
-        sReminder.isChecked = Settings.notificationAct
-        val timeReminder = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
-        tvReminderTime.text = timeReminder
-        tvReminderTime.visibility = if(Settings.notificationAct) View.VISIBLE
-                else View.INVISIBLE
+        sReminderForget.isChecked = Settings.notificationAct
+        val timeReminder = getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(Settings.notificationTime)
+        sReminderForget.text = timeReminder
 
         val dtPickerTime = TimePicker()
         dtPickerTime.onUpdateListener = {
             val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
             val time = timeFormat.format(it.time)
-            val timeReminder = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(time)
+            val timeReminder = getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(time)
             Settings.notificationTime = time
-            tvReminderTime.text = timeReminder
-            deleteNotif(this)
-            createNotif(this, time)
+            sReminderForget.text = timeReminder
+            deleteNotifForget(this)
+            createNotifForget(this, time)
         }
         val dtPickerTimeRV = TimePicker()
         dtPickerTimeRV.onUpdateListener = {
@@ -117,22 +133,20 @@ class SettingsActivity() : AppCompatActivity() {
             Settings.modeNote = isChecked
         }
 
-        sReminder.setOnCheckedChangeListener { _, isChecked ->
+        sReminderForget.setOnCheckedChangeListener { _, isChecked ->
             Settings.notificationAct = isChecked
             if (isChecked) {
                 val newText = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
-                tvReminderTime.text = newText
-                tvReminderTime.visibility = View.VISIBLE
-                deleteNotif(this)
-                createNotif(this, Settings.notificationTime)
+                sReminderForget.text = newText
+                deleteNotifForget(this)
+                createNotifForget(this, Settings.notificationTime)
             }
             else {
-                tvReminderTime.visibility = View.INVISIBLE
-                deleteNotif(this)
+                deleteNotifForget(this)
             }
         }
 
-        tvReminderTime.setOnClickListener {
+        ibReminderTime.setOnClickListener {
             dtPickerTime.show(this, Settings.notificationTime)
         }
 
@@ -182,6 +196,9 @@ class SettingsActivity() : AppCompatActivity() {
             setResult(RESULT_OK, finishIntent)
             Settings.medicationName = etMedicationName.text.toString()
             Settings.trackerList.sort()
+            Settings.moodMax =
+                if (spMaxMood.selectedItemPosition == 0)  5
+                else 9
             finish()
         }
 
@@ -205,10 +222,10 @@ class SettingsActivity() : AppCompatActivity() {
                 val data = exportResult.data?.data
                 val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
                 val writer = outStream?.bufferedWriter()
-                writer?.write("date|time|mood|fatigue|note|medication|key|lastUpdated|tracker")
+                writer?.write("date|jour|time|mood|fatigue|note|medication|key|lastUpdated|tracker")
                 for (m in moodData) {
                     writer?.newLine()
-                    writer?.write("${m.date}|${m.time}|${m.mood}|${m.fatigue}|${m.note.replace("\n","/n")}|${m.ritaline}|${m.key}|${m.lastUpdated}|")
+                    writer?.write("${m.date}|${m.textMoodDay()}|${m.time}|${m.mood}|${m.fatigue}|${m.note.replace("\n","/n")}|${m.ritaline}|${m.key}|${m.lastUpdated}|")
                     for (t in m.trackers) {
                         writer?.write("$t;")
                     }

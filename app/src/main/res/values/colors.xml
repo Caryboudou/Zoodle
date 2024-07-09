@@ -13,16 +13,26 @@
 
     <color name="colorMoodNone">#B4B4B4</color>
     <color name="colorMoodVeryGood">#518100</color>
-    <color name="colorMoodGood">#8AB54C</color>
+    <color name="colorMoodVeryGood1">#5e871a</color>
+    <color name="colorMoodGood">#6e9b26</color>
+    <color name="colorMoodGood1">#92a71e</color>
     <color name="colorMoodMediocre">#F8B212</color>
+    <color name="colorMoodMediocre1">#f4920b</color>
     <color name="colorMoodBad">#F17305</color>
+    <color name="colorMoodBad1">#d84811</color>
     <color name="colorMoodVeryBad">#C01C1D</color>
+    <color name="colorMoodVeryBad1">#C01C1D</color>
 
-    <color name="colorFatigueVeryGood">#00218D</color>
-    <color name="colorFatigueGood">#415ed7</color>
+    <color name="colorFatigueVeryGood">#00189f</color>
+    <color name="colorFatigueVeryGood1">#213bbb</color>
+    <color name="colorFatigueGood">#244de3</color>
+    <color name="colorFatigueGood1">#5e63e3</color>
     <color name="colorFatigueMediocre">#7B68EE</color>
+    <color name="colorFatigueMediocre1">#925bd7</color>
     <color name="colorFatigueBad">#A94DC0</color>
-    <color name="colorFatigueVeryBad">#660066</color>
+    <color name="colorFatigueBad1">#8b1f9a</color>
+    <color name="colorFatigueVeryBad">#5c0a5c</color>
+    <color name="colorFatigueVeryBad1">#660066</color>
 
     <color name="colorPrimaryBackground">#232527</color>
     <color name="colorOnPrimary">#4E4E4E</color>

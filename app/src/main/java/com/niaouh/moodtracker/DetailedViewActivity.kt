@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.niaouh.moodtracker.layout.ChooseFatigueCircle
+import com.niaouh.moodtracker.layout.ChooseFatigueCircle10
 import com.niaouh.moodtracker.layout.ChooseMoodCircle
+import com.niaouh.moodtracker.layout.ChooseMoodCircle10
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.model.updateDateOnly
 import com.niaouh.moodtracker.model.updateTime
@@ -59,8 +61,8 @@ class DetailedViewActivity : AppCompatActivity() {
     }
 
     private fun initButtons() {
-        val numberPickerMood: ChooseMoodCircle = findViewById(R.id.tvmpFrontMoodValue)
-        val numberPickerFatigue: ChooseFatigueCircle = findViewById(R.id.tvmpFrontFatigueValue)
+        val numberPickerMood: ChooseMoodCircle10 = findViewById(R.id.tvmpFrontMoodValue)
+        val numberPickerFatigue: ChooseFatigueCircle10 = findViewById(R.id.tvmpFrontFatigueValue)
         val resetMood : TextView = findViewById(R.id.tvFrontMoodTitle)
         val resetFatigue : TextView = findViewById(R.id.tvFrontFatigueTitle)
         val llRitaline: LinearLayout = findViewById(R.id.llRitaline)

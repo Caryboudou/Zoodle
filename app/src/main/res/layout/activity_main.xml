@@ -145,7 +145,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@color/dark_gray"
@@ -153,7 +153,7 @@
 
                     <TextView
                         android:id="@+id/tvmpMoodTitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="290dp"
                         android:layout_height="@dimen/choose_high_tab"
                         android:autoSizeMinTextSize="30sp"
                         android:autoSizeTextType="uniform"
@@ -164,16 +164,16 @@
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@color/dark_gray"
                     android:gravity="center_horizontal">
 
-                    <com.niaouh.moodtracker.layout.ChooseMoodCircle
+                    <com.niaouh.moodtracker.layout.ChooseMoodCircle10
                         android:id="@+id/tvmpMoodValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/choose_high_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:clickable="true" />
                 </TableRow>
 
@@ -197,16 +197,16 @@
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@color/dark_gray"
                     android:gravity="center_horizontal">
 
-                    <com.niaouh.moodtracker.layout.ChooseFatigueCircle
+                    <com.niaouh.moodtracker.layout.ChooseFatigueCircle10
                         android:id="@+id/tvmpFatigueValue"
-                        android:layout_width="300dp"
-                        android:layout_height="@dimen/choose_high_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:clickable="true" />
                 </TableRow>
 
