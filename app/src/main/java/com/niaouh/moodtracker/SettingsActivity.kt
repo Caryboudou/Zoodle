@@ -136,7 +136,7 @@ class SettingsActivity() : AppCompatActivity() {
         sReminderForget.setOnCheckedChangeListener { _, isChecked ->
             Settings.notificationAct = isChecked
             if (isChecked) {
-                val newText = getString(R.string.settings_reminder_time) + " " + getTimeStringFR(Settings.notificationTime)
+                val newText = getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(Settings.notificationTime)
                 sReminderForget.text = newText
                 deleteNotifForget(this)
                 createNotifForget(this, Settings.notificationTime)

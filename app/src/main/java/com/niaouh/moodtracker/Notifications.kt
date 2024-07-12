@@ -1,12 +1,8 @@
 package com.niaouh.moodtracker
 
-import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.Notification.VISIBILITY_PUBLIC
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -15,38 +11,25 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.niaouh.moodtracker.utils.ResUtil.getDayNameFR
 import kotlinx.coroutines.coroutineScope
 import java.lang.Exception
 import java.net.SocketException
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
-import java.util.Random
-import java.util.UUID
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.logging.Logger
 
 private const val CHANNEL_ID = "notification_channel_id"
-private const val NAME_NOTIF = "notification_tag_"
-private const val DEFAULTTIME = "20:00"
 
-class AlarmWorker (appcontext: Context, workerParams: WorkerParameters):
+class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
     CoroutineWorker(appcontext, workerParams) {
 
     companion object {
         private const val REMINDER_WORK_NAME = "notification_forget_entrance_tag"
         private const val PARAM_NAME = "name"
-        private val log = Logger.getLogger(MainActivity::class.java.name + "Notification.AlarmWorker")
+        private val log = Logger.getLogger(MainActivity::class.java.name + "Notification.ForgottenEntranceAlarmsWorker")
 
 
         fun runAt(
@@ -72,7 +55,7 @@ class AlarmWorker (appcontext: Context, workerParams: WorkerParameters):
             val data = workDataOf(PARAM_NAME to reminderTime)
             log.info("delay ${calendarDelay.timeInMillis - calendar.timeInMillis}")
             val alarmWorkRequest =
-                OneTimeWorkRequestBuilder<AlarmWorker>()
+                OneTimeWorkRequestBuilder<ForgottenEntranceAlarmsWorker>()
                     .setInputData(data)
                     .setInitialDelay(
                         calendarDelay.timeInMillis - calendar.timeInMillis,
@@ -167,14 +150,14 @@ class AlarmWorker (appcontext: Context, workerParams: WorkerParameters):
     }
 }
 
-class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
+class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
     CoroutineWorker(appcontext, workerParams) {
 
     companion object {
         private const val REMINDER_WORK_NAME = "notification_daily_tag"
         private const val PARAM_NAME = "name"
         private const val NOTIF_ID = "notif_id"
-        private val log = Logger.getLogger(MainActivity::class.java.name + "Notification.AlarmWorkerSeveral")
+        private val log = Logger.getLogger(MainActivity::class.java.name + "Notification.DailyAlarmsWorker")
 
 
         fun runAt(
@@ -204,7 +187,7 @@ class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
             val data = workDataOf(PARAM_NAME to reminderTime, NOTIF_ID to notifIDFunc)
 
             val alarmWorkRequest =
-                OneTimeWorkRequestBuilder<AlarmWorkerSeveral>()
+                OneTimeWorkRequestBuilder<DailyAlarmsWorker>()
                     .setInputData(data)
                     .setInitialDelay(
                         calendarDelay.timeInMillis - calendar.timeInMillis,
@@ -226,7 +209,7 @@ class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
                     workname+= if (hour <10 )  "0$hour:" else "$hour:"
                     workname+= if (min <10 )  "0$min" else "$min"
                     WorkManager.getInstance(context).cancelUniqueWork(workname)
-                    log.info("canel all $workname")
+                    log.info("cancel all $workname")
                 }
             }
             log.info("cancel all")
@@ -302,29 +285,29 @@ class AlarmWorkerSeveral (appcontext: Context, workerParams: WorkerParameters):
 
 fun createNotifForget(context: Context, time: String = Settings.notificationTime) {
     createNotificationsChannels(context)
-    AlarmWorker.runAt(time, context)
+    ForgottenEntranceAlarmsWorker.runAt(time, context)
 }
 
 fun deleteNotifForget(context: Context) {
-    AlarmWorker.cancel(context)
+    ForgottenEntranceAlarmsWorker.cancel(context)
 }
 
 fun deleteNotifForgetTomorrow(context: Context, time: String = Settings.notificationTime) {
     //RemindersManager.stopReminder(context)
-    AlarmWorker.cancelTomorrow(context, time)
+    ForgottenEntranceAlarmsWorker.cancelTomorrow(context, time)
 }
 
 fun createNotifSeveral(context: Context, time: String = Settings.notificationTime) {
     createNotificationsChannels(context)
-    AlarmWorkerSeveral.runAt(time, context)
+    DailyAlarmsWorker.runAt(time, context)
 }
 
 fun deleteNotifSeveral(context: Context, time: String) {
-    AlarmWorkerSeveral.cancel(context, time)
+    DailyAlarmsWorker.cancel(context, time)
 }
 
 fun deleteAllNotifSeveral(context: Context) {
-    AlarmWorkerSeveral.cancelAll(context)
+    DailyAlarmsWorker.cancelAll(context)
 }
 
 fun createNotificationsChannels(context: Context) {
