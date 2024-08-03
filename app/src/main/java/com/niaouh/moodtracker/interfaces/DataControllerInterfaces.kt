@@ -3,6 +3,8 @@ package com.niaouh.moodtracker.interfaces
 import com.niaouh.moodtracker.MoodTrackerMain
 import com.niaouh.moodtracker.RecyclerViewAdaptor
 import com.niaouh.moodtracker.RowControllerEvent
+import java.time.LocalDate
+import java.util.Date
 
 interface DataController: DataControllerAccessors, DataControllerEventHandlers
 
@@ -34,7 +36,7 @@ interface DataControllerAccessors {
     fun indexOf(rowEntryModel: RowEntryModel): Int
     fun get(position: Int): RowEntryModel
 
-    fun <T> find(type: String, condition: T): RowEntryModel?
+    fun <T> findDate(condition: T): RowEntryModel?
 
-    fun findFirst(date: String): Int
+    fun findFirst(date: Date): Int
 }

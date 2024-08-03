@@ -19,6 +19,7 @@ import com.niaouh.moodtracker.layout.ChooseFatigueCircle10
 import com.niaouh.moodtracker.layout.ChooseMoodCircle
 import com.niaouh.moodtracker.layout.ChooseMoodCircle10
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import com.niaouh.moodtracker.model.updateDateOnly
 import com.niaouh.moodtracker.model.updateTime
 import com.niaouh.moodtracker.trackerpopup.TrackerMainRecycleViewAdaptor
@@ -35,7 +36,7 @@ import java.util.logging.Logger
 class DetailedViewActivity : AppCompatActivity() {
     private lateinit var secureFileHandler: SecureFileHandler
     private lateinit var securityHandler: SecurityHandler
-    private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
+    private val log = Logger.getLogger(MainActivity::class.java.name + "DetailedViewActivity")
 
     private lateinit var moodEntry: MoodEntryModel
     private val trackerListMood = arrayListOf<Pair<String,Boolean>>()
@@ -48,16 +49,14 @@ class DetailedViewActivity : AppCompatActivity() {
         secureFileHandler = SecureFileHandler(securityHandler)
 
         val data = intent.getSerializableExtra("MoodEntry")
-        moodEntry = if (data != null) data as MoodEntryModel
+        moodEntry = if (data != null) (data as MoodEntryModelToJson).MoodEntryModel()
             else prepMoodEntry()
 
         initButtons()
     }
 
     private fun prepMoodEntry(): MoodEntryModel {
-        val timeFormat = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH)
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
-        return MoodEntryModel(dateFormat.format(LocalDate.now()), timeFormat.format(LocalDateTime.now()))
+        return MoodEntryModel()
     }
 
     private fun initButtons() {
@@ -81,7 +80,7 @@ class DetailedViewActivity : AppCompatActivity() {
         val time: TextView = findViewById(R.id.tvFrontTime)
 
         date.text = getDateStringFR(moodEntry.date)
-        time.text = getTimeStringFR(moodEntry.time)
+        time.text = getTimeStringFR(moodEntry.date)
         etNote.setText(moodEntry.note)
         etRitaline.setText(moodEntry.ritaline)
         numberPickerMood.setSelected(moodEntry)
@@ -110,15 +109,14 @@ class DetailedViewActivity : AppCompatActivity() {
 
         val dtPickerDate = DatePicker()
         dtPickerDate.onUpdateListener = {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-            date.text = getDateStringFR(dateFormat.format(it.time))
+            date.text = getDateStringFR(it)
             moodEntry.updateDateOnly(it)
         }
 
         val dtPickerTime = TimePicker()
         dtPickerTime.onUpdateListener = {
             val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-            time.text = getTimeStringFR(timeFormat.format(it.time))
+            time.text = getTimeStringFR(it)
             moodEntry.updateTime(it)
         }
 
@@ -127,7 +125,7 @@ class DetailedViewActivity : AppCompatActivity() {
         }
 
         time.setOnClickListener {
-            dtPickerTime.show(this, moodEntry.time)
+            dtPickerTime.show(this, moodEntry.date)
         }
 
         resetMood.setOnClickListener {
@@ -157,12 +155,14 @@ class DetailedViewActivity : AppCompatActivity() {
                     if (!moodEntry.trackers.contains(t.first)) moodEntry.trackers.add(t.first)
                 }
             }
-            intent.putExtra("MoodEntry", moodEntry)
+            intent.putExtra("MoodEntry", moodEntry.MoodEntryModelToJson())
             setResult(RESULT_OK, intent)
+            log.info("Close and save")
             finish()
         }
 
         close.setOnClickListener {
+            log.info("Close don t save")
             finish()
         }
     }

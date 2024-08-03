@@ -23,10 +23,12 @@ import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.data.CircleFatigueBO
 import com.niaouh.moodtracker.data.CircleMoodBO
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import com.niaouh.moodtracker.model.getRitalineInt
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
@@ -72,7 +74,7 @@ class TrendViewActivity : AppCompatActivity() {
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
-        var date = dateFormatLocal.format(LocalDate.now())
+        var date = LocalDate.now()
 
         cRitaline.text = Settings.medicationName
 
@@ -86,25 +88,23 @@ class TrendViewActivity : AppCompatActivity() {
         }
 
         bendDate.text = getDateStringFR(date)
-        maxDate = LocalDate.parse(date, dateFormatLocal)
+        maxDate = date
 
-        date = dateFormatLocal.format(LocalDate.now().minusMonths(1))
+        date = LocalDate.now().minusMonths(1)
         binitDate.text = getDateStringFR(date)
-        minDate = LocalDate.parse(date, dateFormatLocal)
+        minDate = date
 
         val dtPickerInit = DatePicker()
         dtPickerInit.onUpdateListener = {
-            date = dateFormat.format(it.time)
-            minDate = LocalDate.parse(date, dateFormatLocal)
-            binitDate.text = getDateStringFR(date)
+            minDate = LocalDate.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH), it.get(Calendar.DAY_OF_MONTH))
+            binitDate.text = getDateStringFR(it)
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
 
         val dtPickerEnd = DatePicker()
         dtPickerEnd.onUpdateListener = {
-            date = dateFormat.format(it.time)
-            maxDate = LocalDate.parse(date, dateFormatLocal)
-            bendDate.text = getDateStringFR(date)
+            maxDate = LocalDate.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH), it.get(Calendar.DAY_OF_MONTH))
+            bendDate.text = getDateStringFR(it)
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
         
@@ -128,23 +128,21 @@ class TrendViewActivity : AppCompatActivity() {
         }
 
         bReset.setOnClickListener {
-            date = dateFormatLocal.format(LocalDate.now())
-            bendDate.text = getDateStringFR(date)
-            maxDate = LocalDate.parse(date, dateFormatLocal)
+            bendDate.text = getDateStringFR(LocalDate.now())
+            maxDate = LocalDate.now()
 
-            date = dateFormatLocal.format(LocalDate.now().minusMonths(1))
-            binitDate.text = getDateStringFR(date)
-            minDate = LocalDate.parse(date, dateFormatLocal)
+            binitDate.text = getDateStringFR(LocalDate.now().minusMonths(1))
+            minDate = LocalDate.now().minusMonths(1)
 
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
         }
 
         binitDate.setOnClickListener {
-            dtPickerInit.show(this, dateFormatLocal.format(minDate))
+            dtPickerInit.show(this, minDate)
         }
 
         bendDate.setOnClickListener {
-            dtPickerEnd.show(this, dateFormatLocal.format(maxDate))
+            dtPickerEnd.show(this, maxDate)
         }
 
         bViewData.setOnClickListener {
@@ -161,7 +159,7 @@ class TrendViewActivity : AppCompatActivity() {
         val lines = mutableListOf<ILineDataSet>()
         val linesMood = mutableListOf<ILineDataSet>()
         val linesFatigue = mutableListOf<ILineDataSet>()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd,HH:mm", Locale.ENGLISH )
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd,HH:mm", Locale.ENGLISH)
         val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
         var dateIt : LocalDate
         var colorsMood = mutableListOf<Int>()
@@ -177,11 +175,11 @@ class TrendViewActivity : AppCompatActivity() {
             var moodNumber = moods.mood
             var fatigueNumber = moods.fatigue
             val ritalineNumber = moods.getRitalineInt()
-            val dateTime = moods.date+","+moods.time
-            val xDate = dateFormat.parse(dateTime)?.time?.toFloat() ?: 0.0.toFloat()
+            val dateTime = Date.from(moods.date.atZone(ZoneId.systemDefault()).toInstant())
+            val xDate = dateTime?.time?.toFloat() ?: 0.0.toFloat()
 
             if (Settings.moodMode == Settings.MoodModes.NUMBERS) { moodNumber = moods.mood; fatigueNumber = moods.fatigue }
-            dateIt = LocalDate.parse(moods.date, dateFormatLocal)
+            dateIt = moods.date.toLocalDate()
 
             if (dateIt <= maxDate && dateIt > minDate) {
                 if (cMood) {
@@ -390,11 +388,11 @@ class TrendViewActivity : AppCompatActivity() {
 
         if (jsonString.isNotEmpty()) {
             val gson = GsonBuilder().create()
-            val type = object: TypeToken<Array<MoodEntryModel>>() {}.type
-            val moodEntries = gson.fromJson<Array<MoodEntryModel>>(jsonString, type)
+            val type = object: TypeToken<Array<MoodEntryModelToJson>>() {}.type
+            val moodEntries = gson.fromJson<Array<MoodEntryModelToJson>>(jsonString, type)
 
             for(x in moodEntries.indices) {
-                moodList.add(moodEntries[x])
+                moodList.add(moodEntries[x].MoodEntryModel())
             }
         }
 

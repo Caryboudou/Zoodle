@@ -4,12 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import java.io.*
 import java.lang.reflect.Modifier
 import java.util.logging.Logger
 
 open class SecureFileHandler(securityHandler: SecurityHandler) {
-    private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
+    private val log = Logger.getLogger(MainActivity::class.java.name + "SecureFileHandler")
     private val _securityHandler = securityHandler
 
     fun write(jsonString: String, filename: String): Boolean {
@@ -37,16 +38,45 @@ open class SecureFileHandler(securityHandler: SecurityHandler) {
         }
     }
 
+    fun prepMoodArray(data: ArrayList<*>): List<MoodEntryModelToJson> {
+        val moodArray = data.filterIsInstance<MoodEntryModel>()
+        val moodArrayReturn = arrayListOf<MoodEntryModelToJson>()
+        for (m in moodArray) {
+            moodArrayReturn.add(m.MoodEntryModelToJson())
+        }
+        return moodArrayReturn
+    }
+
+    fun prepSettings(data: Settings): SettingsToJson {
+        val notifList = arrayListOf<Pair<Int, Int>>()
+        for (d in data.notificationList) {
+            notifList.add(Pair(d.hour, d.hour))
+        }
+        return SettingsToJson(data.moodMode,
+            data.fatigueMode,
+            data.modeNote,
+            data.moodMax,
+            data.fatigueMax,
+            data.notificationTime.hour,
+            data.notificationTime.minute,
+            data.notificationAct,
+            data.medicationName,
+            data.trackerList,
+            data.trackerMode,
+            notifList)
+    }
+
      fun write(data: ArrayList<*>, filename: String = "testData.json"): Boolean {
          val gson = Gson()
-         val moodArray = data.filterIsInstance<MoodEntryModel>()
+         val moodArray = prepMoodArray(data)
          val jsonString: String = gson.toJson(moodArray)
          return write(jsonString, filename)
     }
 
      fun write(data: Settings, filename: String = "settings.json"): Boolean {
-        val gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT).create()
-        val jsonString: String = gson.toJson(data)
+         val gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT).create()
+         val prepSetting = prepSettings(data)
+         val jsonString: String = gson.toJson(prepSetting)
          return write(jsonString, filename)
     }
 

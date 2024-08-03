@@ -4,7 +4,6 @@ package com.niaouh.moodtracker
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
@@ -24,12 +23,13 @@ import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
 import com.niaouh.moodtracker.alarm_rc.AlarmAdapter
-import com.niaouh.moodtracker.layout.ChooseFatigueCircle10
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
+import com.niaouh.moodtracker.model.createNewEntry
 import com.niaouh.moodtracker.trackerpopup.TrackerPopup
-import java.text.SimpleDateFormat
+import com.niaouh.moodtracker.utils.ResUtil.getTimeStringEN
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -100,14 +100,15 @@ class SettingsActivity() : AppCompatActivity() {
         tvTrakerName.text = getTrackerList()
 
         sReminderForget.isChecked = Settings.notificationAct
-        val timeReminder = getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(Settings.notificationTime)
+        val timeReminder =
+            getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(Settings.notificationTime)
         sReminderForget.text = timeReminder
 
         val dtPickerTime = TimePicker()
         dtPickerTime.onUpdateListener = {
-            val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-            val time = timeFormat.format(it.time)
-            val timeReminder = getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(time)
+            val time = LocalTime.of(it.get(Calendar.HOUR_OF_DAY), it.get(Calendar.MINUTE))
+            val timeReminder =
+                getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(time)
             Settings.notificationTime = time
             sReminderForget.text = timeReminder
             deleteNotifForget(this)
@@ -115,8 +116,7 @@ class SettingsActivity() : AppCompatActivity() {
         }
         val dtPickerTimeRV = TimePicker()
         dtPickerTimeRV.onUpdateListener = {
-            val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-            val time = timeFormat.format(it.time)
+            val time = LocalTime.of(it.get(Calendar.HOUR_OF_DAY), it.get(Calendar.MINUTE))
             alarmRecycleView.addAlarm(time, this)
         }
 
@@ -125,8 +125,13 @@ class SettingsActivity() : AppCompatActivity() {
         }
 
         sMoodNumerals.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) { Settings.moodMode = Settings.MoodModes.NUMBERS; Settings.fatigueMode = Settings.FatigueModes.NUMBERS }
-            else {Settings.moodMode = Settings.MoodModes.FACES; Settings.fatigueMode = Settings.FatigueModes.FACES }
+            if (isChecked) {
+                Settings.moodMode = Settings.MoodModes.NUMBERS; Settings.fatigueMode =
+                    Settings.FatigueModes.NUMBERS
+            } else {
+                Settings.moodMode = Settings.MoodModes.FACES; Settings.fatigueMode =
+                    Settings.FatigueModes.FACES
+            }
         }
 
         sModeNote.setOnCheckedChangeListener { _, isChecked ->
@@ -136,12 +141,14 @@ class SettingsActivity() : AppCompatActivity() {
         sReminderForget.setOnCheckedChangeListener { _, isChecked ->
             Settings.notificationAct = isChecked
             if (isChecked) {
-                val newText = getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(Settings.notificationTime)
+                val newText =
+                    getString(R.string.settings_reminder_time_forget) + " " + getTimeStringFR(
+                        Settings.notificationTime
+                    )
                 sReminderForget.text = newText
                 deleteNotifForget(this)
                 createNotifForget(this, Settings.notificationTime)
-            }
-            else {
+            } else {
                 deleteNotifForget(this)
             }
         }
@@ -154,20 +161,26 @@ class SettingsActivity() : AppCompatActivity() {
             dtPickerTimeRV.show(this)
         }
 
-         tvSettingsExport.setOnClickListener {
+        tvSettingsExport.setOnClickListener {
             val intent = Intent()
                 .setType("text/json")
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .putExtra(Intent.EXTRA_TITLE, "mood_tracker_export_med_${Settings.medicationName}.json")
+                .putExtra(
+                    Intent.EXTRA_TITLE,
+                    "mood_tracker_export_med_${Settings.medicationName}.json"
+                )
                 .setAction(Intent.ACTION_CREATE_DOCUMENT)
             getExportJsonFileResult.launch(intent)
         }
-        
+
         tvSettingsExportCSV.setOnClickListener {
             val intent = Intent()
                 .setType("text/csv")
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .putExtra(Intent.EXTRA_TITLE, "mood_tracker_export_med_${Settings.medicationName}.csv")
+                .putExtra(
+                    Intent.EXTRA_TITLE,
+                    "mood_tracker_export_med_${Settings.medicationName}.csv"
+                )
                 .setAction(Intent.ACTION_CREATE_DOCUMENT)
             getExportCSVFileResult.launch(intent)
         }
@@ -191,52 +204,66 @@ class SettingsActivity() : AppCompatActivity() {
         bSettingsConfirm.setOnClickListener {
             val finishIntent = Intent()
             if (dataImport.isNotEmpty()) {
-                finishIntent.putExtra("MoodEntries", dataImport)
+                val data = arrayListOf<MoodEntryModelToJson>()
+                for (m in dataImport) {
+                    data.add(m.MoodEntryModelToJson())
+                }
+                finishIntent.putExtra("MoodEntries", data)
             }
             setResult(RESULT_OK, finishIntent)
             Settings.medicationName = etMedicationName.text.toString()
             Settings.trackerList.sort()
             Settings.moodMax =
-                if (spMaxMood.selectedItemPosition == 0)  5
+                if (spMaxMood.selectedItemPosition == 0) 5
                 else 9
             finish()
         }
 
-        getExportJsonFileResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { exportResult ->
-            try {
-                val gson = Gson()
-                val data = exportResult.data?.data
-                val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
-                val jsonString = gson.toJson(moodData)
-                outStream?.write(jsonString.toByteArray())
-                outStream?.flush()
-                outStream?.close()
-            } catch (e: Exception) {
-                Toast.makeText(this, "Unable to write to file", Toast.LENGTH_SHORT).show()
-            }
-
-        }
-
-        getExportCSVFileResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { exportResult ->
-            try {
-                val data = exportResult.data?.data
-                val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
-                val writer = outStream?.bufferedWriter()
-                writer?.write("date|jour|time|mood|fatigue|note|medication|key|lastUpdated|tracker")
-                for (m in moodData) {
-                    writer?.newLine()
-                    writer?.write("${m.date}|${m.textMoodDay()}|${m.time}|${m.mood}|${m.fatigue}|${m.note.replace("\n","/n")}|${m.ritaline}|${m.key}|${m.lastUpdated}|")
-                    for (t in m.trackers) {
-                        writer?.write("$t;")
-                    }
+        getExportJsonFileResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { exportResult ->
+                try {
+                    val gson = Gson()
+                    val data = exportResult.data?.data
+                    val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
+                    val jsonString = gson.toJson(moodData.map { m -> m.MoodEntryModelToJson() })
+                    outStream?.write(jsonString.toByteArray())
+                    outStream?.flush()
+                    outStream?.close()
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Unable to write to file", Toast.LENGTH_SHORT).show()
                 }
-                writer?.flush()
-                outStream?.close()
-            } catch (e: Exception) {
-                Toast.makeText(this, "Unable to write to file", Toast.LENGTH_SHORT).show()
+
             }
 
-        }
+        getExportCSVFileResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { exportResult ->
+                try {
+                    val data = exportResult.data?.data
+                    val outStream = data?.let { contentResolver.openOutputStream(it, "w") }
+                    val writer = outStream?.bufferedWriter()
+                    writer?.write("date|heure|mood|fatigue|note|medication|tracker|key|lastUpdated|")
+                    for (m in moodData) {
+                        writer?.newLine()
+                        writer?.write(
+                            "${m.textMoodDay()}|${getTimeStringEN(m.date)}|${m.mood}|${m.fatigue}|${
+                                m.note.replace(
+                                    "\n",
+                                    "/n"
+                                )
+                            }|${m.ritaline}|"
+                        )
+                        for (t in m.trackers) {
+                            writer?.write("$t;")
+                        }
+                        writer?.write("|${m.key}|${m.lastUpdated}|")
+                    }
+                    writer?.flush()
+                    outStream?.close()
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Unable to write to file", Toast.LENGTH_SHORT).show()
+                }
+
+            }
 
         getImportJsonFileResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
@@ -262,38 +289,38 @@ class SettingsActivity() : AppCompatActivity() {
                             gson.fromJson<Array<HashMap<String, String>>>(inputAsString, type)
 
                         for (mood in moodEntryList) {
-                            var date = "1987-11-06"
-                            var exceptions = 0
+                            var year = 0
+                            var month = 0
+                            var day = 0
+                            var hour = 0
+                            var minute = 0
+                            var exception = 0
+
                             try {
-                                val format =
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
                                 val localDate = LocalDate.parse(mood["date"])
-                                date = format.format(localDate)
+                                year = localDate.year
+                                month = localDate.monthValue
+                                day = localDate.dayOfMonth
                             } catch (e: Exception) {
-                                exceptions++
-                            }
-
-                            try {
-                                val format =
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
-                                val localDate = LocalDate.parse(
-                                    mood["date"],
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                                )
-                                date = format.format(localDate)
-                                exceptions = 0
-                            } catch (e: Exception) {
-                                exceptions++
-                            }
-
-                            val time = mood["time"]?.substring(0, 5)
-
-                            if (exceptions != 0) {
                                 Toast.makeText(
                                     this,
                                     "Date must be of format yyyy-MM-dd",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                exception++
+                            }
+
+                            try {
+                                val localDate = LocalTime.parse(mood["time"])
+                                hour = localDate.hour
+                                minute = localDate.minute
+                            } catch (e: Exception) {
+                                Toast.makeText(
+                                    this,
+                                    "Time must be of format hh:mm",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                exception++
                             }
 
                             val key = when (mood["key"]) {
@@ -305,35 +332,44 @@ class SettingsActivity() : AppCompatActivity() {
                             else LocalDateTime.now().toString()
 
                             val note = if (mood["note"] != null) mood["note"].toString()
-                                else ""
+                            else ""
 
                             if (mood["mood"] != null) {
                                 if (mood["mood"]!!.toInt() in 6..10) Settings.moodMax = 10
-                                else if (mood["mood"]!!.toInt() > Settings.moodMax) Settings.moodMax = mood["mood"]?.toInt() ?: 5
+                                else if (mood["mood"]!!.toInt() > Settings.moodMax) Settings.moodMax =
+                                    mood["mood"]?.toInt() ?: 5
                             }
                             if (mood["fatigue"] != null) {
                                 if (mood["fatigue"]!!.toInt() in 6..10) Settings.moodMax = 10
-                                else if (mood["fatigue"]!!.toInt() > Settings.moodMax) Settings.moodMax = mood["fatigue"]?.toInt() ?: 5
+                                else if (mood["fatigue"]!!.toInt() > Settings.moodMax) Settings.moodMax =
+                                    mood["fatigue"]?.toInt() ?: 5
                             }
 
                             val medication =
                                 if (mood["medication"] != null) mood["medication"].toString()
                                 else ""
 
-                            dataImport.add(
-                                MoodEntryModel(
-                                    date,
-                                    time.toString(),
-                                    mood["mood"].toString().toInt(),
-                                    mood["fatigue"].toString().toInt(),
-                                    note,
-                                    medication,
-                                    key.toString(),
-                                    lastUpdated.toString()
+                            val trackers = arrayListOf<String>()
+                            val values = mood["tracker"]?.split(";") ?: listOf()
+                            for (v in values) trackers.add(v)
+
+                            if (exception == 0) {
+                                dataImport.add(
+                                    createNewEntry(
+                                        year, month, day, hour, minute,
+                                        mood["mood"].toString().toInt(),
+                                        mood["fatigue"].toString().toInt(),
+                                        note,
+                                        medication,
+                                        trackers,
+                                        key.toString(),
+                                        lastUpdated.toString()
+                                    )
                                 )
-                            )
+                                Toast.makeText(this, "File processed correctly", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
-                        Toast.makeText(this, "File processed correctly", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
                         Toast.makeText(this, "Unable to process as JSON", Toast.LENGTH_SHORT).show()
                     }
@@ -347,7 +383,7 @@ class SettingsActivity() : AppCompatActivity() {
                 var exception = 0
 
                 try {
-                    val csvFile = path?.let {contentResolver.openInputStream(it) }
+                    val csvFile = path?.let { contentResolver.openInputStream(it) }
                     inputAsString =
                         csvFile?.bufferedReader().use { it?.readText() ?: "Failed to read" }
                 } catch (e: Exception) {
@@ -358,7 +394,7 @@ class SettingsActivity() : AppCompatActivity() {
                 if (inputAsString.isNotEmpty() && exception == 0) {
                     val moodEntryList: MutableList<Map<String, String>> = LinkedList()
                     val moodE = inputAsString.split("\n")
-                    val header = moodE.first().replace(" ","").split("|")
+                    val header = moodE.first().replace(" ", "").split("|")
                     val nMoodE = moodE.subList(1, moodE.size)
                     for (next in nMoodE) {
                         val value = next.split("|")
@@ -370,29 +406,38 @@ class SettingsActivity() : AppCompatActivity() {
                     }
 
                     for (mood in moodEntryList) {
-                        var date = "1987-11-06"
-                        var exceptions = 0
+                        var year = 0
+                        var month = 0
+                        var day = 0
+                        var hour = 0
+                        var minute = 0
+                        var exception = 0
+
                         try {
-                            val format =
-                                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
                             val localDate = LocalDate.parse(mood["date"])
-                            date = format.format(localDate)
+                            year = localDate.year
+                            month = localDate.monthValue
+                            day = localDate.dayOfMonth
                         } catch (e: Exception) {
-                            exceptions++
-                        }
-
-                        val time = when (mood["time"]) {
-                            null -> "20:00"
-                            else -> mood["time"].toString().substring(0, 5)
-                        }
-
-                        if (exceptions != 0) {
                             Toast.makeText(
                                 this,
-                                "Date must be of format yyyy-MM-dd not ${mood["date"]}",
+                                "Date must be of format yyyy-MM-dd",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            continue
+                            exception++
+                        }
+
+                        try {
+                            val localDate = LocalTime.parse(mood["time"])
+                            hour = localDate.hour
+                            minute = localDate.minute
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                this,
+                                "Time must be of format hh:mm",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            exception++
                         }
 
                         val key = when (mood["key"]) {
@@ -424,43 +469,45 @@ class SettingsActivity() : AppCompatActivity() {
                             else ""
 
                         val note =
-                            if (mood["note"] != null) mood["note"].toString().replace("/n","\n")
+                            if (mood["note"] != null) mood["note"].toString().replace("/n", "\n")
                             else ""
 
                         val trackers = arrayListOf<String>()
                         val values = mood["tracker"]?.split(";") ?: listOf()
                         for (v in values) trackers.add(v)
 
-                        val moodToAdd = MoodEntryModel(
-                            date,
-                            time,
-                            moodValue,
-                            fatigueValue,
-                            note,
-                            medication,
-                            key,
-                            lastUpdated
-                        )
-                        moodToAdd.trackers = trackers
+                        if (exception == 0) {
+                            val moodToAdd = createNewEntry(
+                                year, month, day, hour, minute,
+                                mood["mood"].toString().toInt(),
+                                mood["fatigue"].toString().toInt(),
+                                note,
+                                medication,
+                                trackers,
+                                key,
+                                lastUpdated
+                            )
+                            moodToAdd.trackers = trackers
 
-                        dataImport.add(moodToAdd)
-                    }
-                    Toast.makeText(this, "File processed correctly", Toast.LENGTH_SHORT)
-                        .show()
+                            dataImport.add(moodToAdd)
+                            Toast.makeText(this, "File processed correctly", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
             }
+    }
 
     private fun getMoodListFromJSON(jsonString: String): ArrayList<MoodEntryModel> {
         val moodList = ArrayList<MoodEntryModel>()
 
         if (jsonString.isNotEmpty()) {
             val gson = GsonBuilder().create()
-            val type = object: TypeToken<Array<MoodEntryModel>>() {}.type
-            val moodEntries = gson.fromJson<Array<MoodEntryModel>>(jsonString, type)
+            val type = object: TypeToken<Array<MoodEntryModelToJson>>() {}.type
+            val moodEntries = gson.fromJson<Array<MoodEntryModelToJson>>(jsonString, type)
 
             for(x in moodEntries.indices) {
-                moodList.add(moodEntries[x])
+                moodList.add(moodEntries[x].MoodEntryModel())
             }
         }
 

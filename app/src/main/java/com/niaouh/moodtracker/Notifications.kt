@@ -14,9 +14,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.niaouh.moodtracker.utils.ResUtil
 import kotlinx.coroutines.coroutineScope
 import java.lang.Exception
 import java.net.SocketException
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
@@ -119,18 +122,20 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         val calendar: Calendar = Calendar.getInstance()
         calendar.add(Calendar.DATE, -1)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val monthString = if (calendar.get(Calendar.MONTH) < 10) "0${calendar.get(Calendar.MONTH)}"
-            else "${calendar.get(Calendar.MONTH)}"
+        val monthString = if (calendar.get(Calendar.MONTH) < 9) "0${calendar.get(Calendar.MONTH)+1}"
+            else "${calendar.get(Calendar.MONTH)+1}"
         val dayString = if (calendar.get(Calendar.DAY_OF_MONTH) < 10) "0${calendar.get(Calendar.DAY_OF_MONTH)}"
             else "${calendar.get(Calendar.DAY_OF_MONTH)}"
-        val month = calendar.get(Calendar.MONTH)
+        val month = calendar.get(Calendar.MONTH)+1
         val year = calendar.get(Calendar.YEAR)
         val title = "Moral du $dayString/$monthString/$year non rempli"
         val nID = 1000*year+100*month+day //+ kotlin.random.Random.nextInt()
         log.info("notif rappel id $nID")
 
         val contentIntent = Intent(applicationContext, MainActivity::class.java)
-        contentIntent.putExtra("Forgotten entry", "$year-$monthString-$dayString")
+        contentIntent.putExtra("Forgotten_entry_year", "$year")
+        contentIntent.putExtra("Forgotten_entry_month", monthString)
+        contentIntent.putExtra("Forgotten_entry_day", dayString)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             1,
@@ -283,27 +288,31 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
     }
 }
 
-fun createNotifForget(context: Context, time: String = Settings.notificationTime) {
+fun createNotifForget(context: Context, time: LocalTime = Settings.notificationTime) {
     createNotificationsChannels(context)
-    ForgottenEntranceAlarmsWorker.runAt(time, context)
+    val timeStr = ResUtil.getTimeStringEN(time)
+    ForgottenEntranceAlarmsWorker.runAt(timeStr, context)
 }
 
 fun deleteNotifForget(context: Context) {
     ForgottenEntranceAlarmsWorker.cancel(context)
 }
 
-fun deleteNotifForgetTomorrow(context: Context, time: String = Settings.notificationTime) {
+fun deleteNotifForgetTomorrow(context: Context, time: LocalTime = Settings.notificationTime) {
     //RemindersManager.stopReminder(context)
-    ForgottenEntranceAlarmsWorker.cancelTomorrow(context, time)
+    val timeStr = ResUtil.getTimeStringEN(time)
+    ForgottenEntranceAlarmsWorker.cancelTomorrow(context, timeStr)
 }
 
-fun createNotifSeveral(context: Context, time: String = Settings.notificationTime) {
+fun createNotifSeveral(context: Context, time: LocalTime = Settings.notificationTime) {
     createNotificationsChannels(context)
-    DailyAlarmsWorker.runAt(time, context)
+    val timeStr = ResUtil.getTimeStringEN(time)
+    DailyAlarmsWorker.runAt(timeStr, context)
 }
 
-fun deleteNotifSeveral(context: Context, time: String) {
-    DailyAlarmsWorker.cancel(context, time)
+fun deleteNotifSeveral(context: Context, time: LocalTime) {
+    val timeStr = ResUtil.getTimeStringEN(time)
+    DailyAlarmsWorker.cancel(context, timeStr)
 }
 
 fun deleteAllNotifSeveral(context: Context) {

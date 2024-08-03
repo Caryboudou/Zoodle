@@ -6,8 +6,8 @@ import com.niaouh.moodtracker.R
 import com.niaouh.moodtracker.SecureFileHandler
 import com.niaouh.moodtracker.interfaces.RowEntryModel
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.createNewEntry
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.random.Random
 
@@ -21,7 +21,7 @@ class DebugDataHandler (secureFileHandler: SecureFileHandler,
             debugArrayList.add(createNewMoodEntry())
        }
         val dateTimeNow = LocalDateTime.now()
-        debugArrayList.add(MoodEntryModel(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(dateTimeNow)))
+        debugArrayList.add(MoodEntryModel(dateTimeNow))
 
         secureFileHandler.write(debugArrayList)
 
@@ -30,11 +30,9 @@ class DebugDataHandler (secureFileHandler: SecureFileHandler,
 
     private fun createNewMoodEntry(): MoodEntryModel {
         val random = Random
-        val randomYear = random.nextInt(2010, 2021).toString()
-        var randMonth = random.nextInt(1, 12).toString()
-        if (randMonth.toInt() < 10) randMonth = "0$randMonth"
-        var randDay = random.nextInt(1, 28).toString()
-        if (randDay.toInt() < 10) randDay = "0$randDay"
+        val randomYear = random.nextInt(2010, 2021)
+        val randMonth = random.nextInt(1, 12)
+        val randDay = random.nextInt(1, 28)
         val randMood = random.nextInt(1, 5)
         val randFatigue = random.nextInt(1, 5)
 
@@ -60,13 +58,14 @@ class DebugDataHandler (secureFileHandler: SecureFileHandler,
             feelings.add(availFeelings[random.nextInt(0, availFeelings.size - 1)])
         }
 
-        return MoodEntryModel(
-            "$randomYear-$randMonth-$randDay",
-            "12:34",
+        return createNewEntry(
+            randomYear, randMonth, randDay,
+            12,34,
             randMood,
             randFatigue,
             "",
             "",
+            arrayListOf(),
             "test_" + UUID.randomUUID().toString()
         )
     }

@@ -4,7 +4,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.interfaces.*
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import java.lang.reflect.Modifier
+import java.time.LocalTime
 import java.util.logging.Logger
 
 class MoodTrackerMain(secureFileHandler: SecureFileHandler,
@@ -28,11 +30,11 @@ class MoodTrackerMain(secureFileHandler: SecureFileHandler,
         if (jsonString.isNotEmpty()) {
             try {
                 val gson = GsonBuilder().create()
-                val type = object : TypeToken<Array<MoodEntryModel>>() {}.type
-                val moodEntries = gson.fromJson<Array<MoodEntryModel>>(jsonString, type)
+                val type = object : TypeToken<Array<MoodEntryModelToJson>>() {}.type
+                val moodEntries = gson.fromJson<Array<MoodEntryModelToJson>>(jsonString, type)
 
                 for (x in moodEntries.indices) {
-                    myArrayList.add(moodEntries[x])
+                    myArrayList.add(moodEntries[x].MoodEntryModel())
                 }
             } catch (e: Exception) {
                 log.info("Unable to parse JSON - invalid format")
@@ -58,13 +60,24 @@ class MoodTrackerMain(secureFileHandler: SecureFileHandler,
 
     override fun readSettingsDataFromJson(jsonSettings: String?) {
         val gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT).create()
-        val type = object : TypeToken<Settings>() {}.type
-        val data = gson.fromJson<Settings>(jsonSettings, type)
+        val type = object : TypeToken<SettingsToJson>() {}.type
+        val data = gson.fromJson<SettingsToJson>(jsonSettings, type)
         if (data != null) {
             Settings.moodMode = data.moodMode
             Settings.moodMax = data.moodMax
             Settings.fatigueMode = data.fatigueMode
             Settings.fatigueMax = data.fatigueMax
+            Settings.modeNote = data.modeNote
+            Settings.notificationTime = LocalTime.of(data.notificationTimeHours, data.notificationTimeMinutes)
+            Settings.notificationAct = data.notificationAct
+            Settings.medicationName = data.medicationName
+            Settings.trackerList = data.trackerList
+            Settings.trackerMode = data.trackerMode
+            val notifList = arrayListOf<LocalTime>()
+            for (t in data.notificationList) {
+                notifList.add(LocalTime.of(t.first, t.second))
+            }
+            Settings.notificationList = notifList
         }
     }
 }

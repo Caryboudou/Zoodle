@@ -25,6 +25,8 @@ import com.niaouh.moodtracker.layout.ChooseMoodCircle
 import com.niaouh.moodtracker.layout.ChooseFatigueCircle10
 import com.niaouh.moodtracker.layout.ChooseMoodCircle10
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
+import com.niaouh.moodtracker.model.createNewEntry
 import com.niaouh.moodtracker.model.updateDateOnly
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -66,8 +68,11 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         clNumberPicker = findViewById(R.id.clNumberPicker)
         clNumberInvisible = true
 
+        log.info("main 4")
         setupRecycleView()
+        log.info("main 3")
         initButtons()
+        log.info("main 2")
         setActivityListeners()
 
         //dataHandler = TestSuite.useLocalData(secureFileHandler, applicationContext)
@@ -80,16 +85,21 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         if (moodEntry != null)
             rowController.update(moodEntry as MoodEntryModel)
 
-        val forgottenEntry = intent.getSerializableExtra("Forgotten entry")
-        if (forgottenEntry != null) {
-            val newMoodEntry = MoodEntryModel(date = forgottenEntry as String)
-            startActivityFrontPage(newMoodEntry)
+        val forgottenEntryYear = intent.getSerializableExtra("Forgotten_entry_year")
+        val forgottenEntryMonth = intent.getSerializableExtra("Forgotten_entry_month")
+        val forgottenEntryDay = intent.getSerializableExtra("Forgotten_entry_day")
+        if (forgottenEntryYear != null && forgottenEntryMonth != null && forgottenEntryDay != null) {
+            try {
+                val newMoodEntry = createNewEntry(
+                    year = forgottenEntryYear as Int,
+                    month = forgottenEntryMonth as Int,
+                    day = forgottenEntryDay as Int
+                )
+                startActivityFrontPage(newMoodEntry)
+            } catch (_ : Exception) {}
         }
         else {
-            val todayMoodEntry: RowEntryModel? = rowController.find(
-                "Date",
-                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now())
-            )
+            val todayMoodEntry: RowEntryModel? = rowController.findDate(LocalDate.now())
             if (todayMoodEntry == null) startActivityFrontPage(null)
             else {
                 deleteNotifForgetTomorrow(applicationContext)
@@ -99,6 +109,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     }
 
     override fun setupRecycleView() {
+        log.info("main 3")
         recyclerViewAdaptor = RecyclerViewAdaptor(
             { moodEntry -> setMoodValue(moodEntry) },
             { moodEntry -> startNoteActivity(moodEntry) },
@@ -127,7 +138,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
     override fun startActivityFrontPage(moodEntry: MoodEntryModel?) {
         val intent = Intent(this, DetailedViewActivity::class.java)
-        if (moodEntry != null) intent.putExtra("MoodEntry", moodEntry)
+        if (moodEntry != null) intent.putExtra("MoodEntry", moodEntry.MoodEntryModelToJson())
         if (clNumberInvisible) getFrontPageActivityResult.launch(intent)
     }
 
@@ -143,7 +154,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
     private fun startNoteActivity(moodEntry: MoodEntryModel) {
         val intent = Intent(this, NoteActivity::class.java)
-        intent.putExtra("MoodEntry", moodEntry)
+        intent.putExtra("MoodEntry", moodEntry.MoodEntryModelToJson())
         if (clNumberInvisible) getNoteActivityResult.launch(intent)
     }
 
@@ -152,8 +163,6 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         val numberPickerFatigue: ChooseFatigueCircle10 = findViewById(R.id.tvmpFatigueValue)
         val resetMood : TextView = findViewById(R.id.tvmpMoodTitle)
         val resetFatigue : TextView = findViewById(R.id.tvmpFatigueTitle)
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
 
         resetMood.setOnClickListener {
             numberPickerMood.reset()
@@ -186,14 +195,10 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
                 Settings.FatigueModes.NUMBERS -> numberPickerFatigue.toInt()
                 else -> mvHelper.getUnsanitisedNumber(numberPickerFatigue.toInt(), Settings.fatigueMax)
             }
-            val dateValue: String = if (creation) dateFormat.format(LocalDateTime.now())
+            val dateValue: LocalDateTime = if (creation) LocalDateTime.now()
                     else moodEntry.date
 
-            val timeValue: String = if (creation) timeFormat.format(LocalDateTime.now())
-                    else moodEntry.time
-
             moodEntry.date = dateValue
-            moodEntry.time = timeValue
             moodEntry.mood = moodValue
             moodEntry.fatigue = fatigueValue
             moodEntry.lastUpdated = LocalDateTime.now().toString()
@@ -216,27 +221,30 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
         getFrontPageActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val data = it.data?.getSerializableExtra("MoodEntry")
-            if (data != null) rowController.update(data as MoodEntryModel)
-            val todayMoodEntry: RowEntryModel? = rowController.find("Date",
-                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
+            log.info("getFrontPageResult")
+            if (data != null) rowController.update((data as MoodEntryModelToJson).MoodEntryModel())
+            val todayMoodEntry: RowEntryModel? = rowController.findDate(LocalDate.now())
             if (todayMoodEntry != null) {
-                deleteNotifForgetTomorrow(applicationContext)
+                deleteNotifForgetTomorrow(applicationContext, Settings.notificationTime)
                 log.info("Delete tomorrow reminder")
             }
         }
 
         getNoteActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val data = it.data?.getSerializableExtra("MoodEntry")
-            if (data != null) rowController.update(data as MoodEntryModel)
+            if (data != null) rowController.update((data as MoodEntryModelToJson).MoodEntryModel())
         }
 
         getSettingsActivityResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 //val data = it.data?.getParcelableExtra<Settings>("Settings")
                 val moodEntries = it.data?.getSerializableExtra("MoodEntries")
-                var moodData = ArrayList<RowEntryModel>()
+                val moodData = ArrayList<RowEntryModel>()
                 if (moodEntries != null) {
-                    moodData = moodEntries as ArrayList<RowEntryModel>
+                    val moodTemp = moodEntries as ArrayList<MoodEntryModelToJson>
+                    for (m in moodEntries) {
+                        moodData.add(m.MoodEntryModel())
+                    }
                 }
 
                 secureFileHandler.write(Settings)
@@ -249,16 +257,13 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
     private fun initButtons() {
         val dtPickerDate = DatePicker()
         dtPickerDate.onUpdateListener = {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-            val dateText = dateFormat.format(it.time)
-            val scrollPosition = recyclerViewAdaptor.findFirst(dateText)
+            val scrollPosition = recyclerViewAdaptor.findFirst(it.time)
             layoutManager.scrollToPositionWithOffset(scrollPosition, 0)
         }
 
         val ibFind: ImageButton = findViewById(R.id.ibFind)
         ibFind.setOnClickListener {
-            dtPickerDate.show(this,
-                DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH).format(LocalDate.now()))
+            dtPickerDate.show(this, LocalDateTime.now())
         }
 
         val addNewButton: ImageButton = findViewById(R.id.addNewButton)
@@ -318,8 +323,12 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
         val ibAddNewDebug: ImageButton = findViewById(R.id.ibAddNewDebug)
         ibAddNewDebug.setOnClickListener {
-            val debugMood = MoodEntryFactory().createDebug(applicationContext)
-            rowController.add(debugMood)
+            //val debugMood = MoodEntryFactory().createDebug(applicationContext)
+            //rowController.add(debugMood)
+            val newMoodEntry = createNewEntry(year = 2025 as Int,
+                month = 1 as Int,
+                day = 1 as Int)
+            startActivityFrontPage(newMoodEntry)
         }
     }
 }

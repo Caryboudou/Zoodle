@@ -5,11 +5,14 @@ import com.niaouh.moodtracker.interfaces.DataControllerEventListener
 import com.niaouh.moodtracker.interfaces.RowEntryModel
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.model.toMap
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 import java.util.logging.Logger
 
 class RowController: DataController {
     override var mainRowEntryList = arrayListOf<RowEntryModel>()
-    private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
+    private val log = Logger.getLogger(MainActivity::class.java.name + "RowController")
     private val listeners = ArrayList<DataControllerEventListener>()
 
     override fun registerForUpdates(listener: DataControllerEventListener) {
@@ -96,10 +99,7 @@ class RowController: DataController {
 
     private fun sort(arrayList: ArrayList<RowEntryModel>): ArrayList<RowEntryModel> {
         val comparator = compareBy { row: RowEntryModel ->
-            convertStringToDateTime(
-                row.date + "T" + row.time,
-                16
-            )
+            row.date
         }.reversed()
         val sorted = arrayList.sortedWith(comparator)
         val arrayListToReturn = ArrayList<RowEntryModel>()
@@ -140,18 +140,19 @@ class RowController: DataController {
 
     override fun get(position: Int): RowEntryModel { return mainRowEntryList[position] }
 
-    override fun <T> find(type: String, condition: T): RowEntryModel? {
+    override fun <T> findDate(condition: T): RowEntryModel? {
         val found: MoodEntryModel? = mainRowEntryList.filterIsInstance<MoodEntryModel>().let {
-            it.find { mood -> mood.toMap()[type.lowercase()] == condition }
+            it.find { mood -> mood.date.toLocalDate() == condition }
         }
-        log.info("Looking for $type as ${condition.toString()}")
+        log.info("Looking for date as ${condition.toString()}")
         return found
     }
 
-    override fun findFirst(date: String): Int {
+    override fun findFirst(date: Date): Int {
         val index = mainRowEntryList.let { row ->
             row.indexOfFirst { it.viewType == MoodEntryModel().viewType
-                    && (it as MoodEntryModel).date <= date}}
+                    && Date.from(
+                        (it as MoodEntryModel).date.atZone(ZoneId.systemDefault()).toInstant()) <= date}}
         log.info("Looking for first row before $date")
         return if (index == -1) 0 else index
     }

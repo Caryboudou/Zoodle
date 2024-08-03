@@ -2,9 +2,8 @@ package com.niaouh.moodtracker
 
 import android.content.Context
 import com.niaouh.moodtracker.model.MoodEntryModel
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZoneOffset
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
@@ -46,19 +45,15 @@ class MoodEntryFactory: RowEntryFactory() {
         }
 
         val dateTime = if (date == null) {
-            val fromDate = LocalDate.of(2017, 1, 1).toEpochDay()
-            val toDate = LocalDate.of(2022, 5, 11).toEpochDay()
+            val zoneOffset = ZoneOffset.of("Z")
+            val fromDate = LocalDateTime.of(2017, 1, 1, 0, 0).toEpochSecond(zoneOffset)
+            val toDate = LocalDateTime.of(2022, 5, 11, 23, 59).toEpochSecond(zoneOffset)
             val randomDate = ThreadLocalRandom.current().nextLong(fromDate, toDate)
-            LocalDate.ofEpochDay(randomDate)
-        } else date.toLocalDate()
-
-        val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-        val randomTime = random.nextInt(10,23).toString() + ":" + random.nextInt(10,59).toString()
-        val time = randomTime.format(dateTimeFormatter)
+            LocalDateTime.ofEpochSecond(randomDate, 0, zoneOffset)
+        } else date
 
         return MoodEntryModel(
-                dateTime.toString(),
-                time,
+                dateTime,
                 moodVal,
                 fatigue,
                 "",

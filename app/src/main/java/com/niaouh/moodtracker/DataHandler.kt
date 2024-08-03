@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.interfaces.RowEntryModel
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
+import com.niaouh.moodtracker.model.createNewEntry
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -14,7 +16,7 @@ import kotlin.random.Random
 open class DataHandler(var secureFileHandler: SecureFileHandler,
                        private var context: Context
 ) {
-    private val log = Logger.getLogger(MainActivity::class.java.name + "****************************************")
+    private val log = Logger.getLogger(MainActivity::class.java.name + "DataHandler")
 
      open fun read(): ArrayList<RowEntryModel> {
         val jsonArray = secureFileHandler.read()
@@ -23,12 +25,12 @@ open class DataHandler(var secureFileHandler: SecureFileHandler,
 
         if (jsonArray.isNotEmpty()) {
             val gson = GsonBuilder().create()
-            val type = object : TypeToken<Array<MoodEntryModel>>() {}.type
-            val moodEntries = gson.fromJson<Array<MoodEntryModel>>(jsonArray, type)
+            val type = object : TypeToken<Array<MoodEntryModelToJson>>() {}.type
+            val moodEntries = gson.fromJson<Array<MoodEntryModelToJson>>(jsonArray, type)
             if (moodEntries.isEmpty()) return moodData
 
             for (x in moodEntries.indices) {
-                moodData.add(moodEntries[x])
+                moodData.add(moodEntries[x].MoodEntryModel())
             }
         }
 
@@ -60,15 +62,8 @@ open class DataHandler(var secureFileHandler: SecureFileHandler,
             feelings.add(availFeelings[random.nextInt(0, availFeelings.size - 1)])
         }
 
-        var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date = dateTimeNow.format(dateTimeFormatter)
-
-        dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-        val time = dateTimeNow.format(dateTimeFormatter)
-
         return MoodEntryModel(
-                date,
-                time,
+                dateTimeNow,
                 3,
                 3,
                 "",

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import com.niaouh.moodtracker.model.getRitalineInt
 import com.niaouh.moodtracker.trackerpopup.TrackerMainRecycleViewAdaptor
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
@@ -31,7 +32,7 @@ class NoteActivity: AppCompatActivity()  {
         setContentView(R.layout.note_recycle_view)
 
         val data = intent.getSerializableExtra("MoodEntry")
-        moodEntry = if (data != null) data as MoodEntryModel
+        moodEntry = if (data != null) (data as MoodEntryModelToJson).MoodEntryModel()
             else prepMoodEntry()
 
         val bConfirm: ImageButton = findViewById(R.id.bConfirm)
@@ -89,7 +90,7 @@ class NoteActivity: AppCompatActivity()  {
                     if (!moodEntry.trackers.contains(t.first)) moodEntry.trackers.add(t.first)
                 }
             }
-            finishIntent.putExtra("MoodEntry", moodEntry)
+            finishIntent.putExtra("MoodEntry", moodEntry.MoodEntryModelToJson())
             setResult(RESULT_OK, finishIntent)
             finish()
         }
@@ -100,8 +101,6 @@ class NoteActivity: AppCompatActivity()  {
     }
 
     private fun prepMoodEntry(): MoodEntryModel {
-        val timeFormat = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH)
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
-        return MoodEntryModel(dateFormat.format(LocalDate.now()), timeFormat.format(LocalDateTime.now()))
+        return MoodEntryModel()
     }
 }

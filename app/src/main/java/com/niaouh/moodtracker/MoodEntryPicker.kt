@@ -10,9 +10,11 @@ import com.niaouh.moodtracker.layout.ChooseMoodCircle
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringEN
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
+import com.niaouh.moodtracker.utils.ResUtil.getLocalDateTimeFromStringFR
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringEN
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -51,8 +53,7 @@ class MoodEntryPicker(context: Context, val onCreateMoodEntry: (MoodEntryModel) 
         val fatigue: ChooseFatigueCircle = dialog.findViewById(R.id.tvmpFatigueValue)
 
         return MoodEntryModel(
-            getDateStringEN(date.text.toString()),
-            getTimeStringEN(time.text.toString()),
+            getLocalDateTimeFromStringFR(date.text.toString(), time.text.toString()),
             mood.toInt(),
             fatigue.toInt()
         )
@@ -69,13 +70,11 @@ class MoodEntryPicker(context: Context, val onCreateMoodEntry: (MoodEntryModel) 
     }
 
     private fun loadDefaults() {
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date: TextView = dialog.findViewById(R.id.tvmpDateValue)
-        val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
         val time: TextView = dialog.findViewById(R.id.tvmpTimeValue)
 
-        date.text = getDateStringFR(dateFormat.format(LocalDate.now()))
-        time.text = getTimeStringFR(timeFormat.format(LocalTime.now()))
+        date.text = getDateStringFR(LocalDateTime.now())
+        time.text = getTimeStringFR(LocalDateTime.now())
     }
 
     fun showPopup() {

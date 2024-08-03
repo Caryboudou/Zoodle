@@ -5,6 +5,10 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.os.Build
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.Calendar
 
 object ResUtil {
 
@@ -19,22 +23,81 @@ object ResUtil {
         )
     }
 
-    fun getDateStringFR(date: String) : String {
-        val slipped = date.split('-')
-        return slipped[2]+"/"+slipped[1]+"/"+slipped[0]
+    fun getDateStringFR(year: Int, month: Int, day:Int) : String {
+        val monthStr = if (month < 10) "0${month}"
+            else month.toString()
+        val dayStr = if (day < 10) "0${day}"
+            else day.toString()
+        return "$dayStr/$monthStr/$year"
     }
-    fun getDateStringEN(date: String) : String {
-        val slipped = date.split('/')
-        return slipped[2]+"-"+slipped[1]+"-"+slipped[0]
+    fun getDateStringFR(date: LocalDateTime) : String {
+        return getDateStringFR(date.year, date.monthValue, date.dayOfMonth)
+    }
+    fun getDateStringFR(date: LocalDate) : String {
+        return getDateStringFR(date.year, date.monthValue, date.dayOfMonth)
+    }
+    fun getDateStringFR(calendar: Calendar) : String {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)+1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        return getDateStringFR(year, month, day)
+    }
+    fun getDateStringEN(date: LocalDateTime) : String {
+        val year = date.year.toString()
+        val month = if (date.month.value < 10) "0${date.month.value}"
+            else date.month.value.toString()
+        val day = if (date.dayOfMonth < 10) "0${date.dayOfMonth}"
+            else date.dayOfMonth.toString()
+        return "$year-$month-$day"
     }
 
-    fun getTimeStringFR(time: String) : String {
-        val slipped = time.split(":")
-        return slipped[0]+"h"+slipped[1]
+    fun getTimeStringFR(hour:Int, minute: Int) : String {
+        val hourStr = if (hour < 10) "0${hour}"
+            else hour.toString()
+        val minuteStr = if (minute < 10) "0${minute}"
+            else minute.toString()
+        return hourStr+"h"+minuteStr
     }
-    fun getTimeStringEN(time: String) : String {
-        val slipped = time.split("h")
-        return slipped[0]+":"+slipped[1]
+    fun getTimeStringFR(date: LocalDateTime) : String {
+        return getTimeStringFR(date.hour, date.minute)
+    }
+    fun getTimeStringFR(date: LocalTime) : String {
+        return getTimeStringFR(date.hour, date.minute)
+    }
+    fun getTimeStringFR(calendar: Calendar) : String {
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        return getTimeStringFR(hour, minute)
+    }
+    fun getTimeStringEN(hour:Int, minute: Int) : String {
+        val hourStr = if (hour < 10) "0${hour}"
+            else hour.toString()
+        val minuteStr = if (minute < 10) "0${minute}"
+            else minute.toString()
+        return hourStr+":"+minuteStr
+    }
+    fun getTimeStringEN(date: LocalDateTime) : String {
+        return getTimeStringEN(date.hour, date.minute)
+    }
+    fun getTimeStringEN(date: LocalTime) : String {
+        return getTimeStringEN(date.hour, date.minute)
+    }
+    fun getTimeStringEN(calendar: Calendar) : String {
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        return getTimeStringEN(hour, minute)
+    }
+
+    fun getLocalDateTimeFromStringFR(date: String, time: String): LocalDateTime {
+        val slippedDate = date.split("/")
+        val day = slippedDate[0].toInt()
+        val month = slippedDate[1].toInt()
+        val year = slippedDate[2].toInt()
+
+        val slippedTime = time.split("h")
+        val hour = slippedTime[0].toInt()
+        val minute = slippedTime[1].toInt()
+        return LocalDateTime.of(year, month, day, hour, minute)
     }
 
     fun getMonthNameFR(month: Int) : String {

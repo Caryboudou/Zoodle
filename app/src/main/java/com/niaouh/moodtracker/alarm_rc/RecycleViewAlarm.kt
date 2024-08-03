@@ -18,10 +18,11 @@ import com.niaouh.moodtracker.deleteAllNotifSeveral
 import com.niaouh.moodtracker.deleteNotifSeveral
 import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.*
 
-class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmAdapter.AlarmViewHolder>() {
-    private var alarmList: MutableList<String> = arrayListOf()
+class AlarmAdapter(data: ArrayList<LocalTime>, layer: LinearLayout): Adapter<AlarmAdapter.AlarmViewHolder>() {
+    private var alarmList: MutableList<LocalTime> = arrayListOf()
     private var rcLayer: LinearLayout
 
     init {
@@ -57,8 +58,8 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
         val dtPickerTime = TimePicker()
         dtPickerTime.onUpdateListener = {
             val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-            val dtTime = timeFormat.format(it.time)
-            val timeReminder = context.getString(R.string.settings_reminder_time) + " " + getTimeStringFR(dtTime)
+            val dtTime = LocalTime.of(it.get(Calendar.HOUR_OF_DAY), it.get(Calendar.MINUTE))
+            val timeReminder = context.getString(R.string.settings_reminder_time) + " " + getTimeStringFR(it)
             mHolder.text.text = timeReminder
             deleteAlarm(position, context)
             addAlarm(dtTime, context)
@@ -83,7 +84,7 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
         }
     }
 
-    fun addAlarm(time: String, context: Context) {
+    fun addAlarm(time: LocalTime, context: Context) {
         if (alarmList.contains(time)) return
         alarmList.add(time)
         notifyItemInserted(alarmList.size.minus(1))
@@ -104,7 +105,7 @@ class AlarmAdapter(data: ArrayList<String>, layer: LinearLayout): Adapter<AlarmA
         val ibSet: ImageButton = itemView.findViewById(R.id.ibSetReminder)
         val ibDelete: ImageButton = itemView.findViewById(R.id.ibDeleteReminder)
 
-        fun updateTime(newTime: String) {
+        fun updateTime(newTime: LocalTime) {
             val context = itemView.context
             val time = getTimeStringFR(newTime)
             val timeReminder = context.getString(R.string.settings_reminder_time) + " " + time

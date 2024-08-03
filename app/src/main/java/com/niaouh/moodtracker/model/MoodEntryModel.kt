@@ -1,6 +1,5 @@
 package com.niaouh.moodtracker.model
 
-import android.content.Context
 import android.graphics.Color
 import android.widget.CheckBox
 import android.widget.TableRow
@@ -13,7 +12,6 @@ import com.niaouh.moodtracker.data.CircleMoodBO
 import com.niaouh.moodtracker.data.CircleStateBO
 import com.niaouh.moodtracker.interfaces.DataController
 import com.niaouh.moodtracker.interfaces.RowEntryModel
-import com.niaouh.moodtracker.utils.ResUtil
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 import com.niaouh.moodtracker.utils.ResUtil.getDayNameFR
 import com.niaouh.moodtracker.utils.ResUtil.getMonthNameFR
@@ -24,11 +22,41 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
+
+data class MoodEntryModelToJson(
+    var dateYear: Int = 2020,
+    var dateMonth: Int = 1,
+    var dateDay: Int = 1,
+    var dateHour: Int = 0,
+    var dateMinute: Int = 0,
+    var mood: Int = 0,
+    var fatigue: Int = 0,
+    var note: String = "",
+    var ritaline: String = "",
+    var trackers: ArrayList<String> = arrayListOf(),
+    var key: String = "local_" + UUID.randomUUID().toString(),
+    var lastUpdated: String = LocalDateTime.now().toString()
+
+): Serializable
+fun MoodEntryModelToJson.MoodEntryModel(): MoodEntryModel {
+    return createNewEntry(dateYear,
+        dateMonth,
+        dateDay,
+        dateHour,
+        dateMinute,
+        mood,
+        fatigue,
+        note,
+        ritaline,
+        trackers,
+        key,
+        lastUpdated)
+}
 
 @IgnoreExtraProperties
 data class MoodEntryModel(
-    override var date: String = "2020-01-01",
-    override var time: String = "08:30",
+    override var date: LocalDateTime = LocalDateTime.now(),
     var mood: Int = 0,
     var fatigue: Int = 0,
     var note: String = "",
@@ -46,55 +74,86 @@ data class MoodEntryModel(
     @Transient var viewHolder: RecyclerView.ViewHolder? = null
 
     fun textMood(): String {
-        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dateLocal = LocalDate.parse(date, format)
-        val monthName = getMonthNameFR(dateLocal.month.value)
-        val dayName = getDayNameFR(dateLocal.dayOfWeek.value)
-        val dayNumber = dateLocal.dayOfMonth
+        val monthName = getMonthNameFR(date.month.value)
+        val dayName = getDayNameFR(date.dayOfWeek.value)
+        val dayNumber = date.dayOfMonth
         return "$dayName $dayNumber $monthName"
     }
 
     fun textMoodDay(): String {
-        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dateLocal = LocalDate.parse(date, format)
-        val dayName = getDayNameFR(dateLocal.dayOfWeek.value)
-        return "$dayName"
+        return getDayNameFR(date.dayOfWeek.value)
     }
 
     fun textMoodSnackbar(): String {
-        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dateLocal = LocalDate.parse(date, format)
-        val monthName = getMonthNameFR(dateLocal.month.value)
-        val dayNumber = dateLocal.dayOfMonth
-        val yearNumber = dateLocal.year
+        val monthName = getMonthNameFR(date.month.value)
+        val dayNumber = date.dayOfMonth
+        val yearNumber = date.year
         return "$dayNumber $monthName $yearNumber"
     }
 }
-
+fun MoodEntryModel.MoodEntryModelToJson(): MoodEntryModelToJson {
+    return MoodEntryModelToJson(date.year,
+        date.monthValue,
+        date.dayOfMonth,
+        date.hour,
+        date.minute,
+        mood,
+        fatigue,
+        note,
+        ritaline,
+        trackers,
+        key,
+        lastUpdated)
+}
+fun createNewEntry(year: Int = 2020,
+                   month: Int = 1,
+                   day:Int = 1,
+                   hour:Int = 23,
+                   minute:Int = 59,
+                   mood: Int = 0,
+                   fatigue: Int = 0,
+                   note: String = "",
+                   ritaline: String = "",
+                   trackers: ArrayList<String> = arrayListOf(),
+                   key: String = "local_" + UUID.randomUUID().toString(),
+                   lastUpdated: String = LocalDateTime.now().toString()): MoodEntryModel {
+    val date = LocalDateTime.of(year, month,day, hour, minute)
+    val moodEntry = MoodEntryModel(date, mood, fatigue, note, ritaline, key, lastUpdated)
+    moodEntry.trackers = trackers
+    return moodEntry
+}
 fun MoodEntryModel.updateDate(calendar: Calendar) {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-    val dateStr = dateFormat.format(calendar.time)
+    val newDate = LocalDateTime.of(calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH)+1,
+        calendar.get(Calendar.DAY_OF_MONTH),
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE))
 
-    date = dateStr
-    time = timeFormat.format(calendar.time)
+    date = newDate
 }
 fun MoodEntryModel.updateDateOnly(calendar: Calendar) {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-    val dateStr = dateFormat.format(calendar.time)
+    val newDate = LocalDateTime.of(calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH)+1,
+        calendar.get(Calendar.DAY_OF_MONTH),
+        date.hour,
+        date.minute)
 
-    date = dateStr
+    date = newDate
 }
 fun MoodEntryModel.updateTime(calendar: Calendar) {
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-    time = timeFormat.format(calendar.time)
+    val newDate = LocalDateTime.of(date.year,
+        date.month,
+        date.dayOfMonth,
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE))
+
+    date = newDate
 }
 
 fun MoodEntryModel.compare(moodEntry: MoodEntryModel): Boolean {
     var isTheSame = true
 
     if (date != moodEntry.date) isTheSame = false
-    if (time != moodEntry.time) isTheSame = false
     if (mood != moodEntry.mood) isTheSame = false
     if (fatigue != moodEntry.fatigue) isTheSame = false
 
@@ -109,7 +168,6 @@ fun MoodEntryModel.hideRow(mViewHolder: MoodViewHolder) {
 fun MoodEntryModel.toMap(): Map<String, Any?> {
     return mapOf(
         "date" to date,
-        "time" to time,
         "mood" to mood,
         "fatigue" to fatigue,
         "note" to note,
@@ -122,7 +180,6 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
     lastUpdated = LocalDateTime.now().toString()
 
     date = moodEntry.date
-    time = moodEntry.time
     mood = moodEntry.mood
     fatigue = moodEntry.fatigue
     note = moodEntry.note
@@ -132,9 +189,9 @@ fun MoodEntryModel.update(moodEntry: MoodEntryModel) {
 fun MoodEntryModel.bindToViewHolder(holder: RecyclerView.ViewHolder, rowController: DataController) {
     val mViewHolder = holder as MoodViewHolder
     mViewHolder.dateText.text = textMood()
-    mViewHolder.timeText.text = getTimeStringFR(time)
+    mViewHolder.timeText.text = getTimeStringFR(date)
     mViewHolder.dateTextTrack.text = getDateStringFR(date)
-    mViewHolder.timeTextTrack.text = getTimeStringFR(time)
+    mViewHolder.timeTextTrack.text = getTimeStringFR(date)
     mViewHolder.noteText.text = note
 
     if (Settings.modeNote && note != "") {
@@ -193,12 +250,16 @@ fun MoodEntryModel.applyDrawableMood() {
         val mViewHolder = viewHolder as MoodViewHolder
         mViewHolder.moodFace.visibility = android.view.View.INVISIBLE
 
-        when {
-            mood == 1 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_bad) }
-            mood == 2 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_bad) }
-            mood == 3 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_mediocre) }
-            mood == 4 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_good) }
-            mood == 5 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_good) }
+        when (mood) {
+            1 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_bad) }
+            2 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_bad_1) }
+            3 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_bad) }
+            4 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_mediocre_1) }
+            5 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_mediocre) }
+            6 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_good_1) }
+            7 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_good) }
+            8 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_good_1) }
+            9 -> { mViewHolder.moodText.setBackgroundResource(R.drawable.mood_rating_colour_very_good) }
             else -> { mViewHolder.moodText.setBackgroundResource(R.drawable.none_rating_color) }
         }
     }
@@ -217,12 +278,16 @@ fun MoodEntryModel.applyDrawableFatigue() {
         val mViewHolder = viewHolder as MoodViewHolder
         mViewHolder.fatigueFace.visibility = android.view.View.INVISIBLE
 
-        when {
-            fatigue == 1 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_bad) }
-            fatigue == 2 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_bad) }
-            fatigue == 3 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_mediocre) }
-            fatigue == 4 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_good) }
-            fatigue == 5 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good) }
+        when (fatigue) {
+            1 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_bad) }
+            2 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_bad_1) }
+            3 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_bad) }
+            4 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_mediocre_1) }
+            5 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_mediocre) }
+            6 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_good_1) }
+            7 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_good) }
+            8 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good_1) }
+            9 -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.fatigue_rating_colour_very_good) }
             else -> { mViewHolder.fatigueText.setBackgroundResource(R.drawable.none_rating_color) }
         }
     } else if (viewHolder != null && Settings.fatigueMode == Settings.FatigueModes.FACES) {

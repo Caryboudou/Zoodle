@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.niaouh.moodtracker.model.MoodEntryModel
+import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 
 class TrackerActivity: AppCompatActivity() {
@@ -75,11 +76,11 @@ class TrackerActivity: AppCompatActivity() {
 
         if (jsonString.isNotEmpty()) {
             val gson = GsonBuilder().create()
-            val type = object: TypeToken<Array<MoodEntryModel>>() {}.type
-            val moodEntries = gson.fromJson<Array<MoodEntryModel>>(jsonString, type)
+            val type = object: TypeToken<Array<MoodEntryModelToJson>>() {}.type
+            val moodEntries = gson.fromJson<Array<MoodEntryModelToJson>>(jsonString, type)
 
             for(x in moodEntries.indices) {
-                moodList.add(moodEntries[x])
+                moodList.add(moodEntries[x].MoodEntryModel())
             }
         }
 
