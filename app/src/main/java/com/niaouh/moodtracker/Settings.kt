@@ -12,7 +12,7 @@ object Settings {
         const val modeNote = false
         const val moodMax: Int = 5
         const val fatigueMax: Int = 5
-        val notificationTime: LocalTime = LocalTime.of(20,0)
+        val notificationTime: LocalTime = LocalTime.of(5,10)
         const val notificationAct = false
         const val medicationName = "Ritaline"
         val trackerList: ArrayList<String> = arrayListOf()
@@ -64,8 +64,8 @@ class SettingsToJson (
     val modeNote: Boolean = false,
     val moodMax: Int = 5,
     val fatigueMax: Int = 5,
-    val notificationTimeHours: Int = 20,
-    val notificationTimeMinutes: Int = 0,
+    val notificationTimeHours: Int = 5,
+    val notificationTimeMinutes: Int = 20,
     val notificationAct: Boolean = false,
     val medicationName: String = "Ritaline",
     val trackerList: ArrayList<String> = arrayListOf(),

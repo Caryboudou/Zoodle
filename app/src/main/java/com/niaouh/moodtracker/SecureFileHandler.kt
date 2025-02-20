@@ -50,7 +50,7 @@ open class SecureFileHandler(securityHandler: SecurityHandler) {
     fun prepSettings(data: Settings): SettingsToJson {
         val notifList = arrayListOf<Pair<Int, Int>>()
         for (d in data.notificationList) {
-            notifList.add(Pair(d.hour, d.hour))
+            notifList.add(Pair(d.hour, d.minute))
         }
         return SettingsToJson(data.moodMode,
             data.fatigueMode,

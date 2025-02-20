@@ -22,6 +22,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.logging.Logger
 import kotlin.collections.ArrayList
 
 data class MoodEntryModelToJson(
@@ -117,7 +118,7 @@ fun createNewEntry(year: Int = 2020,
                    trackers: ArrayList<String> = arrayListOf(),
                    key: String = "local_" + UUID.randomUUID().toString(),
                    lastUpdated: String = LocalDateTime.now().toString()): MoodEntryModel {
-    val date = LocalDateTime.of(year, month,day, hour, minute)
+    val date = LocalDateTime.of(year, month, day, hour, minute)
     val moodEntry = MoodEntryModel(date, mood, fatigue, note, ritaline, key, lastUpdated)
     moodEntry.trackers = trackers
     return moodEntry

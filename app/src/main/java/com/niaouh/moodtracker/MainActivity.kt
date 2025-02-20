@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -81,6 +82,8 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
         rowController.update(dataHandler.read())
 
+        //cancelNotification(applicationContext)
+
         val moodEntry = intent.getSerializableExtra("MoodEntry")
         if (moodEntry != null)
             rowController.update(moodEntry as MoodEntryModel)
@@ -90,13 +93,17 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         val forgottenEntryDay = intent.getSerializableExtra("Forgotten_entry_day")
         if (forgottenEntryYear != null && forgottenEntryMonth != null && forgottenEntryDay != null) {
             try {
+                log.info("launch startActivityFrontPage for y $forgottenEntryYear m $forgottenEntryMonth d $forgottenEntryDay")
                 val newMoodEntry = createNewEntry(
-                    year = forgottenEntryYear as Int,
-                    month = forgottenEntryMonth as Int,
-                    day = forgottenEntryDay as Int
+                    year = (forgottenEntryYear as String).toInt(),
+                    month = (forgottenEntryMonth as String).toInt(),
+                    day = (forgottenEntryDay as String).toInt()
                 )
+                log.info("newMoodEntry $newMoodEntry")
                 startActivityFrontPage(newMoodEntry)
-            } catch (_ : Exception) {}
+            } catch (_ : Exception) {
+                log.info("failed launch startActivityFrontPage for y $forgottenEntryYear m $forgottenEntryMonth d $forgottenEntryDay")
+            }
         }
         else {
             val todayMoodEntry: RowEntryModel? = rowController.findDate(LocalDate.now())

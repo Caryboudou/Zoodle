@@ -45,10 +45,6 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
             val calendarDelay: Calendar = Calendar.getInstance()
             val calendar: Calendar = Calendar.getInstance()
 
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            val month = calendar.get(Calendar.MONTH)
-            val year = calendar.get(Calendar.YEAR)
-
             calendarDelay.set(Calendar.HOUR_OF_DAY, hours)
             calendarDelay.set(Calendar.MINUTE, min)
             calendarDelay.set(Calendar.SECOND, 0)
@@ -111,7 +107,8 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
             // only schedule next day if not retry, else it will overwrite the retry attempt
             // - because we use uniqueName with ExistingWorkPolicy.REPLACE
             if (isScheduleNext) {runAt(reminderTime, context)
-            log.info("set next alarm at $reminderTime")}// schedule for next day
+            log.info("set next forget alarm at $reminderTime")
+            }// schedule for next day
         }
     }
 
@@ -130,7 +127,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         val year = calendar.get(Calendar.YEAR)
         val title = "Moral du $dayString/$monthString/$year non rempli"
         val nID = 1000*year+100*month+day //+ kotlin.random.Random.nextInt()
-        log.info("notif rappel id $nID")
+        log.info("notif rappel forget id $nID")
 
         val contentIntent = Intent(applicationContext, MainActivity::class.java)
         contentIntent.putExtra("Forgotten_entry_year", "$year")
@@ -140,7 +137,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
             applicationContext,
             1,
             contentIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
         val builder = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.drawable.icon_foreground)
@@ -162,13 +159,14 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
         private const val REMINDER_WORK_NAME = "notification_daily_tag"
         private const val PARAM_NAME = "name"
         private const val NOTIF_ID = "notif_id"
+        private const val NB_REPEAT = 3
         private val log = Logger.getLogger(MainActivity::class.java.name + "Notification.DailyAlarmsWorker")
 
 
         fun runAt(
             reminderTime: String,
             context: Context,
-            notifID: Int = -1
+            delay: Int = 0
         ) {
             val (hours, min) = reminderTime.split(":").map { it.toInt() }
 
@@ -179,33 +177,44 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
             calendarDelay.set(Calendar.MINUTE, min)
             calendarDelay.set(Calendar.SECOND, 0)
 
-            val notifIDFunc = if (notifID == -1) 10000+100*hours+min
-                        else notifID+10000
-
-            // si heure de l alarme est deja passee aujourd hui -> debute demain
-            if (calendarDelay.before(calendar)) {
+            // si heure de l alarme est deja passee aujourd hui -> on programme pas
+            if (calendarDelay.before(calendar) || delay != 0) {
                 calendarDelay.add(Calendar.DATE, 1)
             }
 
-            val workName = REMINDER_WORK_NAME+reminderTime
+            for (i in 0 until NB_REPEAT) {
+                val notifID = calendarDelay.get(Calendar.MONTH) * 1000000 +
+                        calendarDelay.get(Calendar.DAY_OF_MONTH) * 10000 +
+                        calendarDelay.get(Calendar.HOUR_OF_DAY) * 100 +
+                        calendarDelay.get(Calendar.MINUTE)
+                //calendarDelay.add(Calendar.MINUTE, dayToAdd * 2)
+                log.info("runAt : dayOfMonth ${calendarDelay.get(Calendar.DAY_OF_MONTH)}, i = $i")
+                log.info("runAt : notifID ${notifID}")
+                log.info("delay ${calendarDelay.timeInMillis - calendar.timeInMillis}")
+                val workName = "$REMINDER_WORK_NAME$reminderTime $i"
 
-            val data = workDataOf(PARAM_NAME to reminderTime, NOTIF_ID to notifIDFunc)
+                val data = workDataOf(PARAM_NAME to reminderTime, NOTIF_ID to notifID)
 
-            val alarmWorkRequest =
-                OneTimeWorkRequestBuilder<DailyAlarmsWorker>()
-                    .setInputData(data)
-                    .setInitialDelay(
-                        calendarDelay.timeInMillis - calendar.timeInMillis,
-                        //10000,
-                        TimeUnit.MILLISECONDS
-                    )
-                    .build()
-            WorkManager.getInstance(context).enqueueUniqueWork(workName, ExistingWorkPolicy.REPLACE,alarmWorkRequest)
+                val alarmWorkRequest =
+                    OneTimeWorkRequestBuilder<DailyAlarmsWorker>()
+                        .setInputData(data)
+                        .setInitialDelay(
+                            calendarDelay.timeInMillis - calendar.timeInMillis,
+                            //10000,
+                            TimeUnit.MILLISECONDS
+                        )
+                        .addTag(REMINDER_WORK_NAME + "$notifID")
+                        .build()
+                WorkManager.getInstance(context).enqueueUniqueWork(workName, ExistingWorkPolicy.REPLACE, alarmWorkRequest)
+                calendarDelay.add(Calendar.DATE, 1)
+            }
         }
         fun cancel(context: Context, reminderTime: String) {
-            val workName = REMINDER_WORK_NAME+reminderTime
-            log.info("cancel $workName")
-            WorkManager.getInstance(context).cancelUniqueWork(workName)
+            for (i in 0 until NB_REPEAT) {
+                val workName = "$REMINDER_WORK_NAME$reminderTime $i"
+                log.info("cancel $workName")
+                WorkManager.getInstance(context).cancelUniqueWork(workName)
+            }
         }
         fun cancelAll(context: Context) {
             for (hour in 0 until 24) {
@@ -213,7 +222,9 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
                     var workname = REMINDER_WORK_NAME
                     workname+= if (hour <10 )  "0$hour:" else "$hour:"
                     workname+= if (min <10 )  "0$min" else "$min"
-                    WorkManager.getInstance(context).cancelUniqueWork(workname)
+                    for (i in 0 until NB_REPEAT) {
+                        WorkManager.getInstance(context).cancelUniqueWork("$workname $i")
+                    }
                     log.info("cancel all $workname")
                 }
             }
@@ -221,7 +232,7 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
         }
     }
 
-    override suspend fun doWork(): Result = coroutineScope {
+    override suspend fun doWork(): Result {
         val context = applicationContext
         val reminderTime = inputData.getString(PARAM_NAME) as String
         val notifID = inputData.getInt(NOTIF_ID, 0)
@@ -232,34 +243,34 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
                 context,
                 NotificationManager::class.java
             ) as NotificationManager
-
+            log.info("send notif $notifID")
             notificationManager.sendReminderNotification(
                 applicationContext = context,
                 channelId = CHANNEL_ID,
                 notifID = notifID
             )
-            Result.success()
+            return Result.success()
         }
         catch (e: Exception) {
         // only retry 3 times
             if (runAttemptCount > 3) {
-                return@coroutineScope Result.success()
+                return Result.success()
             }
             // retry if network failure, else considered failed
-            when(e.cause) {
+            return when(e.cause) {
                 is SocketException -> {
                     isScheduleNext = false
                     Result.retry()
                 }
+
                 else -> Result.failure()
-                }
+            }
         }
         finally {
-            // only schedule next day if not retry, else it will overwrite the retry attempt
-            // - because we use uniqueName with ExistingWorkPolicy.REPLACE
-            if (isScheduleNext) {runAt(reminderTime, context, notifID)
-            log.info("set next alarm at $reminderTime")}// schedule for next day
-        }
+            // schedule alarms for the NB_REPEAT next days
+            // don t overwrite alarms because we use APPEND_OR_REPLACE policy
+            runAt(reminderTime, context, 1)
+            log.info("set next alarms at $reminderTime")}// schedule for next day
     }
 
     private fun NotificationManager.sendReminderNotification(
@@ -267,13 +278,16 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
         channelId: String,
         notifID: Int
     ) {
+        log.info("begin sendReminderNotification")
         val contentIntent = Intent(applicationContext, MainActivity::class.java)
+        log.info("begin sendReminderNotification making builder")
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             1,
             contentIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
+        log.info("begin sendReminderNotification making builder")
         val builder = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.drawable.icon_foreground)
             .setContentTitle(applicationContext.getString(R.string.app_notification))
@@ -284,7 +298,7 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
             .setAutoCancel(true)
 
         notify(notifID, builder.build())
-        log.info("notif ID $notifID")
+        log.info("Send reminder : notif ID $notifID")
     }
 }
 
@@ -332,4 +346,10 @@ fun createNotificationsChannels(context: Context) {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+}
+
+fun cancelNotification (context: Context) {
+    val notificationManager: NotificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.cancelAll()
 }

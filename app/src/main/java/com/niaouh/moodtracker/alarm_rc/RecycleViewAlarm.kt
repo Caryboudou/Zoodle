@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.niaouh.moodtracker.MainActivity
 import com.niaouh.moodtracker.R
 import com.niaouh.moodtracker.Settings
 import com.niaouh.moodtracker.TimePicker
@@ -20,10 +21,12 @@ import com.niaouh.moodtracker.utils.ResUtil.getTimeStringFR
 import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.util.*
+import java.util.logging.Logger
 
 class AlarmAdapter(data: ArrayList<LocalTime>, layer: LinearLayout): Adapter<AlarmAdapter.AlarmViewHolder>() {
     private var alarmList: MutableList<LocalTime> = arrayListOf()
     private var rcLayer: LinearLayout
+    private val log = Logger.getLogger(MainActivity::class.java.name + "RecycleViewAlarm.AlarmAdapter")
 
     init {
         rcLayer = layer
@@ -49,6 +52,7 @@ class AlarmAdapter(data: ArrayList<LocalTime>, layer: LinearLayout): Adapter<Ala
 
     private fun initButtons(mHolder: AlarmViewHolder, position: Int) {
         val time = alarmList[position]
+        log.info("initButtons pos $position time $time")
         val context = mHolder.itemView.context
 
         mHolder.updateTime(time)
