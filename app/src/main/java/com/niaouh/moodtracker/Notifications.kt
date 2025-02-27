@@ -12,6 +12,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.niaouh.moodtracker.utils.ResUtil
@@ -27,7 +28,7 @@ import java.util.logging.Logger
 private const val CHANNEL_ID = "notification_channel_id"
 
 class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
-    CoroutineWorker(appcontext, workerParams) {
+    Worker(appcontext, workerParams) {
 
     companion object {
         private const val REMINDER_WORK_NAME = "notification_forget_entrance_tag"
@@ -72,7 +73,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         }
     }
 
-    override suspend fun doWork(): Result = coroutineScope {
+    override fun doWork(): Result {
         val context = applicationContext
         val reminderTime = inputData.getString(PARAM_NAME) as String
         var isScheduleNext = true
@@ -87,21 +88,22 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
                 applicationContext = context,
                 channelId = CHANNEL_ID
             )
-            Result.success()
+            return Result.success()
         }
         catch (e: Exception) {
         // only retry 3 times
             if (runAttemptCount > 3) {
-                return@coroutineScope Result.success()
+                return Result.success()
             }
             // retry if network failure, else considered failed
-            when(e.cause) {
+            return when(e.cause) {
                 is SocketException -> {
                     isScheduleNext = false
                     Result.retry()
                 }
+
                 else -> Result.failure()
-                }
+            }
         }
         finally {
             // only schedule next day if not retry, else it will overwrite the retry attempt
@@ -153,7 +155,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
 }
 
 class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
-    CoroutineWorker(appcontext, workerParams) {
+    Worker(appcontext, workerParams) {
 
     companion object {
         private const val REMINDER_WORK_NAME = "notification_daily_tag"
@@ -232,7 +234,7 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
         }
     }
 
-    override suspend fun doWork(): Result {
+    override fun doWork(): Result {
         val context = applicationContext
         val reminderTime = inputData.getString(PARAM_NAME) as String
         val notifID = inputData.getInt(NOTIF_ID, 0)
