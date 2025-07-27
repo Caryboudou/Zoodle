@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.github.mikephil.charting.charts.LineChart
@@ -25,12 +26,14 @@ import com.niaouh.moodtracker.data.CircleMoodBO
 import com.niaouh.moodtracker.model.MoodEntryModel
 import com.niaouh.moodtracker.model.MoodEntryModelToJson
 import com.niaouh.moodtracker.model.getRitalineInt
+import com.niaouh.moodtracker.trackerpopup.TrendViewSelectMoyDialog
 import com.niaouh.moodtracker.utils.ResUtil.getDateStringFR
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.logging.Logger
 import kotlin.collections.ArrayList
 
 
@@ -40,6 +43,10 @@ class TrendViewActivity : AppCompatActivity() {
     private var maxDate: LocalDate = LocalDate.now()
     private var minDate: LocalDate = LocalDate.now()
     private lateinit var mainLayout: ConstraintLayout
+    private lateinit var selectMoyDialog: TrendViewSelectMoyDialog
+    private val DEFAULT_MOY = 7L
+    private var moy: Long = 7L
+    private val log = Logger.getLogger(MainActivity::class.java.name + "TrendView")
 
 
     class ChartValueFormatter(): ValueFormatter() {
@@ -71,10 +78,20 @@ class TrendViewActivity : AppCompatActivity() {
         val cFatigue: CheckBox = findViewById(R.id.checkFatigue)
         val cRitaline: CheckBox = findViewById(R.id.checkRitaline)
         val cMoy: CheckBox = findViewById(R.id.checkMoy)
+        val tvMoy: TextView = findViewById(R.id.tvMoy)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         val dateFormatLocal = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH)
         var date = LocalDate.now()
+
+        tvMoy.text = moy.toString()
+        selectMoyDialog = TrendViewSelectMoyDialog(this) { l ->
+            finishSelectMoyDialog(l, cMood,
+                cFatigue,
+                cRitaline,
+                cMoy)
+            tvMoy.text = moy.toString()
+        }
 
         cRitaline.text = Settings.medicationName
 
@@ -96,14 +113,14 @@ class TrendViewActivity : AppCompatActivity() {
 
         val dtPickerInit = DatePicker()
         dtPickerInit.onUpdateListener = {
-            minDate = LocalDate.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH), it.get(Calendar.DAY_OF_MONTH))
+            minDate = LocalDate.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH)+1, it.get(Calendar.DAY_OF_MONTH))
             binitDate.text = getDateStringFR(it)
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
 
         val dtPickerEnd = DatePicker()
         dtPickerEnd.onUpdateListener = {
-            maxDate = LocalDate.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH), it.get(Calendar.DAY_OF_MONTH))
+            maxDate = LocalDate.of(it.get(Calendar.YEAR), it.get(Calendar.MONTH)+1, it.get(Calendar.DAY_OF_MONTH))
             bendDate.text = getDateStringFR(it)
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
         }
@@ -113,6 +130,11 @@ class TrendViewActivity : AppCompatActivity() {
 
         cMood.setOnClickListener {
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked, cMoy.isChecked)
+        }
+
+        tvMoy.setOnClickListener {
+            log.info("tvmoy clicked")
+            selectMoyDialog.showPopup(moy.toInt())
         }
 
         cFatigue.setOnClickListener {
@@ -134,6 +156,9 @@ class TrendViewActivity : AppCompatActivity() {
             binitDate.text = getDateStringFR(LocalDate.now().minusMonths(1))
             minDate = LocalDate.now().minusMonths(1)
 
+            moy = DEFAULT_MOY
+            tvMoy.text = moy.toString()
+
             setLineChartData(cMood.isChecked, cFatigue.isChecked, cRitaline.isChecked)
         }
 
@@ -150,12 +175,26 @@ class TrendViewActivity : AppCompatActivity() {
         }
     }
 
+    private fun finishSelectMoyDialog(l: Int, cMood: CheckBox,
+            cFatigue: CheckBox,
+            cRitaline: CheckBox,
+            cMoy: CheckBox) {
+        moy = l.toLong()
+        if (cMoy.isChecked)
+            setLineChartData(cMood.isChecked,
+                cFatigue.isChecked,
+                cRitaline.isChecked,
+                cMoy.isChecked)
+    }
+
     private fun setLineChartData(cMood: Boolean, cFatigue: Boolean, cRitaline: Boolean, cMoy: Boolean = true) {
         var entryListMood: ArrayList<Entry> = ArrayList()
         var entryListFatigue: ArrayList<Entry> = ArrayList()
         var entryListRitaline: ArrayList<Entry> = ArrayList()
         val entriesMood: ArrayList<Entry> = ArrayList()
         val entriesFatigue: ArrayList<Entry> = ArrayList()
+        val listRitaline: ArrayList<Pair<LocalDate, Entry>> = ArrayList()
+        val listLineRitaline: ArrayList<ArrayList<Pair<LocalDate, Entry>>> = ArrayList()
         val lines = mutableListOf<ILineDataSet>()
         val linesMood = mutableListOf<ILineDataSet>()
         val linesFatigue = mutableListOf<ILineDataSet>()
@@ -165,10 +204,12 @@ class TrendViewActivity : AppCompatActivity() {
         var colorsMood = mutableListOf<Int>()
         var colorsFatigue = mutableListOf<Int>()
 
+        log.info("moy $moy")
+
         val chart: LineChart = findViewById(R.id.getTheGraph)
 
         if (cMoy) {
-            maxDate.minusDays(7)
+            minDate = minDate.minusDays(moy)
         }
 
         for (moods in moodData) {
@@ -181,7 +222,7 @@ class TrendViewActivity : AppCompatActivity() {
             if (Settings.moodMode == Settings.MoodModes.NUMBERS) { moodNumber = moods.mood; fatigueNumber = moods.fatigue }
             dateIt = moods.date.toLocalDate()
 
-            if (dateIt <= maxDate && dateIt > minDate) {
+            if (dateIt in minDate..maxDate) {
                 if (cMood) {
                     val entryMood = Entry(xDate,moodNumber.toFloat())
                     entriesMood.add(entryMood)
@@ -218,26 +259,31 @@ class TrendViewActivity : AppCompatActivity() {
 
                 if (cRitaline) {
                     if (ritalineNumber != 0) {
-                        entryListRitaline.add(
-                            Entry(xDate, ritalineNumber.toFloat())
+                        listRitaline.add(
+                            Pair(dateIt, Entry(xDate, ritalineNumber.toFloat()))
                         )
                     } else if (entryListRitaline.isNotEmpty()) {
-                        val lineDataSet = initRitalineLine(entryListRitaline, chart)
-                        lines.add(lineDataSet)
+                        listLineRitaline.add(listRitaline)
                         entryListRitaline = ArrayList()
                     }
                 }
             }
         }
+
+        if (cMoy) minDate = minDate.plusDays(moy)
+
         val lineDataSetMood = initMoodLine(entryListMood, colorsMood, chart)
 
         val lineDataSetFatigue = initFatigueLine(entryListFatigue, colorsFatigue, chart)
 
-        val lineDataSetRitaline = initRitalineLine(entryListRitaline, chart)
-
         if (cMood) { linesMood.add(lineDataSetMood) }
         if (cFatigue) { linesFatigue.add(lineDataSetFatigue) }
-        if (cRitaline) { lines.add(lineDataSetRitaline) }
+        if (cRitaline) { listLineRitaline.add(listRitaline)
+            for (listR in listLineRitaline) {
+                val l = initRitalineLine((listR.filter { e -> e.first >= minDate }).map { e -> e.second } as ArrayList<Entry>, chart)
+                lines.add(l)
+            }
+        }
 
         if (cMoy) {
             if (cMood) lines.add(getMoy(entriesMood, chart, "Mood", Color.RED))
@@ -251,8 +297,6 @@ class TrendViewActivity : AppCompatActivity() {
                 for (l in linesFatigue) lines.add(l)
             }
         }
-
-        if (cMoy) maxDate.minusDays(7)
 
         val data = LineData(lines)
         data.setValueTextColor(Color.WHITE)
@@ -337,8 +381,9 @@ class TrendViewActivity : AppCompatActivity() {
 
         val dateArray = ArrayList<LocalDate>()
         val dateInit = Date(entry[0].x.toLong())
+        log.info("first date entry moy $dateInit")
         var dateInitLocal = LocalDate.of(dateInit.year, dateInit.month + 1, dateInit.date)
-        dateInitLocal = dateInitLocal.plusDays(5)
+        dateInitLocal = dateInitLocal.plusDays(moy-2)
         for (e in entry) {
             val dateTemp = Date(e.x.toLong())
             val date = LocalDate.of(dateTemp.year, dateTemp.month + 1, dateTemp.date)
@@ -350,7 +395,7 @@ class TrendViewActivity : AppCompatActivity() {
         for (d in dateArray) {
             var sum = 0f
             var sum_div = 0
-            val d_min = d.minusDays(6)
+            val d_min = d.minusDays(moy-1)
             var lastEntry = entry[0]
             for (e in entry) {
                 val dateTemp = Date(e.x.toLong())

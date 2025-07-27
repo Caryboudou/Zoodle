@@ -16,7 +16,6 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.niaouh.moodtracker.utils.ResUtil
-import kotlinx.coroutines.coroutineScope
 import java.lang.Exception
 import java.net.SocketException
 import java.time.LocalDateTime
@@ -79,6 +78,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         var isScheduleNext = true
 
         try {
+            cancelNotification(applicationContext)
             val notificationManager = getSystemService(
                 context,
                 NotificationManager::class.java
@@ -137,9 +137,9 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         contentIntent.putExtra("Forgotten_entry_day", dayString)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
-            1,
+            2,
             contentIntent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.drawable.icon_foreground)

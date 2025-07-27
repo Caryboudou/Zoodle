@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         initButtons()
         log.info("main 2")
         setActivityListeners()
+        cancelNotification(applicationContext)
 
         //dataHandler = TestSuite.useLocalData(secureFileHandler, applicationContext)
         //TestSuite.setDefaultSettings()

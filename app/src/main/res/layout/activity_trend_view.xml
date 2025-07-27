@@ -63,8 +63,22 @@
         android:padding="10dp"
         android:text="@string/trend_check_moy"
         android:textColor="@color/colorOnPrimaryText"
-        app:layout_constraintEnd_toStartOf="@+id/bTrendReset"
+        app:layout_constraintEnd_toStartOf="@+id/tvMoy"
         app:layout_constraintTop_toTopOf="parent"  />
+
+    <TextView
+        android:id="@+id/tvMoy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:autoSizeMaxTextSize="25sp"
+        android:autoSizeTextType="uniform"
+        android:text="@string/trend_check_moy"
+        android:textColor="@color/colorOnPrimaryText"
+        app:layout_constraintEnd_toStartOf="@+id/bTrendReset"
+        app:layout_constraintTop_toTopOf="@id/checkMoy"
+        app:layout_constraintBottom_toBottomOf="@id/checkMoy"  />
 
     <ImageButton
         android:id="@+id/bTrendReset"
@@ -148,7 +162,7 @@
                 android:id="@+id/bTrendInitDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:text="@string/default_date" />
 
@@ -166,7 +180,7 @@
                 android:id="@+id/bTrendEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:text="@string/default_date" />
         </LinearLayout>
