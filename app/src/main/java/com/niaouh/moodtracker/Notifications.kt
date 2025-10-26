@@ -52,7 +52,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
             else calendarDelay.add(Calendar.DATE, 2) //on notifie pour après demain si oubli lorsque qu on vient de remplir demain
 
             val data = workDataOf(PARAM_NAME to reminderTime)
-            log.info("delay ${calendarDelay.timeInMillis - calendar.timeInMillis}")
+            //log.info("delay ${calendarDelay.timeInMillis - calendar.timeInMillis}")
             val alarmWorkRequest =
                 OneTimeWorkRequestBuilder<ForgottenEntranceAlarmsWorker>()
                     .setInputData(data)
@@ -109,7 +109,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
             // only schedule next day if not retry, else it will overwrite the retry attempt
             // - because we use uniqueName with ExistingWorkPolicy.REPLACE
             if (isScheduleNext) {runAt(reminderTime, context)
-            log.info("set next forget alarm at $reminderTime")
+            //log.info("set next forget alarm at $reminderTime")
             }// schedule for next day
         }
     }
@@ -128,7 +128,7 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         val month = calendar.get(Calendar.MONTH)+1
         val year = calendar.get(Calendar.YEAR)
         val title = "Moral du $dayString/$monthString/$year non rempli"
-        val nID = 1000*year+100*month+day //+ kotlin.random.Random.nextInt()
+        val nID = 10000*year+100*month+day //+ kotlin.random.Random.nextInt()
         log.info("notif rappel forget id $nID")
 
         val contentIntent = Intent(applicationContext, MainActivity::class.java)
@@ -137,9 +137,9 @@ class ForgottenEntranceAlarmsWorker (appcontext: Context, workerParams: WorkerPa
         contentIntent.putExtra("Forgotten_entry_day", dayString)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
-            2,
+            1,
             contentIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val builder = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.drawable.icon_foreground)
@@ -307,6 +307,7 @@ class DailyAlarmsWorker (appcontext: Context, workerParams: WorkerParameters):
 fun createNotifForget(context: Context, time: LocalTime = Settings.notificationTime) {
     createNotificationsChannels(context)
     val timeStr = ResUtil.getTimeStringEN(time)
+    Logger.getLogger(MainActivity::class.java.name + "Notification.ForgottenEntranceAlarmsWorker").info("schecule forgettent at $timeStr")
     ForgottenEntranceAlarmsWorker.runAt(timeStr, context)
 }
 
