@@ -39,6 +39,7 @@
     <string name="trend_check_mood">Moral</string>
     <string name="trend_check_fatigue">Fatigue</string>
     <string name="trend_check_ritaline">Ritaline</string>
+    <string name="trend_check_moy">Moyenne</string>
     <string name="trend_month">Mois</string>
     <string name="trend_year">Année</string>
     <string name="trend_title">Évolution</string>
@@ -78,7 +79,13 @@
     <string name="settings_export_csv">Exporter un fichier CSV</string>
     <string name="settings_reminder">Rappel</string>
     <string name="settings_reminder_time">Rappel à</string>
+    <string name="settings_reminder_time_forget">Rappel en cas d\'oubli à</string>
     <string name="settings_medication_name">Medicament surveillé :\ </string>
+    <string name="settings_tracker_name">Tracker :\ </string>
+    <string name="settings_tracker_none">aucun</string>
+    <string name="settings_mode_note">Mode note</string>
+    <string name="settings_max_mood">Échelle notation :\ </string>
+    <string name="settings_tracker_title">Trackers</string>
 
     <dimen name="text_size_xxlarge">30sp</dimen>
     <dimen name="text_size_xlarge">26sp</dimen>
@@ -87,10 +94,18 @@
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_search">14sp</dimen>
     <dimen name="choose_mood_circle_size">50dp</dimen>
+    <dimen name="choose_mood_circle_size_10">50dp</dimen>
     <dimen name="choose_mood_circle_margin">5dp</dimen>
     <dimen name="choose_fatigue_circle_size">50sp</dimen>
+    <dimen name="choose_fatigue_circle_size_10">50sp</dimen>
     <dimen name="choose_fatigue_circle_margin">5dp</dimen>
     <dimen name="choose_high_tab">48dp</dimen>
+
+    <string-array name="max_mood">
+        <item>1 à 5</item>
+        // terrible
+        <item>1 à 9</item>
+    </string-array>
 
     <string-array name="mood_faces">
         <item>&#128557;</item>
@@ -130,6 +145,7 @@
     <string name="fatigue_terrible">&#128557;</string>
     <string name="front_enregistrer">Enregistrer</string>
     <string name="alarm_text">Rappel à 20h00</string>
+    <string name="settings_add_alarm">Ajouter un rappel</string>
 
     <string-array name="available_activities">
         <item>Guitar</item>

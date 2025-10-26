@@ -4,34 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cMoodEntry"
     android:layout_width="match_parent"
-    android:layout_height="70dp">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/llMainRowTop"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/base"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         android:layout_weight="1"
-        android:background="@drawable/activity_row_rounded_corner"
+        android:visibility="gone"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/gene"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/llMainRowTop"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/activity_row_rounded_corner"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/llMainRowVerticalLeft"
@@ -57,7 +58,7 @@
                 android:textSize="24sp"
                 tools:ignore="RtlCompat,TouchTargetSizeCheck" />
 
-            <com.kalzakath.zoodle.layout.MoodCircle
+            <com.niaouh.moodtracker.layout.MoodCircle
                 android:id="@+id/moodCircle"
                 android:layout_width="@dimen/choose_mood_circle_size"
                 android:layout_height="@dimen/choose_mood_circle_size"
@@ -94,7 +95,7 @@
                 android:textSize="24sp"
                 tools:ignore="RtlCompat,TouchTargetSizeCheck" />
 
-            <com.kalzakath.zoodle.layout.FatigueCircle
+            <com.niaouh.moodtracker.layout.FatigueCircle
                 android:id="@+id/fatigueCircle"
                 android:layout_width="@dimen/choose_fatigue_circle_size"
                 android:layout_height="@dimen/choose_fatigue_circle_size"
@@ -110,15 +111,14 @@
 
         <LinearLayout
             android:id="@+id/llText"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0"
             android:layout_marginStart="5dp"
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/llMainRowVerticalRight"
-            app:layout_constraintEnd_toStartOf="@+id/ibNote">
+            app:layout_constraintStart_toEndOf="@id/llMainRowVerticalRight">
 
             <TextView
                 android:id="@+id/tvMoodDate"
@@ -130,7 +130,7 @@
                 android:text="@string/default_date"
                 android:textColor="@color/colorOnPrimaryText"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <TextView
@@ -150,14 +150,209 @@
         <ImageButton
             android:id="@+id/ibNote"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginEnd="0dp"
             app:srcCompat="@drawable/ic_note"
             android:backgroundTint="@android:color/transparent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:id="@+id/llNoteView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/llMainRowTop"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <LinearLayout
+                android:id="@+id/line"
+                android:layout_width="25dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <LinearLayout
+                    android:id="@+id/lineLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="-10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/Void"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+                    <View
+                        android:id="@+id/lineV"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/top_divider" />
+                    <View
+                        android:id="@+id/lineH"
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="-10dp"
+                        android:background="@drawable/top_divider" />
+                </LinearLayout>
+                <View
+                    android:id="@+id/Void"
+                    android:layout_width="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="-10dp"
+                    />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/gene"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/activity_row_rounded_corner">
+                <ScrollView
+                    android:id="@+id/SCROLLER_ID"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="10dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintHeight_max="140sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" >
+                    <TextView
+                        android:id="@+id/tvNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minEms="6"
+                        android:gravity="center_vertical"
+                        android:text="gjkbcjhb "
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/colorOnPrimaryText"
+                        android:textSize="14sp"
+                        tools:ignore="TouchTargetSizeCheck"/>
+                </ScrollView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/trackmode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1"
+        android:visibility="visible"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llMainRowTopTrack"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:visibility="visible"
+            android:background="@drawable/activity_row_rounded_corner"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/llTextTrack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:layout_marginStart="15dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/tvMoodDateTrack"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/default_date"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textSize="16sp"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/tvMoodTimeTrack"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:minEms="6"
+                android:gravity="center_vertical"
+                android:text="@string/default_time"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/colorRecycleBackground"
+                android:textSize="12sp"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/hscrll1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/llTextTrack"
+            app:layout_constraintEnd_toStartOf="@+id/ibNoteTrack" >
+            <RelativeLayout
+                android:id="@+id/RelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp">
+                <TableLayout
+                    android:id="@+id/tlMood"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+        </HorizontalScrollView>
+
+        <ImageButton
+            android:id="@+id/ibNoteTrack"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginEnd="0dp"
+            app:srcCompat="@drawable/ic_note"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

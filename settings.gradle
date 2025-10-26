@@ -14,5 +14,5 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "Zoodle"
+rootProject.name = "moodtracker"
 include ':app'

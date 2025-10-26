@@ -140,7 +140,7 @@
         <LinearLayout
             android:id="@+id/llFrontMood"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="0"
             android:orientation="vertical">
@@ -158,18 +158,20 @@
                 android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
-            <com.kalzakath.zoodle.layout.ChooseMoodCircle
+            <com.niaouh.moodtracker.layout.ChooseMoodCircle10
                 android:id="@+id/tvmpFrontMoodValue"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/choose_high_tab"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+
+                android:layout_marginBottom="5dp"
                 android:clickable="true" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/llFrontFatigue"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:orientation="vertical">
 
@@ -186,11 +188,12 @@
                 android:textColor="@color/colorOnPrimaryText"
                 android:textSize="16sp" />
 
-            <com.kalzakath.zoodle.layout.ChooseFatigueCircle
+            <com.niaouh.moodtracker.layout.ChooseFatigueCircle10
                 android:id="@+id/tvmpFrontFatigueValue"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/choose_high_tab"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:clickable="true" />
         </LinearLayout>
 
@@ -232,6 +235,42 @@
                 android:imeOptions="actionNext"
                 android:singleLine="true"
                 android:maxLines="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llTracker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="0"
+            android:visibility="visible"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvFrontTrackerTitle"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_weight="0"
+                android:background="@drawable/activity_row_rounded_corner"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="Trackers"
+                android:textAlignment="gravity"
+                android:textColor="@color/colorOnPrimaryText"
+                android:textSize="16sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTracker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:background="@android:color/transparent"
+                tools:listitem="@layout/tracker_main_entry_layout"
+                tools:itemCount="2"
+                app:layout_constraintTop_toBottomOf="@+id/tvTrackerTitle"
+                app:layout_constraintBottom_toTopOf="@+id/llButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
         </LinearLayout>
 
         <LinearLayout

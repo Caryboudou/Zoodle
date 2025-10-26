@@ -11,17 +11,32 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMain"
         android:layout_width="0dp"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:scrollbars="vertical"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintBottom_toTopOf="@+id/bViewTrend"
+        tools:itemCount="5"
+        tools:listitem="@layout/mood_entry_layout" />
+
+    <!--
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/recyclerViewMain"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/line"
-        tools:itemCount="5"
-        tools:listitem="@layout/mood_entry_layout" />
+        app:layout_constraintBottom_toTopOf="@+id/bViewTrend" /> -->
 
     <TextView
         android:id="@+id/tv_title"
@@ -50,6 +65,30 @@
         android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_settings" />
 
+    <ImageButton
+        android:id="@+id/ibFind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/main_settings"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_find" />
+
+    <ImageButton
+        android:id="@+id/ibModeTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/main_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ibModeNote"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_mode_track" />
+
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
@@ -68,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="76dp"
         android:layout_marginTop="324dp"
-        android:text="@string/fui_progress_dialog_loading"
+        android:text="Loading..."
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/colorOnPrimaryText"
         android:textSize="60sp"
@@ -97,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="152dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="center_horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -106,7 +145,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@color/dark_gray"
@@ -114,7 +153,7 @@
 
                     <TextView
                         android:id="@+id/tvmpMoodTitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="290dp"
                         android:layout_height="@dimen/choose_high_tab"
                         android:autoSizeMinTextSize="30sp"
                         android:autoSizeTextType="uniform"
@@ -125,16 +164,16 @@
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@color/dark_gray"
                     android:gravity="center_horizontal">
 
-                    <com.kalzakath.zoodle.layout.ChooseMoodCircle
+                    <com.niaouh.moodtracker.layout.ChooseMoodCircle10
                         android:id="@+id/tvmpMoodValue"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/choose_high_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:clickable="true" />
                 </TableRow>
 
@@ -158,16 +197,16 @@
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:background="@color/dark_gray"
                     android:gravity="center_horizontal">
 
-                    <com.kalzakath.zoodle.layout.ChooseFatigueCircle
+                    <com.niaouh.moodtracker.layout.ChooseFatigueCircle10
                         android:id="@+id/tvmpFatigueValue"
-                        android:layout_width="300dp"
-                        android:layout_height="@dimen/choose_high_tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:clickable="true" />
                 </TableRow>
 
@@ -215,10 +254,8 @@
         android:id="@+id/bViewTrend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
         app:srcCompat="@drawable/ic_trend"
         app:layout_constraintStart_toStartOf="parent"
         android:backgroundTint="@android:color/transparent"
@@ -229,14 +266,25 @@
         android:id="@+id/addNewButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/add_new_mood_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/bViewTrend"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ibModeNote"
         android:backgroundTint="@android:color/transparent"
         app:srcCompat="@drawable/ic_add"/>
+
+    <ImageButton
+        android:id="@+id/ibModeNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/add_new_mood_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/addNewButton"
+        app:layout_constraintEnd_toStartOf="@+id/ibModeTrack"
+        android:backgroundTint="@android:color/transparent"
+        app:srcCompat="@drawable/ic_mode_note"/>
 
     <ImageButton
         android:id="@+id/ibAddNewDebug"

@@ -1,0 +1,135 @@
+package com.niaouh.moodtracker.data
+
+import com.niaouh.moodtracker.R
+import com.niaouh.moodtracker.data.MoodDO
+
+enum class CircleFatigueBO(
+    val colorId: Int,
+    val backgroundId: Int,
+    val fatigueDrawable: Int
+) {
+    VERY_GOOD(
+        R.color.colorFatigueVeryGood,
+        R.drawable.fatigue_circle_very_good,
+        R.drawable.ic_very_good_fatigue
+    ),
+    VERY_GOOD_H(
+        R.color.colorFatigueVeryGood1,
+        R.drawable.fatigue_circle_very_good_1,
+        R.drawable.ic_very_good_fatigue_1
+    ),
+    GOOD(
+        R.color.colorFatigueGood,
+        R.drawable.fatigue_circle_good,
+        R.drawable.ic_good_fatigue
+    ),
+    GOOD_H(
+        R.color.colorFatigueGood1,
+        R.drawable.fatigue_circle_good_1,
+        R.drawable.ic_good_fatigue_1
+    ),
+    MEDIOCRE(
+        R.color.colorFatigueMediocre,
+        R.drawable.fatigue_circle_medicore,
+        R.drawable.ic_mediocre_fatigue
+    ),
+    MEDIOCRE_H(
+        R.color.colorFatigueMediocre1,
+        R.drawable.fatigue_circle_medicore_1,
+        R.drawable.ic_mediocre_fatigue_1
+    ),
+    BAD(
+        R.color.colorFatigueBad,
+        R.drawable.fatigue_circle_bad,
+        R.drawable.ic_bad_fatigue
+    ),
+    BAD_H(
+        R.color.colorFatigueBad1,
+        R.drawable.fatigue_circle_bad_1,
+        R.drawable.ic_bad_fatigue_1
+    ),
+    VERY_BAD(
+        R.color.colorFatigueVeryBad,
+        R.drawable.fatigue_circle_very_bad,
+        R.drawable.ic_very_bad_fatigue
+    ),
+    NONE(
+        R.color.colorMoodNone,
+        R.drawable.mood_circle_none,
+        R.drawable.ic_unknow
+    );
+
+    fun toInt(): Int {
+        return when (this) {
+                VERY_GOOD -> 9
+                VERY_GOOD_H -> 8
+                GOOD -> 7
+                GOOD_H -> 6
+                MEDIOCRE -> 5
+                MEDIOCRE_H -> 4
+                BAD -> 3
+                BAD_H -> 2
+                VERY_BAD -> 1
+                NONE -> 0
+            }
+    }
+
+    fun toText(max5: Boolean): String {
+        if (max5)
+            return "${when (this) {
+                    VERY_GOOD -> 5
+                    VERY_GOOD_H -> 5
+                    GOOD -> 4
+                    GOOD_H -> 4
+                    MEDIOCRE -> 3
+                    MEDIOCRE_H -> 2
+                    BAD -> 2
+                    BAD_H -> 1
+                    VERY_BAD -> 1
+                    NONE -> 0
+                }}/5"
+        return "${when (this) {
+            VERY_GOOD -> 9
+            VERY_GOOD_H -> 8
+            GOOD -> 7
+            GOOD_H -> 6
+            MEDIOCRE -> 5
+            MEDIOCRE_H -> 4
+            BAD -> 3
+            BAD_H -> 2
+            VERY_BAD -> 1
+            NONE -> 0
+        }}/9"
+    }
+
+    companion object {
+        fun from(fatigue: MoodDO): CircleFatigueBO {
+            return when (fatigue) {
+                MoodDO.VERY_GOOD -> VERY_GOOD
+                MoodDO.VERY_GOOD_H -> VERY_GOOD_H
+                MoodDO.GOOD -> GOOD
+                MoodDO.GOOD_H -> GOOD_H
+                MoodDO.MEDIOCRE -> MEDIOCRE
+                MoodDO.MEDIOCRE_H -> MEDIOCRE_H
+                MoodDO.BAD -> BAD
+                MoodDO.BAD_H -> BAD_H
+                MoodDO.VERY_BAD -> VERY_BAD
+                MoodDO.NONE -> NONE
+            }
+        }
+        fun from(fatigue: Int) : CircleFatigueBO {
+            return when (fatigue) {
+                9 -> VERY_GOOD
+                8 -> VERY_GOOD_H
+                7 -> GOOD
+                6 -> GOOD_H
+                5 -> MEDIOCRE
+                4 -> MEDIOCRE_H
+                3 -> BAD
+                2 -> BAD_H
+                1 -> VERY_BAD
+                else -> NONE
+            }
+        }
+    }
+}

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.kalzakath.zoodle.layout.MoodCircle
+    <com.niaouh.moodtracker.layout.MoodCircle
         android:id="@+id/veryGoodCircle"
         android:layout_width="@dimen/choose_mood_circle_size"
         android:layout_height="@dimen/choose_mood_circle_size"
@@ -11,7 +11,7 @@
         android:clickable="true"
         android:focusable="true"/>
 
-    <com.kalzakath.zoodle.layout.MoodCircle
+    <com.niaouh.moodtracker.layout.MoodCircle
         android:id="@+id/goodCircle"
         android:layout_width="@dimen/choose_mood_circle_size"
         android:layout_height="@dimen/choose_mood_circle_size"
@@ -19,7 +19,7 @@
         android:clickable="true"
         android:focusable="true"/>
 
-    <com.kalzakath.zoodle.layout.MoodCircle
+    <com.niaouh.moodtracker.layout.MoodCircle
         android:id="@+id/badCircle"
         android:layout_width="@dimen/choose_mood_circle_size"
         android:layout_height="@dimen/choose_mood_circle_size"
@@ -27,7 +27,7 @@
         android:clickable="true"
         android:focusable="true"/>
 
-    <com.kalzakath.zoodle.layout.MoodCircle
+    <com.niaouh.moodtracker.layout.MoodCircle
         android:id="@+id/veryBadCircle"
         android:layout_width="@dimen/choose_mood_circle_size"
         android:layout_height="@dimen/choose_mood_circle_size"
@@ -35,7 +35,7 @@
         android:clickable="true"
         android:focusable="true"/>
 
-    <com.kalzakath.zoodle.layout.MoodCircle
+    <com.niaouh.moodtracker.layout.MoodCircle
         android:id="@+id/mediocreCircle"
         android:layout_width="@dimen/choose_mood_circle_size"
         android:layout_height="@dimen/choose_mood_circle_size"
